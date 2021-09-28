@@ -1,0 +1,10 @@
+cd == cd ~
+
+changing the default branch name to main to match github
+git config --global init.defaultBranch main
+
+my ssh key was not on github for some reason ?!?
+
+vscode live server to auto refresh page on change
+
+
