@@ -1,0 +1,33 @@
+html {
+  font-family: sans-serif;
+}
+
+/* Your CSS below here */
+p {
+  width: 200px;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*font size of rem (default) = 12px. 12*1.5 = 18*/
+  font-size: 1.5rem;
+  background: 
+    linear-gradient(to bottom right, rgba(255, 255, 255, 0) 0%,
+    rgba(0, 0, 0, 0.2) 30%) 
+    currentColor;
+  box-shadow: 
+    0px 0px 10px 2px black, 
+    inset 2px 2px 5px #ffffff88, 
+    inset -2px -2px 5px #00000088 ;
+  /* filter: drop-shadow(5px 5px 5px black); */
+  text-shadow: 2px 1px 100px black;
+  color: red;
+  border: 1px solid darkred;
+  border-radius: 5px;
+}
+
+p::selection { 
+  color: white;
+  text-shadow: 2px 1px 100px black;
+  background: red;
+}
