@@ -1,0 +1,68 @@
+body {
+    --text-color: rgb(63, 71, 80);
+    --label-color: rgb(6, 185, 0);
+    --line-color: #aaa;
+
+    background: url("andrew-neel-ute2XAFQU2I-unsplash.jpg") no-repeat;
+    background-size: cover;
+}
+
+* {
+    font-family: sans-serif;
+    color: var(--text-color);
+}
+
+h1 {
+    text-align: center;
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    border-bottom: 2px solid var(--line-color);
+}
+
+main {
+    margin: 3em;
+    padding: 2em 1.5em;
+    border: 2px solid #aaa;
+    background-color: white;
+}
+
+main p {
+    color: white;
+    background-color: var(--label-color);
+    padding: 1.4em 1em;
+    font-size: 1.5em;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    font-family: monospace;
+}
+
+
+
+
+label {
+    color: var(--label-color);
+    font-size: 21px;
+}
+
+textarea, input[type=text], input[type=email], input[type=number] {
+    height: 2.5em;
+    width: 100%;
+}
+
+textarea {
+    height: 100%;
+}
+
+input, select, fieldset, button{
+    display: block;
+    margin-top: 0.5em;
+    margin-bottom: 2.5em;
+}
+
+select, button {
+    padding: 0.8em 1.5em;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    display: inline;
+}
