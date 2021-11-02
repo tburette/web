@@ -1,0 +1,2289 @@
+tolearn
+Content Security Policy (CSP)
+https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Block_and_Inline_Layout_in_Normal_Flow
+https://www.youtube.com/c/MozillaDeveloper/videos?view=0&sort=p&flow=grid
+https://github.com/Kristories/awesome-guidelines#frontend-development
+https://developer.mozilla.org/en-US/docs/MDN/Guidelines/Code_guidelines/CSS
+CORS
+
+
+EMMET
+main>(div#id+div.class)>h1{Title}^ul>li.class$*5+footer[attr="value"]
+!
+
+TIPS
+make all the elements have a given value for a property
+html {
+  box-sizing: border-box;
+}
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+
+min-width in pixels
+width in %
+=>
+element smaller than min-width?
+	doesn't get smaller (and garble the layout)
+	H scroll
+element bigger than min-width?
+	margin start appearing
+smooth transition between the two
+
+
+i want a margin between elements but not at the beginning/end
+[__]X[__]Y[__]Z	no
+X[__]Y[__]Z[__]	no
+X[__]Y[__]Z		yes
+li + li {
+  margin-top: 1em;
+}
+
+
+
+
+HTML
+element
+	component of the hierarchical structure of the document
+	usually has start/end tags
+
+tag
+	markup that delimits an element
+	has a name
+	may have attribute
+	<p> opening tag
+	</p> closing tag
+	<.../> empty element(aka void element, aka self-closing)
+		void means no content (text, other elements)
+		self-closing : term left-over from XHTML where /> was required
+		/ not needed, is ignored by browsers and does nothing!
+		(accepted by browsers because of compatiblity)
+		<br/> == <br>
+
+self-closing elements:
+	br
+	img
+	input
+	link
+
+attribute
+	property/value of an element. Set on the (opening) tag
+boolean attribute
+	attribute with no value
+	(technically allowed to have a value : same as name of attribute)
+	present = true
+	absent = false
+	e.g. checked disabled defer async 
+
+<!-- comment -->
+
+Entity
+	string representing a character &xxx;
+	critical to use for < and >
+	required in some places (attribute, url) for & " '
+	avoid using unless needed
+	used to be popular before utf-8 documents and editor without unicode support
+	aka character reference (in standard)
+	aka entity reference
+	aka encoded character
+	&lt;	<
+	&gt;	>
+	&amp;	&
+	&nbsp;	' ' non breaking space, do not collapse
+	&apos;	'
+	&quot;	"
+
+basic structure of an HTML document (with comments):
+<!DOCTYPE html>
+	doctype
+	tells which version of HTML we are using
+<html> <!--root element of the document-->
+  <head>
+    <title>Title</title>
+    <meta charset="utf8"/>
+    	defines encoding
+  </head>
+  <body>
+    <!--content-->
+  </body>
+</html>
+
+<meta name="description" content="Description seen by search engines.">
+	There are other descriptive metadata
+	facebook's Open Graph
+	twitter cards
+
+<link rel="icon" href="fav.png">
+	where is the favicon?
+	Instead of the browser going for /favicon.ico
+
+<link rel="stylesheet" href="x">
+	external stylesheet
+
+<script src="x.js" defer></script>
+
+no async/defer attribute
+	parsing of the HTML is stopped.
+	download then execute the script
+	resume parsing the HTML
+
+async and defer attributes
+	are for external scripts only
+	allows loading parallel to parsing the HTML
+	avoids blocking parsing the html document
+	
+async
+	executed as soon as it is available (blocking the HTML parsing)
+	may see partial DOM
+	no execution order between async scripts
+
+defer
+	script executed after the document has been parsed. (just before firing the event DOMContentLoaded) 
+	script will not see partially loaded DOM
+	scripts executed in the order they appear in the DOM
+
+
+
+
+
+
+<span>x</span>
+	generic inline container
+	like div but inline
+	identifies (and allows styling) of a grouping of text
+
+<div>x</div>
+	generic block element
+	contain elements but doesn't have meaning (nav, article,...)
+	
+
+<p>x</p>
+	paragraph
+	adds newline after
+
+<h1>x</h1>
+<h6>x</h6>
+	heading
+	using it implies a new section (even if no div/section/article.. to separate from the content before)
+	should be able to build a good table of content from the h elements
+	semantic/accessibility:
+		only one h1 in a page
+		use same heading as previous one to indicate another section
+		use x+1 header to indicate subsection
+		do not skip h level : NOT h2 then h4
+		put within the article/section/..
+
+<b>x</b>
+	bold text
+	visual
+	draw attention to the text
+
+<strong>x</strong>
+	strong emphasis
+	semantic
+	text of greater importance
+	typically bold
+	browser applies "font-weight: bold;"
+
+<i>x</i>
+	italic text
+	visual
+
+<em>x</em>
+	emphasized
+	semantic
+	typically italics
+
+<small>x</small>
+	was not thought as a semantic element (like i, b) but it can be:
+		small print, side comment
+	browsers render this text smaller
+	often use css styling instead
+
+<u>x</u>
+Used to be underline
+new html5 semantic definition : "non textual annotation" (eg. spelling error)
+to underline : use text-decoration: underline; (on a span for example)
+or keep it simple anduse <u> => browser automatically sets text-decoration: underline;
+note: underline is generally to be avoided due to the risk of confusion with a link
+text-decoration: wavy underline red; => squiggly line (like spelling erro in text editor)
+
+<s>x</s>
+strikethrough
+browser applies text-decoration: line-through;
+<del>
+	use instead of <s> to mark text as deleted
+<ins>
+	used to mark inserted text
+
+<hr>
+	horizontal rule
+	a thematic break in the content
+
+<ul>
+  <li>item</li>
+  <li>item2</li>
+</ul>
+
+<ol>
+  <li>item</li>
+  <li>item2</li>
+</ol>
+
+<dl> <!-- description list -->
+  <dt>Description label</dt>
+  <dd>Description definition</dd>
+  <dd>Second definition</dd>
+</dl>
+
+
+
+Quoting
+<blockquote cite="url"></blockquote>
+	quote
+	is a block element : do not put in an inline element (p,...)
+	visual : text indented
+	cite not used by browsers
+	use cite instead
+	suggestion : wrap in figure + figcaption
+
+<q cite="url"></q>
+	same but inline element (works inside p,...)
+	visual : quoted
+	cite not used by browsers (use cite instead)
+	
+<cite> <a href="url"> source of quote</a></cite>
+	source (name) of the citation
+	NOT inside blockquote/q
+	visual : text in italic
+
+<abbr title="xxx">x</abbr>
+	abbreviation
+	shows as tooltip
+	<acronym> is obsolete
+
+<address>x</address>
+	contains contact information
+	(name of person/organization +) address, phone, email,...
+
+<sup>higher</sup>
+	math exponents, 4th,...
+<sub>lower</sub>
+	footnote number, math,...
+
+<code></code>
+	computer code
+	good for code inline to the text
+	multiple lines? apart from the rest of the text? can wrap inside a pre (! careful with the nowrap of pre)
+	monospace font by default
+
+<pre></pre>
+	preformatted text
+	block
+	preserves spacing
+	does not wrap : will cause horizontal scroll if long!
+	can force newline with css:
+		white-space: pre-wrap;
+	monospace font by default
+
+<var></var>
+	variable name
+	italic by default
+
+<kbd></kbd>
+	keyboard input
+
+<samp></samp>
+	program output, sample
+
+
+<time datetime="2018-07-07">July 7</time>
+<time datetime="20:00">20:00</time>
+<time datetime="PT2H30M">2h 30m</time>
+<time datetime="datetime-string">xxx</time>
+	show a time
+	datetime is a machine-readable string (not displayed to the user)
+
+
+
+
+
+<a href="xxx">anchor text </a>
+	anchor element
+	inline but can wrap block elements
+
+<a href="x" title="some title">x</a>
+	the title appears as tooltip
+
+<a href="x" download>x</a>
+	prompts to download instead of navigating to it
+<a href="x" download="filename.txt">x</a>
+	use the given name
+
+<a href="some_url">anchor text</a>
+	external link
+<a href="#id_of_element_in_the_document">anchor text</a>
+	internal link
+<a href="some_url" target="_blank">anchor text</a>
+	attribute to open in a new window
+
+<a href="#"></a>
+	reference to the top of the page
+	scrolls to the top of the page
+	used when
+		link will be used by javascript
+		as a placeholder (eg in a template)
+<a href=""></a>
+	reference to the current page
+	reloads the page
+
+<a href="javascript:void(0)">hi</a>
+	want a clickable link but really want it to do nothing (unlike "#" or "")
+	used when want a clickable link which will run some js
+		without href no clickable link (only text), even with onclick
+		"" reloads page :(
+		"#" jumps to top of page :( (unless onclick event handler returns false)
+	with href value of "javascript:xxx" runs javascript and replace the content of the page with the value resulting from the xxx expression, unless the returned value is undefined
+	void(x) evaluates the expression x and returns undefined
+	instead of void(0) could also use
+		javascript:undefined
+		javascript:
+		javascript:void 0
+	the reason void(0) is used is historic
+	note : onclick="<some JS>" also exists
+
+links (href):
+	absolute : 	protocol://domain/path
+	relative : 	relative_path (relative to the path of the current document)
+	root relative:
+				/path
+	fragment : 	[path]#fragment
+
+pseudo-classes:
+:link
+	non-cliked link
+:visited
+	clicked link
+:hover
+	being pointed-to at
+:focus
+	has the focus (tab)
+:active
+	being clicked on
+
+! careful in the order if use multiple 
+a {}
+a:active{}
+a:focus{}
+a:link{}
+	same specificity, multiple can be true simultaneously
+	link declarations override the focus ones!!
+	focus declarations override the active ones!!
+
+styling properties linked to links:
+color
+cursor
+	cursor when hovering (do NOT use :hover)
+outline
+	outline when has focus
+	like border but takes no space, always on four sides
+	doesn't affect layout
+text-decoration
+	the underline
+
+
+
+
+<img src="https://www.theodinproject.com/mstile-310x310.png" alt="description">
+	is a replaced element
+	
+	alt
+		for screen reader + displayed when couldn't load image
+		short description of the image
+	alt=""
+		image is decoration only or there already is a caption for the image
+		when used and the image is missing : no image displayed (instead of broken image)
+
+	width height
+		extracted from the image file itself anyway
+		not very useful unless : resize, image hasn't loaded, avoid reflow
+		better to use css
+	object-fit
+		resize to fit container, see replaced element
+	title
+		tooltip
+		better to put it in text next to the image (figure/figcaption is one way)
+
+responsive image
+make multiple resolutions available, browser picks the best
+art direction problem
+	something look good at a size but bad at another:
+		too small can't see details on small screens
+		takes too much space on small screens
+resolution switching problem
+	high res image on small screen
+	low res image on big screen
+
+document.querySelector("html").clientWidth
+	get viewport size
+
+max-width: 100%;
+	make image the largest it needs, size down, do not scale up to become blurry
+	+srcset/sizes to avoid wasting bandwidth on small screens
+
+
+
+
+semantic alternatives to div:
+<main>
+	one per page
+	central topic of the page
+	doesn't include elements repeating on multiple pages (banner, navigation)
+	helps screen reader jumps straight to the main content
+<article>
+	self-contained content
+	would make sense alone without context (RSS)
+	eg.: forum post, news article, blog article, user comment
+<section>
+	group thematically related content
+	typically has its own header/title
+	eg.: sections of an article, different parts of an homepage
+<header>
+	contains navigation or introductory text (typically the part repeated at the top of all the pages)
+	can also be used at the beginning of an article/aside/section
+	NOT to be used as its own section
+		does not contain full content, only introductory one
+		precedes but does not contain content
+	can contain <hx>
+<footer>
+	like header
+<nav>
+	a major block of navigation
+	contains navigation : inside this document or to other pages
+	typically one for the entire document
+	there can be multiple <nav>. Eg. one for site navigation and one for the current document
+	do NOT use <nav> just because there are a bunch of links (eg. no nav for footer)
+<aside>
+	content that is tangentially related to the content around the aside element
+	eg.: info about author, info about an element mentioned in the text, repeating a quote for visual spacing
+	NOT for sidebar
+	block level
+<blockquote>
+<video>
+
+figure + figcaption
+	<figure>
+	  <img src="img.jpeg" alt="">
+	  <figcaption>
+		Master Camper Cat demonstrates proper form of a roundhouse kick.
+	  </figcaption>
+	</figure>
+
+
+
+
+<form action="url" method="post"></form>
+
+
+<input type="text" placeholder="text displayed before typing" required name="x">
+	self-closing
+
+input type
+	text
+	email
+	radio
+	checkbox
+	button
+	submit
+	date
+	time
+	datetime-local
+	...
+
+<button type="submit">full HTML content here (img,...)</button>
+type:
+submit	default
+reset	reset to initial value (bad ux)
+button	no action (for js)
+alternative:
+<input type="button|submit|reset" value="click me">
+	can only have text in this button
+
+
+<input type="date" id="pickdate" name="date">
+
+
+radio button:
+<label> 
+  <input type="radio" name="indoor-outdoor" value="indoor"> Indoor
+</label>
+<input type="radio" id="outdoor" name="indoor-outdoor" value="outdoor" checked>
+<label for="outdoor">Outdoor</label> <!-- need for because label does not wrap the form element-->
+	use identical name in multiple radios to mark them as belonging to the same group : one deselected if select another
+	wrapped in a label or for+id to associate label with button : when click label, activates button
+
+checkbox:
+<label for="loving"><input id="loving" type="checkbox" name="personality" value="loving"> Loving</label>
+<label for="lazy"><input id="lazy" type="checkbox" name="personality"> Lazy</label>
+
+if value attribute is missing on input send:
+	[value of name attribute]=on
+if attribute value="xxx":
+	[value of name attribute]=xxx
+
+if multiple checkbox checked : 
+	multiple instances of [value of name attribute]=xxx
+
+<fieldset>
+	<legend> description of the fieldset </legend>
+	<!-- form elements... -->
+</fieldset>
+
+
+<input ... checked>
+	value checked by default
+
+<select name="dropdown">
+    <option value="one">One</option>
+    <option value="two">Two</option>
+</select>
+	dropdown
+
+<textarea>default text hre</textarea>
+
+
+
+tabindex="<number>"
+	allows the element to be focused on
+	including ones usually not focusable(div,...)
+	(x:focus)
+	also determines in which order tabbing select elements, based on value:
+	negative : cannot focus by tabbing but can focus with JS
+	0 = default : can focus (after positives)
+	positive : 
+		1 : selected first
+		2 : selected after
+		then focus all the elements at zero (the default)
+
+
+
+<audio
+	src=""
+	autoplay
+	controls>
+	<source src="" type="xx"> <!-- for multiple sources -->
+	<source src="" type="xx">
+</audio>
+
+<iframe src="x" width="x" height="x">no iframe support</iframe>
+	src=
+		big speed up : set the src in js after the main content has loaded
+		maked page usable sooner
+	width=
+	height=
+	allowfullscreen
+	sandbox
+		if present sandboxes the iframe.
+		allows adding specific permissions back (sandbox="x y z")
+			downloads
+			submitting forms
+			open windows
+			lock pointer
+			run scripts
+			local storage
+			...
+	style="border: none;"
+		iframe has a border by default, remove it
+
+iframe has security considerations
+risk of modifying your page, tricking people into giving username/passwords,..
+can disallow our pages from being embedded by using an HTTP header X-Frame-Options: DENY
+
+
+
+
+Good accessiblity
+	use good semantic html structure (header, nav, main,...)
+	good headers order/layout
+		do not skip
+		following same level header = next header
+		higher hx means subsection
+	
+	provide text alternatives
+		img alt=""
+		figure figcaption
+		div only visible to screen readers (position absolute, left -10000px)
+		
+	high contrast text
+	no colors neighbor on the color wheel
+	
+	descriptive anchor text
+	
+
+
+
+
+
+
+----------
+CSS
+
+Where to put CSS
+<h2 style="color: red;">
+	inline style
+
+<style>/*stylesheet*/
+  h2 /*selector*/ {
+	  /*property : value; => the combination is called a CSS declaration*/
+    color: blue;
+  }
+</style>
+	inline stylesheet
+
+<link rel="stylesheet" href="x">
+
+@import 'x.css';
+@media ... {}
+	at rules
+
+
+
+
+Media query:
+activate some css (rulesets) based on whether a condition is met
+the condition is usually about the device (visual) capabilities
+one of the "at rules" (along with @keyframes,...)
+@media media type and (media-feature) {}
+@media media type and (media-feature-1) and (media-feature-2) {}
+	and
+@media media type and (media-feature-1), screen and (media-feature-2) {}
+	or
+	with a comma!
+@media not media type and (media-feature-1) {}
+	negates the _entire_ expression
+	if or (,) : only negate one element, not the others
+		"not x, y" => only not of x
+
+eg.:
+@media screen and (max-width: 300px){
+	.blah {
+		x = y;
+	}
+}
+
+media type
+	all
+	print
+	screen
+	speech
+	(other types are deprecated)
+
+media features:
+width		exactly
+max-width	less than
+min-width	greater or equal
+it is possible to change text size. Might be a good idea to use em instead of px so that the breakpoint happen at a similar line length.
+
+orientation: landscape
+orientation: portrait
+	on pc : not based on hardware but on window size
+
+hover: none
+hover: hover
+	can hover
+	will be true for:
+	- pointing device (keyboard, trackpad)
+	- touchscreens
+		on non-clickable element : touch = hover 
+		on clickable element : long touch = hover
+		!sticky : remain in hover after touch/long touch!!
+
+pointer: none
+	no pointing device
+pointer: coarse
+	touchscreen first devices
+pointer: fine
+	mouse/trackpad (and firefox mobile on android..)
+
+
+breakpoint
+name for the point at which a media query gets activated and the layout changes.
+Concretely it is the content of the @media __xxx__{} line
+
+
+
+Responsive web design
+layout responds to the device (size) used
+Done thanks to:
+- media queries
+- flexible layouts
+- responsive images
+	(max-width: 100% to scale down and not grow pixelated)
+	see responsive image section
+
+- responsive typography
+	change size of text (eg h1) with media query (big screen, bigger title)
+	use vw to set font-size
+		! using vw prevent user from zooming text
+		better to use : calc(1.5rem + 3vw);
+
+- mobile first strategy : 
+design first for : one column for narrow screens (mobile)
+then introduce design for larger screens => multiple columns
+often the mobile design is easy to do : order elements in html well.
+
+-viewport meta tag
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	document.querySelector("html").clientWidth
+	mobile browsers lie about their screen size.
+	Done because websites were not mobile optimized => looked bad
+	mobile browsers fiXxed this by
+	reporting a screen larger than reality (960) and zoom out.
+	we want the real size, we are optimized for mobile and small screens
+	
+
+pattern: define a custom property (css variable, see below)
+and conditionnally change it based on media query
+:root {
+  --penguin-size: 300px;
+}
+@media (max-width: 350px) {
+  :root {
+    --penguin-size: 200px;
+  }
+}
+
+
+
+
+
+
+Selectors
+*
+	universal selector
+	improve readability: div :first-child => div *:first-child
+
+div
+	type selector
+	aka element/tag selector
+
+.class
+	<div class="foo"></div>
+	class selector
+	.note-box.warning
+		chain
+
+#id
+	<div id="foo"></div>
+	id selector
+
+
+[attr]
+	attribute selector
+	has attribute
+[attr=value]
+[attr="value"]
+	exact value
+	quote optional (needed if space,..)
+[attr~=value]
+	exact or contains the value separated by space
+	(for list values)
+	"valuex" => no
+	"value x" => yes
+[attr|=value]
+	exact or begins with + follewed by hyphen
+	"value x" => no
+	"value-x" => yes
+	" value-x" => no
+[attr^=value]
+	begins with
+	"x value" => no
+	"valuex" => yes
+[attr$=value]
+	ends with
+	"xvalue" => yes
+[attr*=value]
+	anywhere
+	"AvalueA" => yes
+
+[attr=value i]
+	case insensitive value match
+	attribute always case insensitive
+
+
+:xxx
+	pseudo class
+	select based on state of elements
+:hover
+	pointer moved over element
+:focus
+	eg on <input>
+	tabbed into (a)
+:link
+	link not yet visited
+:visited
+	visited link
+:active
+	being clicked on
+:first-child
+	first element among siblings
+:last-child
+:nth-child(7)
+:nth-child(3n+4)
+:nth-child(even)
+:invalid
+	<input> or other <form> element which fail to validate
+
+
+::x
+	pseudo-element
+	select a (virtual) part of the element
+	as if added a new element
+	:x old syntax (css2). :xx better to distinguish from pseudo-class
+x::first-line
+	selects first line of text
+x::first-letter
+x::before
+x::after
+	insert content
+	create a pseudo-element that is the first/last child of the element
+	content:"" property to set content
+	can have the content be an empty string and set to display:block to add complex stuff
+::selection
+	part of the document selected
+
+
+
+Combinators
+	combine selectors
+a b
+	b is descendant of a
+
+a > b
+	b direct descendant of a
+	advice: avoid long selectors, prefer adding a class
+
+h1 + p
+	adjacent sibling
+	selects p if h1 and p have same parent and p comes directly after h1
+
+h1 ~ p
+	general sibling
+	selects all the siblings p of h1
+
+
+x, y
+	selector list
+	not a combinator
+	style: put each selector on one line
+
+subject of the selector
+	name for elements selected by the selector
+
+
+
+
+
+
+Inheritance
+	some properties set on a parent is inherited by child
+	some not
+do not inherit:
+	width, margin, padding, border
+inherit:
+	font-related, visibility
+
+can force to inherit/not inherit with universal value
+
+
+universal values
+	inherit/default related values, can be set on all properties and all
+inherit	
+	use the computed value of the parent
+	! if the parent has no value set and the parent doesn't inherit itself 
+	(eg. the property doesn't inherit by default)
+		=> will have that parent value which is the initial(/default) value 
+		   EVEN if an indirect ancestor explicitely set a value
+	! unexpected results when applied to non inheritable properties
+initial
+	set to default value
+	not the same as never having set the value. On inherited properties will use default instead of inherited
+	! unexpected results when applied to inheritable properties
+unset
+	set to natural value:
+	inherited property 		=> will inherit
+	non inherited property 	=> will use initial value (browser's user agent value, cf css reset)
+	as if zero selector/property matching 
+	! different from not having the declaration at all => 
+		with no declaration the other matching properties would have been used
+revert
+	like unset but for non inherited, give the value from the "base" style origin (author => user agent/agent).
+	As if there were nothing in this style origin(author origin typically) related to that element/property. (still apply inherited value if inherit would have been the value)
+
+
+style origin
+	user-agent origin
+	user origin
+	author origin
+
+Specificity
+	a value ranking the selectors
+	alphabetic order, 1,0,0,0 > 0,10,0,0
+	four components:
+		1. inline style (style="" attribute)
+			they don't have selector so other components always 0 (1000)
+		2. id selectors
+			#id
+		3. class selectors, attribute selectors, pseudo-class
+			.class
+			[attr=x]
+			:pseudo-class
+		4. element / pseudo-element selector
+			div
+			::after
+	
+	* + > ~ :not
+		no effect on specificity
+
+Cascade
+	algorithm
+	decides which rule will apply if conflict when combining CSS rules
+	when for one element, one property: multiple declarations	
+	criterias (in order of priority):
+	1) origin and !important priority
+		from lower to higher:
+		user agent	normal
+		user		normal
+		author		normal
+		animations				(?)
+		author		!important
+		user		!important
+		user agent	!important
+		transitions				(?)
+		in plain english for author:
+			!important before normal
+			I take precedence over user/user agent
+			if nothing there might be a (user) agent value (cf css reset)
+			user/user agent might overwrite my !important value (rare)
+	2)  specificity
+	
+	3) source order
+		if same importance and specificity later wins
+
+
+	!!! an inline style takes precedence over a non-inline !important
+
+	other factors intervening in deciding the property's value:
+	inheritance
+		applies directly vs inherited
+		More directly inherited (closer distance)
+	order in css files
+
+
+
+
+
+
+Dev tools Rules:
+List the rules that apply to the element
+Ordered from most specific to least specific
+Rules defined on element first then inherited from parent elements
+When inherited rule : only show actually inherited properties, not the entire ruleset
+Content:
+	element {}
+		css in the style="" attribute
+	inline:xx (top right)
+		defined in the HTML
+		defined in the style attribute or style element
+		(technically DOM because can add through js)
+
+Dev tools style editor
+can modify all the css style sheets
+can create and apply a new style sheet
+
+
+Dev tools Computed
+All the calculated values for the element
+Show the rule that sets the value
+Browser styles : check to show value set by the browser and not explicitely
+
+
+
+
+
+
+--- Units ---
+data type = value type
+	a type (accepted by a property)
+	collection of allowable values
+	eg. <color>	(not to be confused with an element)
+
+%
+	have to know what it relates to:
+	width : 	width of parent
+	font-size : 	font size of parent
+	margin/padding : inline size (width) of the containing (parent) block
+		allows maintaining equal margin on all sides but can be weird
+	...
+	can often be used where a <length> is needed (see below) : <length-percentage>
+
+absolute <length> units:
+supposed to approximate size on screen (but more complex because of resolutions...)
+in
+cm
+mm
+px (1/96th of 1in)
+	height in px
+
+relative <length> units:
+relative to another length (parent font size, viewport size,...)
+font:
+em
+	size of the element's font
+	(if use it to set font-size : relative to parent's font-size)
+rem
+	font size of :root
+ex
+	x-height
+ch
+	width of 0
+lh
+	line height
+
+viewport:
+vw
+	viewport width
+	relative to viewport width (visible area in browser)
+	100vw = 100% of the viewport's width
+vh
+	viewport height
+	like vw
+vmin
+	based on viewport's smaller dimension (width or height)
+	100vmin = 100% of the viewport's smaller dimension (width or height)
+vmax
+	based on viewport's bigger dimension (width or height)
+
+
+calc()
+	simple calculations
+	can perform + - * /
+calc(20% + 100px)
+calc(2em * 5)
+
+
+elements have intrinsic size
+img : size of image
+div : size of content
+
+extrinsic size:
+size given to an element
+width, height,..
+
+
+
+
+
+Variables
+Custom properties
+define:
+:root {
+  --variable-name: value;
+}
+	the selector defines the scope the custom property can be used in!
+	custom properties are inherited like any ordinary property
+	:root is a pseudo-class that matches the root (<html>) => available globally
+	can overwrite a custom property in a (sub) element
+use:
+var(--variable-name)
+var(--variable-name, fallback_value)
+	fallback is not for backward compatibility with browser without custom property support
+	fallback is for if the variable is not defined (in this context)
+
+custom properties are inherited from parent elements
+
+Can use a media query to change a custom variable
+eg.: if the screen is small make this element smaller => set a variable in the media query "small screen"
+
+
+
+
+Browser Fallback
+setting up the CSS to provide a fallback if a browser doesn't support something
+Presented in the context of CSS variable that may not be supported (put a more generic declaration above which will be overidden by the newer feature)
+but can be used elsewhere :
+	missing font-family
+	<noscript>
+	unsupported media query
+	https://stackoverflow.com/questions/25377545/what-is-a-fallback/25377721
+
+
+
+
+
+Properties
+Shorthand property : a property that sets value for multiple other properties
+eg.: border => border-width, border-style, border-color
+
+all: x;
+	value is a universal value;
+	reset all values
+	css custom properties still exist
+
+color
+
+Color theory
+hue (ton) => vert bleu rouge,...
+primary color => base available color mixed together to get all the colors
+secondary color => mix two primary colors, same amount (eg. R+G = yellow)
+tertiary color => mix a primary with a secondary
+color wheel
+
+specifying a color:
+  green
+  #00ff00
+  #0f0
+  rgb(255, 0, 0)
+  rgb(45, 45, 0, 0.1)
+  rgba(45, 45, 0, 0.1)
+	alpha value:
+		1 = opaque
+		0 = transparent
+  hsl(hue, saturation, lightness)
+  hsl(hue, saturation, lightness, 0.5)
+  hsla(hue, saturation, lightness, 0.5)
+  	hue : ton 0 to 360 (color wheel)
+  	saturation : 100%=full color, 0%=full gray
+  	lightness : 0%=black, 50%=normal, 100%=white
+  	eg.: hsl(240, 100%, 50%) = (full) blue
+  	alpha
+  transparent
+  currentColor
+  	value of the element's color: property
+
+opacity
+	set opacity of an element
+	can be equivalent to color/background-color: rgba(x, x, x, XXX);
+
+
+
+background
+
+background-color
+	under content, padding, and border (if border exists and is transparent)
+
+background-image: url(https://cdn-media-1.freecodecamp.org/imgr/MJAkxbh.png);
+	by default: repeats, does not scale/shrink to available size
+	quote optional
+	quote or escaped characters if parentheses, whitespace, quote
+background-repeat: x;
+	repeat		default
+	no-repeat
+	repeat-x
+	repeat-y
+background-size: x;
+	widthpx		(height auto)
+	widthpx heightpx
+	cover		fully cover the element (no gap), may crop
+	contain		as large as possible without cropping
+background-position x;
+background-position x y;
+background-position x x x x;
+	0px 0px;	x y
+	0% 0%;		x y
+	top left;
+	center;
+	(top left bottom center)
+...
+
+background: x;
+	shorthand, many options
+background: what [background-repeat-value] [background-position-value] 
+background: url(https://cdn-media-1.freecodecamp.org/imgr/MJAkxbh.png);
+background: linear-gradient(35deg, #CCFFFF, #FFCCCC);
+background: linear-gradient(to bottom, #CCFFFF, #FFCCCC);
+	gradient
+	0deg = up, clockwise
+	there can be more than two colors
+	to top = 0deg
+	to right = 90d
+	to bottom = 180deg
+	to left = 270deg
+linear-gradient(xxx, #CCFFFF 0%, #FFCCCC 10%);	
+	percentage tells where the percentage where that color is compared to the entire height/width
+
+
+can have multiple background, repeat the background-x values with a ',':
+background-image: url(x), url(y);
+background-position: top, bottom;
+...
+
+
+
+color:;
+	also affects text-decoration (border,..)
+
+font-size xxx;
+	font height (but text can be smaller/bigger than that..)
+	default is 16px (not on my machine. Did I change it??)
+	(h1 will have another default)
+	some set the font-size to 10px in the root and use (r)em everywhere
+		=> computing on a base of 10 is easier
+		=> css adjust to text size change automatically
+
+font-weight
+	normal
+	bold
+	bolder
+	lighter
+	100
+	200
+	...
+	900
+	400 //normal
+	700 //bold
+
+font-family font_name;
+font-family font_name, alternative_font, generic_fallback_font;
+	separated by comman to provide alternatives
+	generic names: (worst case scenario)
+	monospace
+	serif
+	sans-serif
+	cursive
+	fantasy
+	...
+	there are web safe fonts : should be available on all systems
+		Arial
+		Courier New
+		Georgia
+		Times New Roman
+		Verdana
+		Trebushet MS	(not widely available on mobile os?)
+	custom font (imported with <link href="xxx" rel="stylesheet"/>)
+	case sensitive!
+	quotes if space in it. Eg. "Trebushet MS"
+
+font-style: italic;
+
+line-height: 1;
+
+letter-spacing:;
+word-spacing:;
+	h space between letters/words
+
+text-indent: <pos or neg size>;
+	indent beginning of text
+
+text-align
+	left
+	center
+	justify
+	right
+
+text-decoration: 
+	underline
+	line-through (see also <u> <del>)
+
+text-transform:
+	lowercase
+	uppercase
+	capitalize
+	none
+	initial
+	default
+
+text-shadow: x y radius color;
+text-shadow: 
+	x y radius color,
+	x y radius color;
+	can have multiple shadows
+
+
+custom font
+@font-face {
+  font-family: "myFont";
+  src: url("myFont.woff2");
+}
+can now use:
+font-family: myFont, serif;
+
+formats (in order of preference):
+woff2 woff
+	generated from otf,... fonts (there are only tools to generate webfonts)
+EOT, TTF, SVG (legacy)
+
+
+
+
+
+
+width
+	sets the width of the content.
+	Doesn't include padding, border, margin in the standard CSS box model
+	x px;
+		absolute unit width
+	x em;
+		relative unit width
+	???
+		percentage of parent's width
+
+min-width
+	no effect if width is set in an absolute unit
+	works well with
+		min-width in pixels
+		width in %
+		=>
+		element smaller than min-width?
+			doesn't get smaller (and garble the layout)
+			H scroll
+		element bigger than min-width?
+			margin start appearing
+		smooth transition between the two
+
+max-width
+	width will never be bigger than this
+	useful to prevent elements from becoming bigger than the space we have for them, without forcing them to stretch if they are too small
+	eg. img
+max-width: 100%;
+	percentage based on the containing block width
+
+height
+	similar to width
+height: auto;
+	browser computes height
+	height defined based on the content
+
+
+
+
+lists (ul, li, dl)
+have top/bottom margins (like p and other text elements)
+there is a left-padding for ul/li
+
+list-style-type:;
+	defines the markers before each item
+	values:
+	 disc
+	 circle
+	 square
+	 decimal
+	 lower-alpha
+	 upper-roman
+	 ...
+	 '- '
+	 	marker as a string
+	 none
+	 counter-style-name
+	 	@counter-style x {} defines how markers look
+	 symbols()
+	 	inline version of counter-style
+
+list-style-image:;
+	an image
+	limited. Can use background-xx properties on on li to add an image with more control
+
+list-style-position:;
+	are the marks inside the li or outside (in the padding)
+list-style-position:outside;
+	default, in the padding
+list-style-position:inside;
+	not in the padding, inside
+
+
+list-style: <type> <image> <position>;
+	shorthand
+
+
+<ol start="4">
+	start at number 4
+	(4 => 4, 'd',...)
+
+<ol reversed>
+	count backward
+
+<li value="6">
+	give a certain value, following items will follow after this value
+
+
+
+transform: scale(1.5);
+	rotate
+	scale
+	skew skewX skewY
+	translate
+transform: translate(20%, 0%) rotate(30deg) ;
+	can chain operations
+
+
+
+border = border around the element
+border-width
+border-style
+	solid
+border-color
+border-radius
+	in px or %
+	can make a circle : 50%
+border-radius <top-left> <top-right> <bottom-right> <bottom-left>
+
+border: xpx solid red;
+	value is : width style color
+	can omit width/color
+	set for four sides
+
+border-top: xpx solid red;
+	set for just the top
+border-top-color:
+	sets color just for top
+...
+
+
+padding = space between element's content and the border
+padding: 20px;
+
+padding-top
+padding-right 
+padding-bottom
+padding-left
+or:
+padding top_val right_val bottom_val left_val
+or:
+padding x;
+	all 4 values at once
+or
+padding <vert>, <hor>;
+	vertical, horizontal values
+
+margin = space between the border of an element and its surrounding
+margin: 20px;
+margin: -10px;
+	can give a negative margin (contrary to padding and border) :
+	element will move by x pixels closer to neighbor
+margin: auto;
+	four sides
+margin: 0 auto;
+	centers a block element horizontally
+	if inline : must turn into block first => display: block;
+	tricky: won't work is some circumstances (fixed positioned element,..)
+value auto
+	if available space to fill (eg. width set) : use whatever space available
+	otherwise 0
+
+
+Margin collapsing
+if two elements have top and bottom margin touching : 
+	margin will be that of the bigger one
+	margin do NOT add up
+	if one negative : subtract from the positive
+	if two negatives : take the smallest negative value
+if a parent (with no content, no padding, no border) has a margin and its descendant also has one:
+	collapse margin
+
+box-shadow offset-x offset-y [blur-radious] [spread-radius] color;
+	sets a shadow
+	see also filter: drop-shadow();
+
+box-shadow inset ...;
+	shadow inside instead of outside
+
+
+
+
+CSS reset
+same defaults across browsers
+browser apply predefined styles, may not be consistant across browsers
+most popular:
+	https://necolas.github.io/normalize.css/
+
+
+
+
+Ways to layout:
+- normal flow (block/inline)
+- positioning (position:x)
+- float
+- flexbox
+- grid
+- table layout (display: table; legacy)
+- multicol (column-count:; column-width:;)
+
+
+
+CSS box model
+Elements are are rectangular boxes with:
+- content
+- padding
+- border
+- margin
+
+Two types of boxes(see below):
+	block
+	inline <= only uses some of the box model's properties (no size, vert margin)
+
+two box models
+- standard CSS box model
+	box-sizing: content-box; /* default value, size is content */
+	width/height only applies to content
+	padding/border on top
+	technically the margin is not part of the box. Box's size stops at the border
+	size of box = width/height + padding + border => inconvenient hence alternative
+
+- alternative CSS box model
+	box-sizing: border-box; /* size is border */
+	size = size of the visible box = width/height + padding + border
+	content area = size - border - margin
+
+
+
+CSS normal flow
+defines how elements are laid out on the page
+the way layout happens (unless you override it)
+works like this:
+
+block elements:
+	works like paragraphs in a text document
+	start on a new line, next element on a new line (occupy its own space)
+	extend to fill the space (width)
+	width/height are respected
+	eg.: <p>, <h1>, <div> (by default)
+inline elements :
+	works like words in a text document
+	continue from the previous element. Left to right, top to bottom
+	width/height have no effect
+	anything related to the vertical spacing with other elements (layout) has no effect:
+		vertical margin => no effect
+		vertical padding/border => effect  but does not change the layout of other elements(risk of overlapping):
+	eg.: <img>, <span>, <a> (by default)
+
+
+outer display type:
+	how the element will be laid out (compared to the other elements)
+	block or inline
+inner display type
+	how the elements inside the element will be laid out
+	the layout used
+	use the normal flow by default (normal handling of block/inline elements)
+
+display: x;
+	sets outer and inner display types:
+	sets element as block or inline element (outer display type)
+	sets layout of contained elements (inner display type)
+display: block;
+display: inline;
+
+display: inline-block;
+	does not break into a new line like inline
+	but width/height, padding, margin and border are used
+	works like replaced elements
+display: flex;
+	outer display type : box
+	inner display layout : flexbox
+display: inline-flex:
+	outer display type : inline
+	inner display layout : flexbox
+	
+display: grid;
+	use css grid
+
+
+
+Replaced element
+an element whose content is not affected by CSS. The representation of the content comes from somewhere else
+	<iframe>
+	<video>
+	<img> (can affect how the content is displayed with filter())
+	(<input>, ONLY because of the exotic type=image)
+can have intrinsic dimension set by its own content (not css properties or children)
+
+object-fit: x;
+	make a replaced element fit its html element
+	(does NOT fit an <img> with <div> container)
+	fits the replaced element content (of a certain size) inside its html element (of a certain size)
+		=> html element needs a size
+	can use 100% (parent needs an extrinsec size)
+	can use px
+	similar to background-size
+object-fit: none;
+	default
+	do not resize
+object-fit: cover;
+	zoom to cover all
+	+ no gap, respect ratio
+	- can clip
+object-fit: fill;
+	take the size/shape of container
+	+ no gap, no clip
+	- can not respect ratio
+object-fit: contain;
+	shrink so that it is fully contained
+	+ no clip, respect ratio
+	- can gap
+
+
+
+
+
+
+position:
++
+top right bottom left
+	changes where the element is positioned
+	(compared to the application of the normal flow)
+
+position: static;
+	positioned according to the normal flow
+	default
+	top/right/... have no effect
+
+position: relative;
+	move the element relative to where it is positioned in the normal flow
+	the rest of the elements are flowed as if the element was not moved
+	use top, bottom, left, right
+
+position: absolute;
+	remove the element from the normal flow
+	the other elements are laid out as if the element didn't exist
+	position is set relative to the closest _positioned_ parent element (or root if no positioned parent exist)
+	positioned element = element with position: property NOT static (the default) or the root element
+	eg.: if the top of the closest positioned parent element is 200 and we set "top: 10px", the top coordinate of the element will be 210
+		 if the bottom of the closest positioned parent is 400 and we set "bottom: 20px", the bottom coordinate of the element will be 380.
+
+position: fixed;
+	remove the element from the normal flow
+	the other elements are laid out as if the element didn't exist
+	position is relative to the screen (viewport)
+	not affected by scroll
+
+position: sticky;
+	affected by scroll
+	acts like relative until a certain treshold then becomes fixed
+	top: 20px; => becomes fixed when we are 20px from the top of the viewport
+
+
+float: left;
+float: right;
+float: none; ?
+	remove the element from the normal flow
+	starting at it's position in the normal flow (if it were inline)
+	shift it all the way to the left/right until it bumps into the parent container or another floated element
+	the flow of the other elements is performed within the space left after the floated elements have been positioned
+	typically used with width
+
+clear: left;
+clear: right;
+clear: both;
+	the element is moved below the floating elements that precede it.
+
+clearfix
+if a floated element is taller than its container (other non-floated elements do not reach the end of the floated element), it will overflow outside its container.
+on the container fix:
+	overflow: auto;
+version 2 (more robust?):
+.the_container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+
+z-index: integer;
+	when using positioned element : there can be overlap
+	elements positioned later in the document appear on top
+	can change with z-index
+	integer value;
+	higher z-index wins (on top)
+	default is auto (= 0)
+
+
+
+--- text direction ---
+vertical content.
+This could be useful for layout
+	float, block, inline working at 90°, making some things easier
+
+writing-mode x;
+	text running horizontally or vertically, left-to-right or right-to-left
+	inherited
+writing-mode: horizontal-tb;
+	horizontal text, top to bottom
+	default
+writing-mode: vertical-rl;
+	text vertical r-to-l
+writing-mode: vertical-lr;
+	text vertical l-to-r
+	(less useful than rl : if multiple line makes less sense)
+
+block direction
+	the direction blocks elements stack
+	usually top to bottom
+	will be right to left if writing-mode is vertical-rl
+
+inline direction
+	direction a sentence (inline elements) flow
+	usually left to right
+	will be top to bottom if writing-mode is vertical-rl
+
+CSS was designed with horizontal-tb in mind. The usual properties work that way:
+physical properties:
+top = top of screen, width = horizontal,...
+
+CSS now works no matter the direction : properties/values relative to (orientation of) content:
+Logical properties
+
+inline-size: x;
+	replaces width. Size in the inline direction
+block-size:
+	replaces height. Size in the block direction
+margin-block-start: x;
+	replaces margin-top;
+	margin at the start of the block dimension
+padding-inline-end: x;
+	replaces padding-right
+	margin at the end of the inline dimension
+border-block-start-width
+	...
+
+Modern layouts (flex) talk about start and end, not left and right.
+
+
+
+
+--- overflow ---
+too much content to fit in a box and fixed width/height
+non breakable word/content too large	=> overflow to the right
+too much lines/content for the height	=> overflow to the bottom
+
+dangerous to set fixed width/height : risk of overflow
+better to make layout not reliant on fixed size
+
+overflow: visible;
+	default. Overflows
+overflow: hidden;
+	hide overflow
+overflow: auto;
+	scrollbar when needed
+overflow: scroll;
+	scrollbar always
+overflow: clip:
+	truncates
+	similar to hidden but something different about scroll bar (appear due to margin/padding ????)
+
+
+--- Flexbox ---
+flex container = container with display: flex
+flex item = (direct) children of a flex container
+https://www.w3.org/TR/css-flexbox-1/images/flex-direction-terms.svg
+main start, main end, cross start, cross end
+	end edges in the direciton of the flex or perpendicular to it
+main axis : the axis the flex elements are laid in
+	row = horizontal
+	column = vertical
+cross axis : the axis perpendicular to flex-direction
+flex may not respect width/height (see flex-wrap)
+
+flex is about lining up flex items one after the other and having rule to determine what to do when:
+	elements take more space than the main size
+		flex-wrap
+		flex-shrink
+	there is free space
+		justify-content
+		flex-grow
+
+--- flex container properties ---
+display: flex;
+	turns element into a flex container
+display: inline-flex;
+	turns element into a flex container
+	container is inline instead of block
+	
+flex-direction row; (default value)
+flex-direction column;
+	aligns children horizontally/vertically
+	set on the container
+flex-direction row-reverse;
+flex-direction column-reverse;
+	elements shown in the reverse order
+	main-start main-end are reversed (flex-start flex-end)
+
+justify-content: x;
+	justify items within a row which has available space
+	applies on the row
+	when the flex items take less space than the size of the parent container,
+	determines how to distribute the available space between items
+	(alternative : grow the items themselves, see flex-grow)
+	There won't be any free space in a row if any element in the row has a non zero flex-grow value
+justify-content: normal;
+	default
+	one after the other starting at main start?
+	equal to flex-start?
+justify-content: center;
+	center in the middle of the container
+justify-content: flex-start;
+	put one after the other starting at main start
+justify-content: flex-end;
+	put one after the other starting from main end side
+justify-content: space-between;
+	first/last element pushed at the very edge of the container
+	center elements in the middle but with space in between elements
+justify-content: space-around;
+	same but first/last not pushed against the edges
+justify-content: space-evenly;
+	space evenly
+	like previous but same space at edges than between elements
+
+align-items: x;
+	Determines how to align items in the cross direction
+	row direction : how much height, where aligned on the Y axis
+	column direction: how much width, where aligned on the X axis
+	(where they are located + how big they are)
+align-items: normal;
+	default, equals to stretch
+align-items: flex-start;
+	aligned to cross start
+align-items: flex-end;
+	aligned to cross end
+align-items: center;
+	aligned to the center (of the row)
+align-items: strech;
+	take all the row size
+align-items: baseline;
+	align all the elements on the same text baseline
+	look at the bigger element, line it up to cross start, line up baselines of all elements of the row to that baseline
+
+flex-wrap: x;
+	wrap (newline) rule in the case the items take more space than the flex container
+	opposite of justify-content : we don't have spare space but the opposite
+	(alternative : shrink the items, see flex-shrink)
+flex-wrap: nowrap;
+	default
+	put all on one line/row
+flex-wrap: wrap;
+	can break into multiple lines
+flex-wrap: wrap-reverse;
+	same
+	the set of lines contain same elements in same order as "wrap"
+	but the lines(/rows) of flex elements in the reverse order
+
+flex may not respect the desired width/height of an element
+	if sum of sizes of all flex items > main size of flex container	
+	makes it smaller if flex-wrap: nowrap (everything on the same line so has to make it fit)
+
+flex-flow: <flex-direction> <flex-wrap>;
+	single property for flex-direction and flex-wrap
+
+
+--- flex items properties ---
+flex-grow: x;
+	when the flex items take less space than the size of the parent container,
+	when the flex items size is not defined and some are big (eg long text)
+	determine how to distribute the space
+	0 default
+	0 does not grow
+	relative:
+	lower grows less
+	higher grows more
+	1 = baseline
+	2 = grows twice as much as 1
+	0.5 = grows twice less as 1
+
+flex-shrink: x;
+	when the flex items take more space than the size of the parent container,
+	defines how much the flex items shrinks if the flex container is too small
+	non-negative, can be decimal
+	1 default
+	0  = do not shrink
+	same relative system as flex-grow
+
+flex-basis: x;
+	takes priority over width/height
+	initial size of flex element before shrink/grow adjustments
+	"= min-size but can be affected by grow/shrink"
+	0 = fit to content ???
+	
+flex-basis: auto;
+	default
+	size fits the content
+	auto like 0?
+
+flex-basis: 100%; + flex:wrap
+	tip
+	easy way to have an element be on its own line and take the entire width
+
+flex: <grow> <shrink> <basis>;
+	shorthand
+flex: 0 1 auto;
+	default
+flex: 1;
+	grow = 1, others=default
+flex: 1 100px;
+	grow + basis
+
+align-self: x;
+	override align-items for a single item
+	same values as align-items
+
+order:
+	an integer (can be negative)
+	default 0
+	by default flex items appear in the order of the DOM
+	order overrides this
+	sort order of flex items in a flex container:
+		1) value of order property
+		2) order in which they appear in the DOM
+	sorts for all the elements of the flex container NOT for the line where the item is
+
+
+
+
+
+
+
+--- CSS Grid ---
+arrange element in a grid
+a grid container contains grid items
+a grid made of cells
+grid items occupy one or more cells
+keep in mind : either items have a size (width) or the grid (column) has a size or auto fit. Cannot set both a column size and an item size.
+--- grid container properties ---
+display: grid;
+	turn the element into a grid container containing grid items.
+	sets number of rows automatically (unless grid-template-rows used)
+		likewise for columns	
+	
+grid-template-columns: auto 100px 10%  1fr 2fr;
+	defines number of columns and their size
+
+number of elements in the value defines number of columns	
+each element of the value defines the size of columns:
+	px, em,...
+	fr			fraction (eg. 1fr 2fr 1fr) 
+				divide the remaining space (if other units are used)
+	auto		width/height of content
+	%			percentage of its container
+
+repeat(amount, element);
+repeat(amount, element element);
+	repeat amount times the element(s)
+repeat(auto-fill, element);
+	add as many row/column as possible
+	if more space than items : keep creating columns/cells which will remain empty
+repeat(auto-fit, element);
+	same but do not create empty columns/rows when there is more space than items. Instead have as many columns/rows as items
+	cannot use auto
+minmax(min-size, max-size);
+	min/max column/row size
+	common : minmax(100px, auto); <= minimum size but can expand to accomodate
+
+grid-template-rows
+	defines number of rows and their size
+	(only really useful to give size of rows)
+	if the number of items is not enough for columns*rows
+		new rows will be added with size auto;
+
+explicit grid : grid created with grid-template-columns or grid-template-rows
+implicit grid : created when content is placed outside of that grid (too many items for the explicit grid)
+
+grid-auto-rows: x;
+	specifies the size of an implicitely created row
+
+grid-template-areas:
+	"header header header"
+	"ad content content"
+	"ad footer footer";
+	give name to grid areas
+	grid area = cell(s) forming a rectangle
+
+grid-row-gap: 5px;
+	space between rows
+	
+grid-column-gap: 5px;
+	space between columns
+
+grid-gap xpx;
+gap xpx;
+	row and column gap
+	gap sometimes referred to as gutter
+	replaced by grid-gap:; => gap:; (so it can be used in multiple layouts)
+grid-gap <row> <column>;
+	row gap of xpx
+	column gap of ypx;
+
+justify-items 
+	justify items within their cells/area
+	like justify-self of grid item but applies to all the items in the container. Same values
+	values
+		stretch
+		start
+		end
+		center
+	(for grid and NOT flexbox)
+	(different property name than flex, justify-content, because it does not do the same. justify-content is about distributing the free space around all the elements of the row/column, here it is about justifying individually for each item/cell
+
+align-items
+	like align-self of grid item but applies to all items in the container.
+	Same values
+
+! if the items have width/max-width height/max-height => the justify/align items won't override the properties
+
+
+
+
+-- grid item properties --
+grid-column <start line> / <end line>
+grid-row
+	determine which cells an item occupies
+	items where it is not specified : will fill the gaps
+	works with line/column numbers.
+	line/column 1 is the top/left column
+	line/column 2 is the next
+	...
+	the grid item's will be contained between the two lines
+
+grid-area: row-line-start / col-line-start / row-line-end / col-line-end;
+	place an item in an area using the column/rows numbers
+grid-area: area-name;
+	place an item in a grid area (created with grid-template-areas)
+
+order
+	same as order of flexbox
+	integer, 0 default
+	sort by order then DOM order
+
+justify-self
+	justify an item within its cell(s)
+	values
+		stretch (default)
+		start
+		end
+		center
+	like justify-items of grid container
+
+align-self
+	idem but vertically
+
+
+
+
+
+
+Multicol
+
+---Properties on container---
+column-count: <integer>;
+	create a multicol container
+	flexible width
+column-width: x;
+	create a multicol container
+	as many column of the give size
+	share remaining space between columns
+
+Columns all styled the same way
+	cannot make one column bigger than the others
+	cannot set color on one column
+	...
+column-gap:;
+gap:;
+	gap between columns
+
+column-rule:;
+	line between columns called a rule
+	is a shorthand, works like border
+	doesn't take any space in the layout (contrary to border)
+
+--- Properties on item---
+column-span: all;
+	on an item.
+	goes across all the columns
+	Takes all the horizontal space
+
+break-inside: never;
+	put in an item (direct child of a multicol container)
+	avoid breaking in the middle of an item
+
+sometimes content is fragmented
+	one element spread on multiple columns
+	also happens with inline content in normal flow, paged media (print)
+can control when the break happens
+Multiple ways to control: https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Fragmentation
+
+
+
+
+
+
+
+--- Old browser support ---
+
+
+Float based grid framework (legacy)
+(-) lot of computations, risk of errors, can overflow/fragment, one dimentional : no handling of columns height, unsemantic (class for visual),..
+each column is float, columns stack next to each other
+there are 12 virtual columns. Actual columns span one or more virtual one
+960px wide, 20px space between columns => column = (960-(20*12))/12 = 60
+specify width for one column + size of margin on one side
+	px if fixed size
+	% if liquid layout :
+		column width = 60 / 960 (if 12 columns) = 6.25%
+		gap width: 20 / 960 = 2.08333333%
+make classes representing column spanning multiple virtual column
+(an x wide column has width=x*(width+margin)
+column within row, rows have 'clear: both', allows other content above/below 
+=> css grid layout much better
+
+there is an old, different implementation of flexbox (IE 10, -ms- prefix)
+there is an old, different implementation of grid (IE10, IE11, -ms- prefix)
+
+fallback support
+support for older browser
+what if we want to use grid but must make a page that is ok in browser without support for grid?
+start by adding older CSS then overwrite it
+- add css for fallback method, newer method will override the old
+	eg.: if use flex/grid then float:left is ignored
+- detect if we will use a feature
+	feature query:
+	@supports (display: grid){}
+	@supports not (display: grid){}
+	browser may not support feature query itself!
+
+there are VM with old versions of IE
+
+
+
+
+
+
+--- Animation ---
+1) set parameters of animations with animation- properties
+2) defines multiple steps of the animation (see @keyframes)
+
+1)
+animation-name: any_string;
+	give a name for the animation of this element
+
+animation-duration: xs;
+animation-duration: xms;
+	duration
+	
+animation-fill-mode: xxx;
+	used to apply the first step/last step of the animation to the element
+	before the animation starts or after the animation has ended
+	affected by animation-direction
+animation-fill-mode: none;
+	default
+	animation specific styling only applied during the animation
+animation-fill-mode: forwards;
+	keep applying the styling values of the last keyframe after the animation has ended
+animation-fill-mode: backwards;
+	use the styling values of the animation before the start of the
+animation-fill-mode: both;
+	forwards and backwards
+
+animation-iteration-count: s;
+	integer
+	infinite
+	repeat (loop) animation x times
+
+animation-timing-function: x;
+	speed of animation need not be constant
+	change the speed throughout the animation
+x
+ease
+	default
+	slower at beginning and end
+	aka accelerates in the middle
+ease-in-out
+	similar principle as ease : also slower at beginning and end
+	but starts/ends really slow, really fast in the middle
+linear
+	constant speed
+ease-in 
+	slow at the beginning
+ease-out
+	slow at the end
+cubic-bezier(x1, y1, x2, y2)
+	manual decide of the speed curve.
+	4 points: first (0,0) p0, last (1,1) p3
+	give coordinates of the two intermediate points p1, p2
+	this sets the speed curve
+	x between 0 and 1, y can be >1
+		  Y
+		  ^	
+		  |                    p3
+		  ┌───────────────────┐
+		  │         p2      xx│ (1,1)
+		  │         (x2,y2)Ox │
+		  │               xx  │
+		  │             xxx   │
+		  │            xx     │
+		  │         xxxx      │
+		  │      xxxx         │
+		  │  xxOx             │
+		  │xxx (x1,y1)p1      │
+	(0,0) └───────────────────┘=> X
+		 p0
+	cubic-bezier(0.25, 0.1, 0.8, 0.9)
+	at 25% of time we have progressed to 10% of the animation
+	at 80% of time we have progressed 90% of the animation
+	it's bezier so curve is smoothed!
+
+
+2)
+@keyframes any_string {
+  <!-- first keyframe -->
+  0% { <!-- 0% = start of animation = from -->
+  	declarations here
+  }
+  100% { <!-- 0% = end of animation = to-->
+  	other declarations here
+ }
+}
+	keyframe at rule
+	contains a list of keyframe
+	each keyframe defines styles at a given step
+	linked to element through animation-name
+	can omit 0%
+	can even omit 100% (eg. put a 50% to change and then go back to original smoothly)
+
+can have movement if element is positioned (position: xxx) + top/right/bottom/left
+
+
+there is another way to animate : 
+transition
+state which property to watch for, when it changes (eg. due to a :pseudo-class) smoothly go from one value to the other
+
+
+
+
+Random
+------
+Critical css : the css needed to render above the fold
+inline it inside the html to increase (perceived) loading speed
+
+
+BEM
+Block Element Modifier
+naming convention to define blocks
+self-standing
+same vein as OOCSS
+.block
+.block__element
+.block__element--modifier 
+
+
+DOM
+Document Object Model
+
+End CSS
+----------
+SEO
+
+meta description
+
+images with meaningful filenames
+<img> with alt
+
+page load time
+
+
