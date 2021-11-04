@@ -486,6 +486,20 @@ figure + figcaption
 <form action="url" method="post"></form>
 
 
+can structure forms:
+-fieldset (+ul)
+	to group checkbox/radio
+	in fieldset
+	li for each choice (input+label)
+-section
+	for multiple related inputs
+	+title
+-p
+	for each input
+-h1/h2
+	for the form/each section
+
+
 <input type="text" placeholder="text displayed before typing" required name="x">
 	self-closing
 
@@ -535,6 +549,10 @@ if attribute value="xxx":
 if multiple checkbox checked : 
 	multiple instances of [value of name attribute]=xxx
 
+:checked
+	pseudo class, checked elements
+
+
 <fieldset>
 	<legend> description of the fieldset </legend>
 	<!-- form elements... -->
@@ -544,13 +562,42 @@ if multiple checkbox checked :
 <input ... checked>
 	value checked by default
 
+
+--- select ---
 <select name="dropdown">
     <option value="one">One</option>
     <option value="two">Two</option>
 </select>
 	dropdown
 
+
+--- Autocomplete ---
+<input type="text" id="x" name="x" list="suggestions" autocomplete="off">
+<datalist id="suggestions">
+  <option>Apple</option>
+  <option>Banana</option>
+</datalist>
+
+
+-- textarea --
 <textarea>default text hre</textarea>
+
+
+--- input image ---
+<input type="image">
+	display image
+	when clicked:
+		submits form
+		sends x/y coordinates of where the image was clicked
+
+--- input file ---
+<input type="file>
+	accept attribute
+		"image/*,.jpg"
+	multiple attribute
+
++ progress + meter
+
 
 
 
@@ -1117,7 +1164,7 @@ but can be used elsewhere :
 	<noscript>
 	unsupported media query
 	https://stackoverflow.com/questions/25377545/what-is-a-fallback/25377721
-
+	unknown type for <input> : fallsback to type="text"
 
 
 
@@ -1983,10 +2030,13 @@ grid-template-rows
 		new rows will be added with size auto;
 
 explicit grid : grid created with grid-template-columns or grid-template-rows
-implicit grid : created when content is placed outside of that grid (too many items for the explicit grid)
+implicit grid : created when content is placed outside of that grid
+	=>too many items for the explicit grid or no grid-template-rows
+	in firefox grid inspector, can tell where the explicit grid ends
+	it is where the solid line is
 
 grid-auto-rows: x;
-	specifies the size of an implicitely created row
+	specifies the size of all the implicitely created rows
 
 grid-template-areas:
 	"header header header"
@@ -2097,6 +2147,7 @@ column-span: all;
 	on an item.
 	goes across all the columns
 	Takes all the horizontal space
+	must be block outer display type?
 
 break-inside: never;
 	put in an item (direct child of a multicol container)
@@ -2136,6 +2187,7 @@ there is an old, different implementation of flexbox (IE 10, -ms- prefix)
 there is an old, different implementation of grid (IE10, IE11, -ms- prefix)
 
 fallback support
+graceful degredation / progressive enhancement
 support for older browser
 what if we want to use grid but must make a page that is ok in browser without support for grid?
 start by adding older CSS then overwrite it
@@ -2146,6 +2198,8 @@ start by adding older CSS then overwrite it
 	@supports (display: grid){}
 	@supports not (display: grid){}
 	browser may not support feature query itself!
+	@supports selector(::before){}
+		recent!
 
 there are VM with old versions of IE
 
