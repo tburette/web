@@ -483,6 +483,8 @@ figure + figcaption
 
 
 
+
+
 <form action="url" method="post"></form>
 
 
@@ -506,14 +508,45 @@ can structure forms:
 input type
 	text
 	email
+	search
+	tel
+	url
+	number
+	
+	range
+	
 	radio
 	checkbox
+	
 	button
 	submit
+	reset
+	
 	date
 	time
 	datetime-local
+	month
+	week
+	
+	password
+	hidden
+	color
+	image
+	file
 	...
+default is text
+fallsback to text if unknown
+
+properties:
+	disabled
+	readonly
+	required
+	maxlength
+	placeholder
+	value
+	spellcheck
+	name
+	pattern
 
 <button type="submit">full HTML content here (img,...)</button>
 type:
@@ -525,10 +558,31 @@ alternative:
 	can only have text in this button
 
 
+--- input text ---
+can have pattern
+see also: email, search, tel, url, number
+
+--- input search ---
+difference with text:
+- appearance
+- virtual keyboard
+- saves input
+
+--- input number ---
+min max attributes
+step="any" for float
+
+
+--- input range ---
+a slider
+can combine with <output for="x"> + js to display numerical value
+
+
+--- input date ---
 <input type="date" id="pickdate" name="date">
 
 
-radio button:
+--- input radio ---
 <label> 
   <input type="radio" name="indoor-outdoor" value="indoor"> Indoor
 </label>
@@ -537,7 +591,8 @@ radio button:
 	use identical name in multiple radios to mark them as belonging to the same group : one deselected if select another
 	wrapped in a label or for+id to associate label with button : when click label, activates button
 
-checkbox:
+
+--- input checkbox ---
 <label for="loving"><input id="loving" type="checkbox" name="personality" value="loving"> Loving</label>
 <label for="lazy"><input id="lazy" type="checkbox" name="personality"> Lazy</label>
 
