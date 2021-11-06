@@ -4,7 +4,8 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Block_and_Inlin
 https://www.youtube.com/c/MozillaDeveloper/videos?view=0&sort=p&flow=grid
 https://github.com/Kristories/awesome-guidelines#frontend-development
 https://developer.mozilla.org/en-US/docs/MDN/Guidelines/Code_guidelines/CSS
-CORS
+CORS, same-origin policy
+Fetch API
 
 
 EMMET
@@ -2202,7 +2203,7 @@ column-span: all;
 	on an item.
 	goes across all the columns
 	Takes all the horizontal space
-	must be block outer display type?
+	must be block outer display type (?)
 
 break-inside: never;
 	put in an item (direct child of a multicol container)
@@ -2270,6 +2271,7 @@ there are VM with old versions of IE
 1)
 animation-name: any_string;
 	give a name for the animation of this element
+	do NOT put quotes around the string!
 
 animation-duration: xs;
 animation-duration: xms;
