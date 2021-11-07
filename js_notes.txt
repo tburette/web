@@ -1,0 +1,9 @@
+courses:
+freecodecamp
+codeacademy
+odin
+udemy
+	ES2015	https://www.udemy.com/course/the-advanced-web-developer-bootcamp/
+	ES6		https://www.udemy.com/course/modern-javascript-es6-for-react-js/
+nodeschool
+https://javascript.info/
