@@ -7,6 +7,9 @@ https://developer.mozilla.org/en-US/docs/MDN/Guidelines/Code_guidelines/CSS
 CORS, same-origin policy
 Fetch API
 
+web component (exists, actually used?)
+(SMACSS alternative to BEM, understand what it is, how to recognize but do not learn)
+
 
 EMMET
 main>(div#id+div.class)>h1{Title}^ul>li.class$*5+footer[attr="value"]
@@ -324,10 +327,10 @@ Quoting
 	program output, sample
 
 
+<time datetime="datetime-string">xxx</time>
 <time datetime="2018-07-07">July 7</time>
 <time datetime="20:00">20:00</time>
 <time datetime="PT2H30M">2h 30m</time>
-<time datetime="datetime-string">xxx</time>
 	show a time
 	datetime is a machine-readable string (not displayed to the user)
 
@@ -1886,6 +1889,9 @@ too much lines/content for the height	=> overflow to the bottom
 dangerous to set fixed width/height : risk of overflow
 better to make layout not reliant on fixed size
 
+
+overflow: x;
+	set on the container
 overflow: visible;
 	default. Overflows
 overflow: hidden;
@@ -2126,15 +2132,18 @@ grid-template-areas:
 	give name to grid areas
 	grid area = cell(s) forming a rectangle
 
-grid-row-gap: 5px;
-	space between rows
-	
-grid-column-gap: 5px;
-	space between columns
 
-grid-gap xpx;
+row-gap: 5px;
+	space between rows
+	(used to be grid-row-gap)
+	
+column-gap: 5px;
+	space between columns
+	(used to be grid-column-gap)
+
 gap xpx;
 	row and column gap
+	(used to be grid-gap)
 	gap sometimes referred to as gutter
 	replaced by grid-gap:; => gap:; (so it can be used in multiple layouts)
 grid-gap <row> <column>;
@@ -2222,6 +2231,7 @@ column-rule:;
 	line between columns called a rule
 	is a shorthand, works like border
 	doesn't take any space in the layout (contrary to border)
+	value is like border:;
 
 --- Properties on item---
 column-span: all;
@@ -2403,9 +2413,13 @@ Block Element Modifier
 naming convention to define blocks
 self-standing
 same vein as OOCSS
++ do not have to worry about other css with (higher) specificity
+	problem with non-BEM css: when you use specifity because you want to refer to some element you also increase specificity. May end up with a mish-mash of specificity
++ do not have to worry about our css being inherited by some element down the hierarchy
 .block
 .block__element
 .block__element--modifier 
+
 
 
 DOM
