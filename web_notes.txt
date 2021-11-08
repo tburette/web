@@ -122,6 +122,31 @@ basic structure of an HTML document (with comments):
 <link rel="stylesheet" href="x">
 	external stylesheet
 
+<link rel="prefetch" href="x">
+	hint to the browser that the ressource will be needed in a future page
+	hint, low priority
+	there also is a Link: HTTP header
+	older
+	
+<link rel="preload" href="x" as="style">
+	preloader
+	high priority
+	newer
+	useful for:
+		things loaded by CSS/js
+		larger image/... files
+	as values:
+		script
+		style
+		font
+		image
+		...
+	other attributes:
+		type		MIME type
+		crossorigin	CORS
+		media		media query (responsive preloading)
+
+
 <script src="x.js" defer></script>
 
 no async/defer attribute
