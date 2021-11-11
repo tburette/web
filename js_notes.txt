@@ -59,3 +59,41 @@ BigInt
 "oh hello".substring(3, 7)  // from, to (excluded)
 "hell".length === 4
 
+
+
+
+var x = 0;
+var x = 0, y = 1;
+	set variable
+	block scope (visible in the rest of the function)
+var x;
+	var has the value undefined
+	different from x not being defined
+
+x = 0;
+	global var
+
+
+
+
+['hi', 1, true]
+push(elem);
+	add to the right
+unshift(first)
+	add to the left
+pop()
+	remove last
+shift()
+	remove first
+.length
+[1, "hi"].join(", ");
+	"1, hi"
+slice(from_i, [to_i])
+	returns new subarray with elements
+	does not modify the array
+splice(start, deleteCount, item1, item2, itemN)
+	-remove items
+	-remove and add items
+	-add items (deleteCount = 0)
+	in place
+	returns removed elements
