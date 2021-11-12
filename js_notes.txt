@@ -97,3 +97,42 @@ splice(start, deleteCount, item1, item2, itemN)
 	-add items (deleteCount = 0)
 	in place
 	returns removed elements
+
+
+{key:0, "k":0}
+	create an object
+	key : string or identifier
+	looks like a dictionary but isn't : 
+		default keys
+		keys are string only
+		no size
+	use new Map() for a real dictionary type
+a.key
+a["key"]
+	get value of key
+
+
+m = new Map();
+m.set("x");
+
+
+if(x){
+    console.log("yup");
+}else if(true) {
+    console.log("nope");
+}else{
+    console.log("nope")
+}
+
+v = 'a';
+switch(v){
+    case 'a':
+        console.log("this is a");
+        break;
+    case 'A':
+        console.log("this is A");
+        break;
+    default:
+        console.log("other");
+        break;
+}
