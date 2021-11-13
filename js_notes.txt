@@ -97,6 +97,7 @@ splice(start, deleteCount, item1, item2, itemN)
 	-add items (deleteCount = 0)
 	in place
 	returns removed elements
+	
 
 
 {key:0, "k":0}
@@ -136,3 +137,52 @@ switch(v){
         console.log("other");
         break;
 }
+
+
+while(x > 0) {...}
+do { ... } while(x > 0)
+
+outer: for(var i = 0; i < 10; i++) {
+    for(var j = 0; j < 3 ; j++) {
+        console.log(i, j);
+        break outer;
+    }
+}
+	can break of outer loop by giving a label
+
+for(var x = 0; x < 2; x++){};
+for(var x in obj){};
+	enumerable property names of objects
+	included enumerable inherited properties
+	iterate on
+		object	(x are the Enumerable keys)
+		array	(prefer the use or..of)
+		Map		(prefer the use of for..of)
+		NOT string (works but keys: 0, 1, 2,... prefer the use of for..of)
+	it's a weird choice to enumerator object (outside debugging?)
+	often use for..of
+for(var x of iterable){};
+	iterate on iterable objects
+	iterable[Symbol.iterator] magic behind the scene
+	iterate on
+		array
+		string
+		Map
+		Set
+		NodeList (document.querySelectorAll)
+		Object.entries/keys/values(an_object) to iterate over objects
+forEach
+a.forEach(elem => console.log(elem));
+a.forEach((elem, index) => console.log(elem, index));
+a.forEach((elem, index, array) => console.log(elem, index, array));
+	for arrays
+
+
+
+(function(){
+    //...
+})();
+	IIFE
+	Immediately Invoked Function Expression
+
+
