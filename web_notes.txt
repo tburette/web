@@ -172,6 +172,8 @@ defer
 	script will not see partially loaded DOM
 	scripts executed in the order they appear in the DOM
 
+type="text/javascript"
+	obsolete
 
 
 
@@ -261,8 +263,8 @@ browser applies text-decoration: line-through;
 </ol>
 
 <dl> <!-- description list -->
-  <dt>Description label</dt>
-  <dd>Description definition</dd>
+  <dt>Description Term</dt>
+  <dd>Description Detail</dd>
   <dd>Second definition</dd>
 </dl>
 
@@ -1308,11 +1310,13 @@ background-image: url(https://cdn-media-1.freecodecamp.org/imgr/MJAkxbh.png);
 	by default: repeats, does not scale/shrink to available size
 	quote optional
 	quote or escaped characters if parentheses, whitespace, quote
-background-repeat: x;
+background-repeat: h_and_v;
+background-repeat: h v;
 	repeat		default
 	no-repeat
 	repeat-x
 	repeat-y
+	space 		no clipping, add space between elements if needed
 background-size: x;
 	widthpx		(height auto)
 	widthpx heightpx
@@ -1405,7 +1409,7 @@ word-spacing:;
 	h space between letters/words
 
 text-indent: <pos or neg size>;
-	indent beginning of text
+	indent first line of text
 
 text-align
 	left
@@ -1752,7 +1756,8 @@ object-fit: contain;
 	+ no clip, respect ratio
 	- can gap
 
-
+???
+	why does object-fit work when width/height set but not when max-width/max-height set?
 
 
 
