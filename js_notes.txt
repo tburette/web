@@ -1,12 +1,27 @@
+???
+Symbol "The symbol type is used to create unique identifiers for objects" https://javascript.info/types
+weird comparison rules https://javascript.info/comparison
+
+standard
+last published:
+https://www.ecma-international.org/publications/standards/Ecma-262.htm
+includes proposals:
+https://tc39.es/ecma262/
+https://github.com/tc39/proposals
+
 courses:
-freecodecamp
+https://javascript.info/
+https://developer.mozilla.org/en-US/docs/Web/JavaScript
+https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/#basic-javascript
 codeacademy
-odin
+https://www.theodinproject.com/paths/foundations/courses/foundations
 udemy
 	ES2015	https://www.udemy.com/course/the-advanced-web-developer-bootcamp/
 	ES6		https://www.udemy.com/course/modern-javascript-es6-for-react-js/
 nodeschool
-https://javascript.info/
+
+todo
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
 
 npm
@@ -22,11 +37,53 @@ npm init
 	defaults, do not prompt questions
 
 
+"use strict";
+Introduced in EC5 (2009), backward incompatible changes
+at beginning of script
+at beginning of function
+??? automatically enabled by modules and classes?
 
-
+;
 always ; recommended
 
 
+==
+	does type conversion
+	if number + a string/boolean => the string/boolean converted to number
+===
+	no type conversion
+	different type => different
+
+typeof
+	return string of the type
+
+true/false	'boolean'
+null		'object'	!
+[]			'object'	!
+{}			'object'
+function(){}	'function'
+() => none	'function'
+class Foo{}	'function'
+1			'number'
+1n			'bigint'
+Symbol("a")	'symbol
+
+
+null
+	no value, unknown, empty
+	x = null; makes sense
+	Number(null) === 0
+
+undefined
+	value not assigned
+	x = undefined; to avoid
+	Number(undefined) === NaN
+
+null == undefined
+	this is a special rule
+	(eg. [] != {})
+
+Number
 numbers are double
 0.1 + 0.2 == 0.30000000000000004
 Number.MIN_SAFE_INTEGER
