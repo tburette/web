@@ -91,10 +91,22 @@ Number.MAX_SAFE_INTEGER
 	around 10**15, 2^53-1
 	Number.MAX_SAFE_INTEGER +1 === Number.MAX_SAFE_INTEGER + 2
 
+Number(<something>)
++a_string
+	convert to number (eg. a string)
+
 Infinity
+	obtained with the keyword or dividing by zero (except 0/0, Infinity/Infinity,..)
+	
+Nan
+	cannot parse a number ParseInt(), Number()
+	string + operation "foo" / 2
+
+
 
 BigInt
 	represents integer of any size
+	! fairly recent (Safari 2020)
 	BigInt(1)
 	BigInt("1")
 	1n 				// BigInt literal
@@ -108,7 +120,36 @@ BigInt
 
 
 
+bitwise operators
+AND ( & )
+OR ( | )
+XOR ( ^ )
+NOT ( ~ )
+LEFT SHIFT ( << )
+RIGHT SHIFT ( >> )
+ZERO-FILL RIGHT SHIFT ( >>> )
+numbers are converted to signed 32 bits integers. Truncated if needed
 
+
+logical operators
+|| && ! ??
+	if operand is not a boolean
+		convert to boolean to evaluate if true/false
+		if operand is returned (see below): returns the original value (not converted)
+|| || || ...
+	return first true value
+	or last value
+&& && && ...
+	return first false value
+	or first value
+
+a ?? b
+	nullish coalescing operator
+	if a not null or undefined: returns a
+	if a null or undefined: 	returns b
+	fairly new (2020)
+	useful to give a default value if something may not be defined
+		alert(user ?? "Anonymous");
 
 "13"[0] === "1"
 "13".charAt(0) === "1"
