@@ -157,22 +157,65 @@ a ?? b
 "oh hello".substring(3, 7)  // from, to (excluded)
 "hell".length === 4
 
+"ba" < "bar"
+	lexicographical order
 
+`template literal ${expression}`
+	${} = literal
+`multi
+	line`
+	multiline (return and newline part of the string)
+
+a_function`tagged template literal`
+	call a_function passing the strings and ${} to it
+foo`tagged ${"hi"}template literal ${1+1} hi`
+same as : foo([ 'tagged ', 'template literal ', ' hi' ], 'hi', 2)
+
+String(something)
+	convert to string
 
 
 var x = 0;
 var x = 0, y = 1;
 	set variable
-	block scope (visible in the rest of the function)
+	function (or global) scope (visible in the rest of the function)
 var x;
 	var has the value undefined
 	different from x not being defined
 
 x = 0;
 	global var
+	error in strict mode
+
+let a = 12;
+	block scope
+	if executed in global scope, does NOT set a property on global object (window)
+
+let a = 12;
+let a = 11;
+	error, can't declare a variable twice
+
+const a = 12;
+a = 11; // error
+	block scope
+	cannot reassign
+	must assign a value;
+
+variable name
+	first character:  letter, $, _
+	other characters: number, letter, $, _
+	case sensitive
+	there are reserved names (strict mode)
+	camel case
+	uppercase + _ for constant
 
 
-
+,
+	lower precedence than =
+	evaluate expr to the left of , 
+	evaluate expr to the right of , 
+	return result of right/last one
+	commonly used when assigning value (variables creation, for loop)
 
 ['hi', 1, true]
 push(elem);
