@@ -238,16 +238,18 @@ splice(start, deleteCount, item1, item2, itemN)
 	-add items (deleteCount = 0)
 	in place
 	returns removed elements
-	
+a_function(...array)
+	= a_function(array[0], array[1], array[2]);
 
 
 {key:0, "k":0}
 	create an object
 	key : string or identifier
 	looks like a dictionary but isn't : 
+		is an object
 		default keys
 		keys are string only
-		no size
+		no size attribute
 	use new Map() for a real dictionary type
 a.key
 a["key"]
@@ -258,6 +260,11 @@ m = new Map();
 m.set("x");
 
 
+a = [0, 1];
+a = new Array();
+
+
+
 if(x){
     console.log("yup");
 }else if(true) {
@@ -265,6 +272,12 @@ if(x){
 }else{
     console.log("nope")
 }
+
+if("hi") true
+	converts content of () into a boolean value
+	
+true ? 1 : 2;
+	ternary operator
 
 v = 'a';
 switch(v){
