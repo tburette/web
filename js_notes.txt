@@ -315,7 +315,10 @@ for(let x in obj){};
 		NOT string (works but keys: 0, 1, 2,... prefer the use of for..of)
 	it's a weird choice to enumerator object (outside debugging?)
 	often use for..of
-for(var x of iterable){};
+	hasOwnProperty()
+		exclude properties of prototypes
+		builtin properties (of Object) already ignored
+for(let x of iterable){};
 	iterate on iterable objects
 	iterable[Symbol.iterator] magic behind the scene
 	iterate on
