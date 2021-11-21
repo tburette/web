@@ -296,16 +296,16 @@ switch(v){
 while(x > 0) {...}
 do { ... } while(x > 0)
 
-outer: for(var i = 0; i < 10; i++) {
-    for(var j = 0; j < 3 ; j++) {
+outer: for(let i = 0; i < 10; i++) {
+    for(let j = 0; j < 3 ; j++) {
         console.log(i, j);
         break outer;
     }
 }
 	can break of outer loop by giving a label
 
-for(var x = 0; x < 2; x++){};
-for(var x in obj){};
+for(let x = 0; x < 2; x++){};
+for(let x in obj){};
 	enumerable property names of objects
 	included enumerable inherited properties
 	iterate on
