@@ -336,10 +336,143 @@ a.forEach((elem, index, array) => console.log(elem, index, array));
 
 
 
+
+function
+
+a function with no return value or no return
+	returns undefined
+
 (function(){
     //...
 })();
 	IIFE
 	Immediately Invoked Function Expression
+
+() => { return 2 }
+() => 2
+x => { return x; }
+x => x
+(x,y) => { return x+y; }
+(x,y) => x+y
+	lambda
+
+
+a();
+function a(){console.log("a");}
+	function declaration
+	call before definition ok (hoisting)
+
+b();
+b = function(){console.log("b");};
+	function expression
+	ko : b doesn't exist at the moment of the call
+
+c();
+c = () => console.log("c!");
+c = one_param => console.log("c!");	// no ()
+c = (p1, p2) => console.log("c!");
+c = (p1, p2) => {console.log("c!"); ... };
+	ko : c doesn't exist at the moment of the call
+
+
+default parameter
+function foo(param=[]){
+    param.push("hi");
+    console.log(param);
+}
+foo(); // no arg
+foo(undefined); 
+	default parameter used if no arg passed OR undefined passed!
+	(but default NOT used if null)
+	default parameter evaluated each call
+		opposite of python where it is evaluated once
+		risk of modifying a default arg and affecting subsequent calls does not exist
+
+
+
+OO
+the way the function is called determines if it is:
+	- a function (this not attached to object but global)
+	- a method (this = object)
+this is the opposite of python (bound method stays attached)
+a = {
+    attr: 0,
+    func: function() {
+        return this;
+    }
+}
+a.func(); // this = a
+f = a.func
+b = f() // this = global object
+
+Can take any function and attach it as an attribute to the object : 'this' will be the object if called through the object
+a.fn = some_random_function
+
+a_function.call(this_object, 0, 1);
+	calls the function with a certain this object and arguments
+a_function.apply(this_object, [0, 1]);
+	same but args is an array
+	can be used to splat an array:
+	a = [0, 1, 2]
+	Math.min.apply(Math, a); // array converted to individual arguments
+
+bound_function = a_function.bind(this_object, 0, 1);
+	return a new function whose this is permanently attached to this_object
+	and the first arguments always are the ones specified (0, 1)
+	bound_function() ~= a_function.call(this_object, 0, 1);
+	stronger than call, apply, an_obj.bound_function()!
+
+new a_function()
+	a_function is (used as) a Constructor
+	creates a new object, within the function 'this' is that object
+	that object is returned
+	BUT if return a object (type object only) : will be the object returned
+	a_function(){...; return {};}
+		{} will be the object created
+	a_function(){...; return "4";}
+		not a valid object, the created "this object" will be returned
+
+var Constructor = function(){
+    this.x = "x";	//within it, this is the new object which will be returned
+};
+o = new Constructor(); // new object
+o.x === "x"
+
+Prototype
+object have prototype
+prototype can itself have a prototype
+attribute access looks up the prototype chain
+
+myobj = Object.create(a_prototype);
+	associate a new object with a prototype
+
+or
+function Constructor(){}
+Constructor.prototype = {
+    number: 5,
+    getNumber: function(){
+        return this.number;
+    }
+}
+
+12 !== new Number(12)
+typeof 12 => number
+typeof new Number(12) => object
+
+Number.prototype.decuple = function(){
+    return this*10;
+}
+	can change prototype of builtins
+	sometimes used for polyfilling
+
+
+
+alert("msg")
+
+prompt("msg", displayed_default)
+	return null if cancel
+
+confirm("msg")
+	return true or false
 
 
