@@ -312,13 +312,20 @@ for(let x = 0; x < 2; x++){};
 for(let x in obj){};
 	enumerable property names of objects
 	included enumerable inherited properties
+	order of iteration
+		if key is string : order of property creation
+		if key is string representing non negative integers:
+			sorted integers first
+			then other strings
+			0, 1, 2, ... => integer properties
+			-1, +2, ...  => NOT integer properties (sorted as string)
+		(I imagine it is useful if iterate over an array, obsolete : nowadays would use for...of)
 	iterate on
 		object	(x are the Enumerable keys)
-		array	(prefer the use or..of)
+		array	(prefer the use of for..of)
 		Map		(prefer the use of for..of)
 		NOT string (works but keys: 0, 1, 2,... prefer the use of for..of)
 	it's a weird choice to enumerator object (outside debugging?)
-	often use for..of
 	hasOwnProperty()
 		exclude properties of prototypes
 		builtin properties (of Object) already ignored
@@ -395,9 +402,39 @@ foo(undefined);
 
 
 OO
+
+{}
+	object literal
+	keys converted to string
+
+{
+  [a_var]:1; //any expression really
+}
+	computed property
+	Take the value, use its string representation as the key
+
+name = "John";
+{
+  name // equivalent to name: name
+}
+	property value shorthand
+	result : Object { name: "John" }
+
+obj.key = x;
+obj["key"] = x;
+
+"property_name" in obj
+	test if the property exists
+	almost like obj.property_name !== undefined but returns true if we stored undefined in property_name
+
+delete object.property
+delete object["property"]
+	removes key from object
+
 the way the function is called determines if it is:
 	- a function (this not attached to object but global)
 	- a method (this = object)
+	(except if used bind)
 this is the opposite of python (bound method stays attached)
 a = {
     attr: 0,
