@@ -61,7 +61,7 @@ true/false	'boolean'
 null		'object'	!
 []			'object'	!
 {}			'object'
-function(){}	'function'
+function() {}	'function'
 () => none	'function'
 class Foo{}	'function'
 1			'number'
@@ -342,7 +342,7 @@ function
 a function with no return value or no return
 	returns undefined
 
-(function(){
+(function() {
     //...
 })();
 	IIFE
@@ -358,12 +358,12 @@ x => x
 
 
 a();
-function a(){console.log("a");}
+function a() {console.log("a");}
 	function declaration
 	call before definition ok (hoisting)
 
 b();
-b = function(){console.log("b");};
+b = function() {console.log("b");};
 	function expression
 	ko : b doesn't exist at the moment of the call
 
@@ -427,12 +427,12 @@ new a_function()
 	creates a new object, within the function 'this' is that object
 	that object is returned
 	BUT if return a object (type object only) : will be the object returned
-	a_function(){...; return {};}
+	a_function() {...; return {};}
 		{} will be the object created
-	a_function(){...; return "4";}
+	a_function() {...; return "4";}
 		not a valid object, the created "this object" will be returned
 
-var Constructor = function(){
+var Constructor = function() {
     this.x = "x";	//within it, this is the new object which will be returned
 };
 o = new Constructor(); // new object
@@ -447,10 +447,10 @@ myobj = Object.create(a_prototype);
 	associate a new object with a prototype
 
 or
-function Constructor(){}
+function Constructor() {}
 Constructor.prototype = {
     number: 5,
-    getNumber: function(){
+    getNumber: function() {
         return this.number;
     }
 }
@@ -459,7 +459,7 @@ Constructor.prototype = {
 typeof 12 => number
 typeof new Number(12) => object
 
-Number.prototype.decuple = function(){
+Number.prototype.decuple = function() {
     return this*10;
 }
 	can change prototype of builtins
