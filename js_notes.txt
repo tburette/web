@@ -1,6 +1,12 @@
 ???
-Symbol "The symbol type is used to create unique identifiers for objects" https://javascript.info/types
-weird comparison rules https://javascript.info/comparison
+Symbol "The symbol type is used to create unique identifiers for objects"
+	https://javascript.info/types
+get/set
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set
+	(+ impact on https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign : "Therefore it assigns properties, versus copying or defining new properties. This may make it unsuitable for merging new properties into a prototype if the merge sources contain getters. ")
+weird comparison rules
+	https://javascript.info/comparison
 
 standard
 last published:
@@ -149,6 +155,7 @@ logical operators
 
 a ?? b
 	nullish coalescing operator
+	nullish = null or undefined ( https://developer.mozilla.org/en-US/docs/Glossary/Nullish )
 	if a not null or undefined: returns a
 	if a null or undefined: 	returns b
 	fairly new (2020)
@@ -359,6 +366,8 @@ a function with no return value or no return
 	IIFE
 	Immediately Invoked Function Expression
 
+
+Arrow function
 () => { return 2 }
 () => 2
 x => { return x; }
@@ -366,6 +375,10 @@ x => x
 (x,y) => { return x+y; }
 (x,y) => x+y
 	lambda
+
+arrow function don't have their own this
+this comes from the context!
+Useful and intuitive when create an arrow function within a function
 
 
 a();
@@ -486,7 +499,7 @@ attribute access looks up the prototype chain
 
 myobj = Object.create(a_prototype);
 	associate a new object with a prototype
-
+	??? has a second argument propertiesObject (to define properties?)
 or
 function Constructor() {}
 Constructor.prototype = {
