@@ -1,12 +1,20 @@
 ???
 Symbol "The symbol type is used to create unique identifiers for objects"
 	https://javascript.info/types
+Symbol as key
+	"Bear in mind that enumerable properties are looped over by for...in loops, with the exception of Symbols. " https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable
+enumerable (and own) object
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable
 get/set
 	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
 	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set
 	(+ impact on https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign : "Therefore it assigns properties, versus copying or defining new properties. This may make it unsuitable for merging new properties into a prototype if the merge sources contain getters. ")
 weird comparison rules
 	https://javascript.info/comparison
+generator
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
+
 
 standard
 last published:
@@ -162,6 +170,32 @@ a ?? b
 	useful to give a default value if something may not be defined
 		alert(user ?? "Anonymous");
 
+a?.b
+	optional chaining
+	the object on the left may not exist
+	if a is nullish (null/undefined) return undefined
+	if a exists returns value of b (which can be undefined)
+	permits: a?.b?.c
+	a && a.b && a.b.c is similar but
+		more verbose
+		if falsish value : return falsish value instead of undefined
+	the variable a must exist (but may be null/undefined) otherwhise exception
+object.function?.()
+	calls the function if it exists
+	returns undefined if it does not exist
+object?.[key]
+array?.[i]
+	read if object/array exists, otherwise returns undefined
+delete obj?.value
+	delete obj.value if obj exists
+a_null_variable?.name = "John";
+	SyntaxError (cannot do what amounts to undefined = "x");
+
+
+
+
+--- String ---
+
 "13"[0] === "1"
 "13".charAt(0) === "1"
 "oh hello".substr(3, 4)		// from, length
@@ -184,6 +218,64 @@ same as : foo([ 'tagged ', 'template literal ', ' hi' ], 'hi', 2)
 
 String(something)
 	convert to string
+
+
+--- Symbol ---
+Unique identifier
+NOT like string
+NOT like smalltalk's #symbol
+
+
+Symbol("a") != Symbol("a")
+	each symbol is unique
+	even if same description
+	(exception see global registry Symbol.for)
+
+alert(Symbol("hi"))
+"My symbol is " + Symbol("hi")
+	TypeError, symbols do not auto convert to string
+
+Usage 1:
+if use a symbol as a key (obj[symbol]) on object,
+since no one else can generate the same symbol
+we can have "hidden" private properties (cf Van Roy)
+o[s] = "pseudo private value"
+	s won't show up in
+		for loop
+		Object.keys()
+	but will show up in the String(o)
+not quite true in reality, can get the "private" symbols used as keys of an obj:
+	Object.getOwnPropertySymbols(o) returns the symbols of an object
+	Reflect.ownKeys(o); returns all the keys (including symbols) of an object
+
+Object.assign WILL copy the symbolic properties
+
+String(Symbol("x"))
+Symbol("x").toString()
+	convert to string 'Symbol("id")' manually
+
+Symbol("desc").description == "desc"
+	gets the (string) description
+
+Symbol.for('x')
+	global registry of symbol
+	Symbols in the registry are called global symbols
+	create new or return existing symbol
+	Symbol.for("x") == Symbol.for("x")
+	Symbol("x") != Symbol.for("x")
+	similar to smalltalk's #symbol
+
+Symbol.keyFor(some_symbol)
+	returns the description of a global symbol
+	pointless : can use some_symbol.description
+	can be used to determine if a symbol is global or not
+
+Usage 2:
+There are "system symbols" used by javascript implementation, defined in the js specs and used by some algorithms of the language:
+Symbol.hasInstance, Symbol.iterator, Symbol.toPrimitive,...
+Can alter the built-in behaviour:
+- make an object iterable (we choose the returned elements)
+- ...
 
 
 var x = 0;
@@ -414,10 +506,11 @@ foo(undefined);
 
 
 
-OO
+--- OO ---
 
 {}
-	object literal
+	object initializer
+	aka object literal
 	keys converted to string
 
 {
@@ -433,6 +526,16 @@ name = "John";
 	property value shorthand
 	result : Object { name: "John" }
 
+obj = {
+  shorthandMethod(){ // equivalent to shorthandMethod: function() {
+    ...
+  }
+}
+	method definition shorthand
+	! contrary to the long form cannot be used as a constructor ??? why
+	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#method_definitions
+
+
 obj.key = x;
 obj["key"] = x;
 
@@ -444,11 +547,15 @@ delete object.property
 delete object["property"]
 	removes key from object
 
+object converted to boolean : always true
+
+
+
 the way the function is called determines if it is:
-	- a function (this not attached to object but global)
+	- a function (this not attached to object but global/undefined)
 	- a method (this = object)
 	(except if used bind)
-this is the opposite of python (bound method stays attached)
+this is the opposite of python and many languages where this in a method is always bound to an object
 a = {
     attr: 0,
     func: function() {
@@ -459,7 +566,7 @@ a.func(); // this = a
 f = a.func
 b = f() // this = global object
 
-Can take any function and attach it as an attribute to the object : 'this' will be the object if called through the object
+Can take any function and attach it as an attribute to the object : 'this' will be the object if called through the object (exception bind)
 a.fn = some_random_function
 
 a_function.call(this_object, 0, 1);
@@ -476,21 +583,41 @@ bound_function = a_function.bind(this_object, 0, 1);
 	bound_function() ~= a_function.call(this_object, 0, 1);
 	stronger than call, apply, an_obj.bound_function()!
 
-new a_function()
-	a_function is (used as) a Constructor
+if call a function without an object, this:
+	- non strict: 	global object
+	- strict: 		undefined
+
+Constructor
+new aFunction()
+	aFunction is (used as) a Constructor
 	creates a new object, within the function 'this' is that object
 	that object is returned
-	BUT if return a object (type object only) : will be the object returned
-	a_function() {...; return {};}
+	BUT if return a object (type object only, no primitive) : will be the object returned
+	aFunction() {...; return {};}
 		{} will be the object created
-	a_function() {...; return "4";}
+	aFunction() {...; return "4";}
 		not a valid object, the created "this object" will be returned
+	if no argument, can omit the () : new aFunction <=> new aFunction()
 
 var Constructor = function() {
     this.x = "x";	//within it, this is the new object which will be returned
 };
 o = new Constructor(); // new object
 o.x === "x"
+
+immediately called constructor
+let user = new function(){
+	this.x = ...
+	...
+};
+	immediately called constructor function
+	wrap object creation related code in a single place
+
+new.target
+	within the function
+	if not called with new :	undefined
+	if called with new :		= the function
+
 
 Prototype
 object have prototype
@@ -518,6 +645,15 @@ Number.prototype.decuple = function() {
 }
 	can change prototype of builtins
 	sometimes used for polyfilling
+
+Object.assign(target, ...sources)
+	take all the enumerable own properties of the source objects and put it into target
+	returns target
+	shallow clone (property values of source are copied by value)
+	order important (later overwrite earlier)
+	??? how are properties handled? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#description
+
+
 
 
 
