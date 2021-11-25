@@ -72,6 +72,44 @@ always ; recommended
 	no type conversion
 	different type => different
 
+Object.is(a, b)
+	like === but
+	NaN is NaN
+	+0 is not -0
+	
+
+primitive types (singlue value, stored as value in variables)
+string
+number
+bigint
+boolean
+symbol
+null
+undefined
+
+Object type
+	{}
+	function
+	array
+	Map
+	...
+
+String, Number, Boolean, Symbol
+	allow calling methods on primitive types
+	eg aString.toUpperCase(), aNumber.toFixed(2)
+	as if the js Engine created a temporary object wrapper around the primitive to allow an operation to carry out.
+
+new Number(0)
+new Boolean(false)
+	create a wrapper object
+	NEVER USE !!!
+	awful:
+		typeof is object
+		considered truthy (like all objects)!!
+			if(new Boolean(false)) console.log("this will print!")
+			if(new Number(0)) console.log("this will print!")
+	Number("123") ok : returns primitive
+
 typeof
 	return string of the type
 
@@ -276,6 +314,7 @@ Symbol.hasInstance, Symbol.iterator, Symbol.toPrimitive,...
 Can alter the built-in behaviour:
 - make an object iterable (we choose the returned elements)
 - ...
+
 
 
 var x = 0;
@@ -653,6 +692,59 @@ Object.assign(target, ...sources)
 	order important (later overwrite earlier)
 	??? how are properties handled? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#description
 
+
+
+Primitive conversion
+no operator overloading (redefine '+' operator in obj1 + obj2)
+but can control (some) conversions of obj (to string/number/default)
+obj->boolean : always true, NO control
+	eg !obj, obj === true (but NOT obj == true which uses default), Boolean(obj)
+obj->string : can control
+	"string" hint
+	eg alert(obj), anotherObj[obj], String(o)
+	! NOT "a string" + obj
+obj->number : can control
+	"number" hint
+	eg obj1 - obj2, Number(obj), obj1 > obj2, 0 > obj, "str" > obj
+default conversion
+	"default" hint
+	eg obj1 + obj2, "str" + obj, if (obj == 1)
+	used when not sure if number or string should be used
+	in practice : all built-ins object convert to number (except date), we should do the same => treat number and default hints the same
+
+Two ways
+1. Modern
+o = {
+    [Symbol.toPrimitive](hint) {
+        if(hint == 'string'){
+            return "I am o!"
+        }else{ // 'number' or 'default'
+            return 0;
+        }
+    }
+}
+	Checked to see if exist first, used if exists
+	must return a primitive type, error if return object
+
+2. older
+o = {
+    toString(){
+        return "I am o"
+    },
+    valueOf(){
+        return 99;
+    }
+}
+	checked if no Symbol.toPrimitive
+	"string" hint : check toString then valueOf
+	"number" "default" hints : check valueOf then toString
+	can implement only one : eg toString
+	must return primitive, result ignored if not a primitive (as if method didn't exist)
+
+Since we can't return objects nor know which exact operation the conversion is for, the conversion system is of limited use (especially default/number).	
+If want to keep things simple : 
+-can implement only toString, will always be called (except boolean conversion). Good for debugging.
+-States that objects not designed to perform operations on it.
 
 
 
