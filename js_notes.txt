@@ -1,3 +1,9 @@
+js warts
+negative index : like 0 or count from the end of the array/string?
+	inconsistant (indexOf and substring vs slice and substr)
+
+objects used as dictionary (no length, perfs, limited keys)
+
 ???
 Symbol "The symbol type is used to create unique identifiers for objects"
 	https://javascript.info/types
@@ -272,13 +278,14 @@ a_null_variable?.name = "John";
 --- String ---
 
 "13"[0] === "1"
-"13".charAt(0) === "1"
-"oh hello".substr(3, 4)		// from, length
-"oh hello".substring(3, 7)  // from, to (excluded)
+"13".charAt(0) === "1"		// was the only way originally
 "hell".length === 4
 
 "ba" < "bar"
 	lexicographical order
+	uppercase before lowercase  (cf ASCII table)
+	diacritical marks after non diacritical marks (z < ö) (cf unicode)
+	str.localeCompare to be language aware
 
 `template literal ${expression}`
 	${} = literal
@@ -293,6 +300,44 @@ same as : foo([ 'tagged ', 'template literal ', ' hi' ], 'hi', 2)
 
 String(something)
 	convert to string
+
+str.localeCompare(otherString)
+	compare with locale awareness. Eg. Ö < P
+
+str.toUpperCase()
+
+str.indexOf(searchedString, fromIndex)
+	returns index
+	-1 if not found
+	! careful:  if(str.indexOf(...)) <== wrong (fails on -1, 0) use includes instead
+	negative index like 0
+
+str.includes(searchedString, fromIndex)
+	returns true/false
+
+
+"oh hello".substring(3, 7)
+	returns substring
+	from, to (excluded)
+	can ommit to
+	negative index like 0
+	if from > to => swaps index
+
+str.slice(startI, endI)
+	modern version of substring.
+	similar:
+	returns substring
+	endI excluded
+	can ommit endI
+	different:
+	negative index counts from end of string (-1 = last index)
+	if start > end => empty
+
+str.substr(startI, length)
+	negative index counts from end of string (-1 = last index)
+
+str.split(', ')
+	turn string into array based on the delimiter
 
 
 --- Symbol ---
@@ -396,18 +441,40 @@ variable name
 	return result of right/last one
 	commonly used when assigning value (variables creation, for loop)
 
+
+
+-- Array ---
 ['hi', 1, true]
+new Array('hi', 1, true);
+	rarely used (more verbose than array literal)
+	if single argument of type number : create an array of that size!
+array is an object with extra stuff (length, managing the ordered collection)
+can be sparse
+	a = [];
+	a[10] = null;
+	a.length === 11
+== on two arrays is always false unless it is the same array (like all objects)
+delete array[i]
+	sets element to undefined
+Array.isArray
+	typeof [] is 'object'
+	this allows to tell if something is an array
 push(elem);
+push(elem, elem2);
 	add to the right
 unshift(first)
+unshift(first, second)
 	add to the left
 pop()
 	remove last
 shift()
 	remove first
 .length
+	last index + 1
+	writable!
 [1, "hi"].join(", ");
 	"1, hi"
+	see also str.split
 slice(from_i, [to_i])
 	returns new subarray with elements
 	does not modify the array
@@ -417,8 +484,48 @@ splice(start, deleteCount, item1, item2, itemN)
 	-add items (deleteCount = 0)
 	in place
 	returns removed elements
+arr.concat(arg1, arg2)
+	does not change arr
+	returns new array with arr concatenated to arg1, arg2,..
+	args can be array or single elements
+	if arg is an object with a [Symbol.isConcatSpreadable] property then all the property values of that object will be added to the result (instead of the object itself)
+indexOf(item, from)
+lastIndexOf(item, from)
+includes(item, from)
+	search for element. Uses ===
+some
+every
+flat
+flatMap
+find(fn)
+	returns undefined or the first match
+	fn = function(item, index, array){}
+findIndex(fn)
+	like find but returns the index
+filter(fn)
+	returns array of all matching
+map(fn)
+
+reduce(fnWithAcc, optionalInitialValue)
+sort(compareFn)
+	sorts in place
+	!! if no compareFn => sorted as string
+		[1, 2, 15].sort() => [1, 15, 2]!
+	compareFn(a, b) returns positive/zero/negative number
+reverse()
+	in place
 a_function(...array)
 	= a_function(array[0], array[1], array[2]);
+
+for(let value of array){}
+	iterate
+forEach(function(item, index, array){})
+
+Math.max(...array)
+	largest value in an array
+	string converted to number
+	other value : returns NaN
+
 
 
 {key:0, "k":0}
