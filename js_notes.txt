@@ -526,28 +526,132 @@ Math.max(...array)
 	string converted to number
 	other value : returns NaN
 
+let arr = 'hello over there'.split(' ')
+let  [a, , b] = arr
+	array destructuring
+	any iterable on the right side
+
+-- Iterable ---
+objectThatMustBeIterable[Symbol.iterator] = function() {
+    return {
+        next() {
+            return {done: false, value: this.current++};
+            return {done: true};
+        }
+    };
+};
+
+Can make a self-iterable
+range[Symbol.iterator] = function() {
+    return this;
+}
+range.next = function() {
+    return {done: false, value: xxx};
+    return {done: true};
+};
+	downside : only one iteration possible
+
+Manually interating :
+    iterator = iterable[Symbol.iterator]();
+    while(true){
+        let result = iterator.next();
+        if(result.done) break;
+        console.log(result.value)
+    }
 
 
+Array like object
+	an object with keys: 0, 1, 2,... and length
+
+Array.from(arrayLike)
+Array.from(iterable)
+	returns an object which behaves like an array:
+		all the methods (push,...)
+		for..of
+		indexed access
+	works on non array-like/iterable : as if the object was an empty array
+
+[a, b, ...rest] = anIterable
+	destructuring
+[a="default", b="default", ...rest] = anIterable
+	can provide default value
+
+
+
+
+--- Map ---
 {key:0, "k":0}
-	create an object
-	key : string or identifier
+	creates an object
 	looks like a dictionary but isn't : 
 		is an object
 		default keys
-		keys are string only
+		keys are string (or symbol) only
 		no size attribute
-	use new Map() for a real dictionary type
-a.key
-a["key"]
-	get value of key
+use new Map() for a real dictionary type
+	allows keys of any type
 
+can have object as key
+
+key does not have to be readonly
+no equality/hash operator overloading
+comparisoin based on identity
 
 m = new Map();
-m.set("x");
+m = new Map([ ['k', 'v'], ['k2', 'v2']])
+m = new Map(Object.entries(obj))
+set(key, value)
+	can chain
+get(key)
+has(key)
+delete(key)
+clear()
+size
 
+Object.fromEntries(map)
+	makes a plain object from a map object
+	map = iterable/array like
+	can use Object.entries(o) as source
 
-a = [0, 1];
-a = new Array();
+for(let v of m)
+	iterate on entries [key, value]
+for(let v of m.keys())
+for(let v of m.values())
+forEach( (value, key, map) => ...)
+
+WeakMap
+	like map but
+		key must be an object
+		removed automatically if object has no other reference
+		typical use : 
+		-add info to an object belonging to other code. Do not want to modify the object itself but still want associated data
+		- cache the result of a computation (for a given object)
+	no size
+	no iteration
+
+-- set --
+new Set()
+new Set(iterable)
+add(value)
+delete(value)
+has(value)
+clear()
+size
+
+for(let v of m)
+for(let v of m.keys()) //useless
+for(let v of m.values()) // for compat with map, same as keys
+for(let v of m.entries()) // for compat with map : [value, value]
+forEach((value, valueAgain, set) => ...)
+	works on Map, Set, Array
+	note : also exists Object.keys, Object.values, Object.entries for objects (different from functions here)
+
+WeakSet
+	only contains objects
+	no size
+	no iteration
+	does contain has, delete
+	can determine if an element is or is not in the set
+	eg.: message has been read if is in the set.
 
 
 
@@ -696,6 +800,10 @@ foo(undefined);
 	aka object literal
 	keys converted to string
 
+a.key
+a["key"]
+	get value of key
+
 {
   [a_var]:1; //any expression really
 }
@@ -732,6 +840,55 @@ delete object["property"]
 
 object converted to boolean : always true
 
+Object.keys()
+Object.values()
+Object.entries()
+	return arrays (contrary to map.xxx, set.xxx, Array.xxx which return an iterable)
+
+for(let [key, value] of Object.entries(obj)){}
+
+
+Object destructuring
+o = {
+    a: "aa", 
+    b: "bb",
+    1: "one value",
+}
+let {a, b, 1: one} = o;
+a === "aa"
+b === "bb"
+one === "one value" //variable name different from the key
+	destructuring objects
+	extract values of properties and put them in variables
+let {width: w = 100, height: h = 200, title} = options;
+	with default value
+
+can have multiple levels
+let options = {
+  size: {
+    width: 100,
+    height: 200
+  },
+  items: ["Cake", "Donut"],
+  extra: true
+};
+// destructuring assignment split in multiple lines for clarity
+let {
+  size: { // put size here
+    width,
+    height
+  },
+  items: [item1, item2], // assign items here
+  title = "Menu" // not present in the object (default value is used)
+} = options;
+
+let options = {
+    title: "title", 
+    items: [1]
+}
+function manyArgs({title = "default", items = [],...} = {}){}
+manyArgs(options)
+	can use on parameters
 
 
 the way the function is called determines if it is:
@@ -900,5 +1057,24 @@ prompt("msg", displayed_default)
 
 confirm("msg")
 	return true or false
+
+
+
+--- DOM ---
+<div id="foo">hello</div>
+<script>
+    foo.textContent = "new content";
+    window.foo.textContent = "new content";
+</script>
+    Named access on the Window object
+    all nodes with id are added to the window object
+    (and thus globally available)
+	Crazy (bad) because
+	- it can clash with window's default properties
+		(window's built-in properties win in that case)
+	- it can clash with global variables set in js
+		(global var wins in that case)
+    https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
+    https://html.spec.whatwg.org/multipage/window-object.html#named-access-on-the-window-object
 
 
