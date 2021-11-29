@@ -274,7 +274,6 @@ a_null_variable?.name = "John";
 
 
 
-
 --- String ---
 
 "13"[0] === "1"
@@ -340,6 +339,7 @@ str.split(', ')
 	turn string into array based on the delimiter
 
 
+
 --- Symbol ---
 Unique identifier
 NOT like string
@@ -399,6 +399,9 @@ Can alter the built-in behaviour:
 
 
 
+--- variables ---
+
+
 var x = 0;
 var x = 0, y = 1;
 	set variable
@@ -406,6 +409,14 @@ var x = 0, y = 1;
 var x;
 	var has the value undefined
 	different from x not being defined
+
+function foo(){
+    x = 1 //local, despite the later var x 
+    var x;// same with if(false){var x;}
+}
+foo();
+console.log(x) // x is not defined
+	a declaration of a variable _anywhere_ with var is enough to make it  a local/function scoped variable
 
 x = 0;
 	global var
@@ -419,11 +430,21 @@ let a = 12;
 let a = 11;
 	error, can't declare a variable twice
 
+for(let i = 0; i < 3 ; i++) {
+    arr.push(function foo(){
+        console.log(i); //i different with let. Would be the same xith var
+    });
+}
+
 const a = 12;
 a = 11; // error
 	block scope
 	cannot reassign
 	must assign a value;
+
+function foo(){}
+	hoisted
+	in strict mode : function definition is block scoped : exists only within the block
 
 variable name
 	first character:  letter, $, _
@@ -514,17 +535,14 @@ sort(compareFn)
 	compareFn(a, b) returns positive/zero/negative number
 reverse()
 	in place
+	
 a_function(...array)
 	= a_function(array[0], array[1], array[2]);
+	spread operator
 
 for(let value of array){}
 	iterate
 forEach(function(item, index, array){})
-
-Math.max(...array)
-	largest value in an array
-	string converted to number
-	other value : returns NaN
 
 let arr = 'hello over there'.split(' ')
 let  [a, , b] = arr
@@ -570,13 +588,15 @@ Array.from(iterable)
 		for..of
 		indexed access
 	works on non array-like/iterable : as if the object was an empty array
+[...anIterable]
+	creates array from iterable
 
 [a, b, ...rest] = anIterable
 	destructuring
 [a="default", b="default", ...rest] = anIterable
 	can provide default value
 
-
+similar exists for objects : {...obj}
 
 
 --- Map ---
@@ -733,18 +753,110 @@ a.forEach((elem, index, array) => console.log(elem, index, array));
 
 
 
+-- Date --
+Date and time
+important:
+	use FullYear NOT year
+	month : 0-based (0 = january)
+	day: use getDate NOT getDay
+	getDay : day in the week, 0-based (0=sunday)
+	timestamp are in ms, not s as is more common
+	autocorrection when date is out of range
+	by default values are set/returned relative to current timestamp
+	can set/get values relative to utc with UTC variant of methods
 
-function
+new Date()
+	current date/time
+new Date(existingDate)
+new Date(ms_since_1_1_1970)
+	date.getTime() to get the timestamp
+	date can be before 1970 => negative timestamp value
+new Date("2017-01-26")
+new Date("2017-01-26 01:02:59")
+new Date("YYYY-MM-DDTHH:mm:ss.sssZ")
+	or Date.parse(str)
+	Z is the time zone
+		Z = UTC+0
+		+-hh:mm
+		(time will be set relative to that timezone, the created date will be displayed relative to the local timezone)
+new Date(year, month, date, hours, minutes, seconds, ms)
+	month: 0 = jan
+uses local time zone
+
+getTime
+	returns the timestamp
+Date.now()
+	returns current timestamp
+	shortcut for new Date().getTime()
+
+getFullYear
+getMonth // 0-11, 0 = january !
+getDate // day in the current month !
+getHours getMinutes getSeconds getMilliseconds
+getDay
+	day of the week 0=sunday, 6=saturday
+getYear
+	do NOT use
+	weird value
+
+variations of above methods:
+setxxx
+	set the value
+	Date objects are mutable
+setUTCxxx
+	sets the value relative to UTC. Date object remains in local time
+	setUTCHour(22) and local timezone at T+1? => getHours() will be 23
+getUTCxxx
+	(add UTC)
+	value relative to UTC instead of local time
+getTimezoneOffset
+	difference in minutes between local timezone (timezone used in the date object) and UTC
+
+autocorrection
+if create a date/set a value too big/too small
+	will auto adjust
+	new Date(2000, 0, 32) => date will be in february
+useful :
+	set the date to x seconds after the date : date.setSeconds(date.getSeconds()+x);
+	set the date to the last day of the previous month : setDate(0)
+double edged : can give wrong value and there won't be an error
+
+conversion to primitive (number timestamp)
++aDate
+	converts date to timestamp (see primitive conversion)
+aDate - anotherDate
+	difference in timestamp => difference in ms
+
+
+
+--- function ---
 
 a function with no return value or no return
 	returns undefined
+
+function foo(){}
+	function declaration
+
+const foo = function(){}
+	function expression
+
+const foo = function bar(){}
+	named function expression
+
+const func = new Function('arg1', 'return arg1 + 1;')
+	new Function syntax to create a function from string
+	not to be confused with object creation through constructor call
+	no access to variables available in the environment where new Function is called
 
 (function() {
     //...
 })();
 	IIFE
 	Immediately Invoked Function Expression
-
+	not too useful anymore can be replaced in most situation with a block {}
+	case where still useful : 
+	- want to assign the result of a calculation to a const
+	  const foo = (function(){...return x;})();
 
 Arrow function
 () => { return 2 }
@@ -790,6 +902,45 @@ foo(undefined);
 	default parameter evaluated each call
 		opposite of python where it is evaluated once
 		risk of modifying a default arg and affecting subsequent calls does not exist
+
+
+
+a_function(...array)
+	rest parameters
+	= a_function(array[0], array[1], array[2]);
+[1, 2, ...array]
+	spread operator
+
+
+function foo(...array)
+	rest parameters
+	array is a regular array
+
+Math.max(...array)
+	largest value in an array
+	string converted to number
+	other value : returns NaN
+
+arguments
+	within a function : the arguments passed
+	arrow functions don't have their own arguments (it is the one of the parent function)
+	array-like, iterable but does not an array : does not support array function
+theFunction(...args){}
+	alternative to arguments
+	real array
+
+
+a function is an object. It can have properties
+name
+	name of the object
+foo = function(){] //foo.name === "foo"
+obj.prop = function(){] //obj.prop.name === "prop"
+	contextual name
+	if no name : uses name of variable it is assigned to!
+array.push(function(){}); //array.pop().name === "" got em!
+
+length
+	number of parameters
 
 
 
@@ -993,9 +1144,11 @@ Object.assign(target, ...sources)
 	order important (later overwrite earlier)
 	??? how are properties handled? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign#description
 
+Array.prototype.join.call(arguments)
+	method borrowing
 
 
-Primitive conversion
+--- Primitive conversion ---
 no operator overloading (redefine '+' operator in obj1 + obj2)
 but can control (some) conversions of obj (to string/number/default)
 obj->boolean : always true, NO control
@@ -1049,7 +1202,6 @@ If want to keep things simple :
 
 
 
-
 alert("msg")
 
 prompt("msg", displayed_default)
@@ -1057,6 +1209,75 @@ prompt("msg", displayed_default)
 
 confirm("msg")
 	return true or false
+
+
+
+--- Global object ---
+window in browser
+global in node
+globalThis in browser and node (since 2019)
+
+var foo = x;
+console.log(window.foo);
+
+global.foo = 1
+console.log(foo);
+	bad to put variables in the global object
+	useful for polyfill
+
+
+
+--- JSON ---
+RFC4627
+a JSON string called : JSON-encoded, serialized, marshalled.
+differences from object literals:
+	strings are double quotes
+	property keys are within quotes
+	no properties with undefined value
+	no function
+	no Symbols
+	no comments
+	
+JSON.stringify(value)
+JSON.stringify(value, replacer)
+	replacer : array of string or function
+JSON.stringify(value, ["a", "b"])
+	in objects only properties with these names will be encoded
+JSON.stringify(value, function(key, value){})
+	! first call to it will have empty key and the object passed to stringify as value
+	this is the object which possess the property
+	return undefined to skip property
+	return a value : that value will be the one encoded
+JSON.stringify(value, replacer, space)
+	space
+	0 = one-line compact
+	1+ = on multiple lines + size of indentation
+
+toJSON
+	function attached to an object
+	returns string representation
+	used by stringify
+
+
+JSON.parse(str)
+JSON.parse(str, reviver)
+	reviver is a function(key, value)
+	convert the string value back into js representation
+	returning undefined = do not deserialize that property
+	eg: dates
+
+
+
+--- timeout interval ---
+timerId = setTimeout(func, delay, arg1, arg2,...)
+timerId = setInterval(func, delay, arg1, arg2,...)
+	careful if func is slow : calls func every delay.
+	Do NOT wait for one call to be finished before waiting delay time.
+clearTimeout(timerId);
+
+creates a memeory leak : everything func refers to won't be GC'ed until clearTimeout is called
+
+zero delay scheduling: delay == 0. wait for the current code to stop running before running rh
 
 
 
