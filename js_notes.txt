@@ -683,6 +683,9 @@ if(x){
     console.log("nope")
 }
 
+if(variable = xxx) yyy;
+	assign xxx to variable
+
 if("hi") true
 	converts content of () into a boolean value
 	
@@ -767,6 +770,8 @@ important:
 
 new Date()
 	current date/time
+Date()
+	current date as a string!
 new Date(existingDate)
 new Date(ms_since_1_1_1970)
 	date.getTime() to get the timestamp
@@ -858,6 +863,7 @@ const func = new Function('arg1', 'return arg1 + 1;')
 	- want to assign the result of a calculation to a const
 	  const foo = (function(){...return x;})();
 
+
 Arrow function
 () => { return 2 }
 () => 2
@@ -870,6 +876,7 @@ x => x
 arrow function don't have their own this
 this comes from the context!
 Useful and intuitive when create an arrow function within a function
+
 
 
 a();
@@ -995,11 +1002,111 @@ Object.keys()
 Object.values()
 Object.entries()
 	return arrays (contrary to map.xxx, set.xxx, Array.xxx which return an iterable)
+	do not appear:
+		symbols
+		properties with flag writable: false
+	(can get them with Reflect.ownKeys())
 
 for(let [key, value] of Object.entries(obj)){}
 
 
-Object destructuring
+
+-- Properties --
+property attributes : value + flags
+property flags:
+writable		read-only or not?	
+enumerable		appear in loops
+configurable	can be deleted, flags can be changed
+a normal property : 3 flags true
+
+for a getter/setter property:
+get
+set
+enumerable
+configurable
+
+writable: false
+	write non strict : nothing happens
+	write strict: error
+
+configurable: false
+	prevents property from being deleted
+	cannot change flags/value (EXCEPTION : can set writable to false)
+	often combined with writable false otherwise can set writable back to true with Object.defineProperty
+
+
+Accessor descriptor : object describing a property (configurable, enumerable,...)
+
+Object.getOwnPropertyDescriptor(obj, propertyName)
+	returns a property descriptor : value + flags
+
+Object.getOwnPropertyDescriptors(obj)
+	get proprety descriptors for all properties
+	returns an object: {propertyName: {propertyDescriptor}, ...}
+		same object structure as in defineProperties
+
+Object.defineProperty(obj, propertyName, descriptor)
+	sets attribute
+	eg. Object.defineProperty(o, "a", {value: "hello", enumerable:false})
+	if creates a new property: missing flags are assumed false
+
+Object.defineProperties(obj, {
+	prop1: {...},
+	prop2: {...},
+})
+	same object structure as in getOwnPropertyDescriptors
+
+Object.getOwnPropertySymbols(o)
+	get all Symbol properties
+Reflect.ownKeys(o)
+	all the keys (string and symbols)
+
+Object.isExtensible(obj)
+Object.preventExtensions(obj);
+	cannot add new properties
+	
+Object.isSealed(obj)
+Object.seal(obj);
+	cannot add/remove properties.
+	Sets configurable: false on all properties
+	
+Object.isFrozen(obj)
+Object.freeze(obj)
+	cannot add/remove/change any property.
+	Sets configurable: false, writable: false on all properties
+
+
+data property : usual property
+accessor property : property with a getter/setter method behind it.
+
+let obj = {
+  get propName() {
+    // getter, the code executed on getting obj.propName
+  },
+
+  set propName(value) {
+    // setter, the code executed on setting obj.propName = value
+  }
+};
+
+Create an accessor property with an accessor descriptor:
+Object.defineProperty(object, 'fullName', {
+  get() {
+    return `${this.name} ${this.surname}`;
+  },
+
+  set(value) {
+    [this.name, this.surname] = value.split(" ");
+  },
+  //enumerable, configureble..
+});
+
+to have a "private" backing field for a property:
+_privateProperty
+
+
+
+-- Object destructuring --
 o = {
     a: "aa", 
     b: "bb",
@@ -1068,11 +1175,18 @@ a_function.apply(this_object, [0, 1]);
 	a = [0, 1, 2]
 	Math.min.apply(Math, a); // array converted to individual arguments
 
-bound_function = a_function.bind(this_object, 0, 1);
-	return a new function whose this is permanently attached to this_object
-	and the first arguments always are the ones specified (0, 1)
-	bound_function() ~= a_function.call(this_object, 0, 1);
-	stronger than call, apply, an_obj.bound_function()!
+bind(thisObject, arg1, arg2)
+	return a new function whose this is _permanently_ attached to thisObject
+	and the first arguments always are the ones specified (arg1, arg2)
+	returnedFunction() ~= originalFunction.call(thisObject, 0, 1);
+	call to bind does not affect the original function
+	stronger than call, apply, an_obj.bound_function()! => this won't change
+	cannot rebind
+	useful for setTimeout(object.method) => can avoid losing object being this with bind
+	the new function does NOT have the properties of the original
+
+bind(null)
+	bind to the global object
 
 if call a function without an object, this:
 	- non strict: 	global object
@@ -1108,6 +1222,7 @@ new.target
 	within the function
 	if not called with new :	undefined
 	if called with new :		= the function
+
 
 
 Prototype
@@ -1146,6 +1261,7 @@ Object.assign(target, ...sources)
 
 Array.prototype.join.call(arguments)
 	method borrowing
+
 
 
 --- Primitive conversion ---
@@ -1271,15 +1387,64 @@ JSON.parse(str, reviver)
 --- timeout interval ---
 timerId = setTimeout(func, delay, arg1, arg2,...)
 timerId = setInterval(func, delay, arg1, arg2,...)
-	careful if func is slow : calls func every delay.
-	Do NOT wait for one call to be finished before waiting delay time.
 clearTimeout(timerId);
 
-creates a memeory leak : everything func refers to won't be GC'ed until clearTimeout is called
+this is the window object (Timer object in node)
 
-zero delay scheduling: delay == 0. wait for the current code to stop running before running rh
+zero delay scheduling: delay == 0. wait for the current code to stop running before running it
+
+careful: 
+- memory leak : everything func refers to (variables outside the function) won't be GC'ed until clearTimeout has been called
+
+- delay is NOT wait 'delay' amount of time after last execution before calling it again
+	it is : call func every 'delay'
+	problematic if the function is slow => short/no pause between calls
+	can be fixed by  rescheduling the calls ourself with setTimeout
+
+- can lose the this
+	setTimeout(object.method, 1000)
+	method will be called without the object. Wrong this.
+	fix with bind
 
 
+
+--- Regex ---
+new RegExp("pattern", "flags");
+/pattern/gmi
+
+flags
+i	case insensitive
+g	global, all matches not just the first
+m	multiline mode, ^ and $ match at beginning/end of line not just string
+
+str.match(regexp)
+	if g flag : array of matches (simple strings)
+	if no g flag: array representing a match (details on the match)
+		[0] = matched, [1] first group,..
+		length	number of indexes (result+groups)
+		index
+		input
+		groups ???
+	if not match: null !!! (g or no g)
+
+str.matchAll(regexp)
+	regexp must have the g flag
+	returns an iterable of objects representing a match
+	returns empty array if no match
+
+str.replace(regexp, replacement)
+	if no g :	replace first
+	if g: 		replace all
+	replacement accepts special value which will be replaced by part of the match
+
+aRegexp.test(string)
+	is there a match
+
+str.split(regexp)
+	returns array
+
+str.search(regexp)
+	position of first match or -1
 
 --- DOM ---
 <div id="foo">hello</div>
