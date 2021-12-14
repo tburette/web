@@ -4,22 +4,31 @@ negative index : like 0 or count from the end of the array/string?
 
 objects used as dictionary (no length, perfs, limited keys)
 
-???
-Symbol "The symbol type is used to create unique identifiers for objects"
-	https://javascript.info/types
-Symbol as key
-	"Bear in mind that enumerable properties are looped over by for...in loops, with the exception of Symbols. " https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable
-enumerable (and own) object
-	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties
-	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/propertyIsEnumerable
-get/set
-	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/get
-	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/set
-	(+ impact on https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign : "Therefore it assigns properties, versus copying or defining new properties. This may make it unsuitable for merging new properties into a prototype if the merge sources contain getters. ")
+o == 1 => not the number primitive conversion but the string one
+
+let proto = {
+    stomach: [],
+    eat(food) {
+      this.stomach.push(food); // changes proto.stomach)
+      this.stomach = [food]; // set stomach on the instance object)
+    },
+}
+instance = Object.create(proto); // or through a constructor
+
+var anywhere (at the end, if(false),..) in a function makes the variable local
+
+Array() same as new Array()
+Date() different from new Date() (str vs object)
+
+behaviour of str.match (type of value returned) depends on a flag of the regExp (g global)
+
+todo
+https://github.com/goldbergyoni/javascript-testing-best-practices/blob/master/readme-fr.md
+
+when: an own property vs from a prototype 
+
 weird comparison rules
 	https://javascript.info/comparison
-generator
-	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
 
 
 standard
@@ -179,6 +188,14 @@ non use strict : === 8, but Number("010") === 10
 Number(<something>)
 +a_string
 	convert to number (eg. a string)
+
+new Number(12) !== 12 
+typeof 12 => number
+typeof new Number(12) => object
+!!0 => false
+!!new Number(O) => true
+
+but Number(0) is the same as 0
 
 parseInt(str)
 parseInt(str, radix) // default 10
@@ -445,6 +462,7 @@ a = 11; // error
 function foo(){}
 	hoisted
 	in strict mode : function definition is block scoped : exists only within the block
+	in non-strict mode : function scoped
 
 variable name
 	first character:  letter, $, _
@@ -474,6 +492,13 @@ can be sparse
 	a = [];
 	a[10] = null;
 	a.length === 11
+fill(value)
+	fill array with value
+fill(value, start, end)
+	determine the part of the array to fill
+	doesn't add elements if start/end outside the size of the array
+	accepts negative value
+
 == on two arrays is always false unless it is the same array (like all objects)
 delete array[i]
 	sets element to undefined
@@ -719,7 +744,7 @@ outer: for(let i = 0; i < 10; i++) {
 
 for(let x = 0; x < 2; x++){};
 for(let x in obj){};
-	enumerable property names of objects
+	enumerable property names of objects (enumerable: true in descriptor)
 	included enumerable inherited properties
 	order of iteration
 		if key is string : order of property creation
@@ -951,6 +976,141 @@ length
 
 
 
+-- Callback --
+//simple callback
+aFunction(..., function(value){
+});
+
+//callback with error
+aFunction(..., function(error, value){
+	//no error : error null, value
+	//error:	 error, no value
+});
+
+to avoid callback hell:
+- put into separate (top-level) functions instead of imbricating
+  inconvenient : have to jump around the various functions to follow execution
+- promise
+
+
+
+-- Promise --
+new Promise(executorFunction);
+let aPromise = new Promise(function(resolve, reject){ // executor function
+	... // usually some asynchronous work
+	// single argument
+    resolve(1);
+    
+    // recommend returning an Error object (like throw)
+    // alternative : throw
+    reject(new Error("error x")); 
+})
+the executor function is run immediately (before returning the promise object)
+
+only the first resolve/reject has an impact on the listeners
+
+promise has a (internal, hidden) state : pending or settled(fulfilled/rejected)
+
+when there is a reject : the closest reject block catches it.
+
+a throw xxx in executor or a handler turns the result into a reject
+
+Can create custom "thenable" object : an object with a then function
+	will be treated like a native promise.
+	allows objects that can be used with the promise system without having them inherit from Promise
+let thenable = {
+    then(resolve, reject) {
+        resolve(2);
+    }
+}
+	typically they would be a full type created with a class or constructor
+
+handling promise result
+then()/catch()/finally()
+	blocking
+	can call multiple time on the same object(multiple subscribers)
+	can chain
+	they return a new Promise object each time
+
+.then()
+	if there is a chain: must return a value otherwise next handler will see undefined!!!
+	can return a value or a new Promise object!
+.catch()
+.finally()
+
+	
+aPromise.then(function(result){
+    // onfulfilled
+    console.log("fulfilled: " + result)
+},
+function(error){
+    // onrejected
+    console.log("rejected: " + error)
+});
+
+
+aPromise.catch(function(error){
+    console.log(error);
+})
+same as:
+aPromise.then(null, f);
+
+aPromise.finally(function(){
+	// no arg
+	// for cleanup
+})
+
+
+Promise.all
+	arg = array/iterable of promises
+		there can be regular values in the iterable as well
+	then : arg is an array (same size/order as the arg)
+	if rejection : first rejection is passed (others are ignored)
+
+Promise.allSettled
+	arg = array/iterable of promises
+	then : arg is an array of :
+		{ status: 'fulfilled', value: 1 },
+		{ status: 'rejected', reason: [Error: err msg] }
+	waits for all the promises to be settled
+
+Promise.race
+	arg = array/iterable of promises
+	returns the first settled promise
+
+Promise.any
+	arg = array/iterable of promises
+	returns the first fulfilled promise
+	if all are rejected : returns an AggregateError containing an errors array
+
+Promise.resolve(value)
+	creates a resolved promise from the passed value
+
+Promise.reject(error)
+	creates a rejected promise from the passed value
+
+
+promisification : turn a function accepting a callback into a function returning a promise
+
+fetchFromAPI : callback has two parameters: error, value
+function fetchFromAPIPromise(name) {
+    return new Promise((resolve, reject) => {
+        fetchFromAPI(name, (error, result) => {
+            if(error) reject(error);
+            else resolve(result);
+        });
+    });
+}
+
+fetchFromAPI : callback has single parameter: value (no error)
+function fetchFromAPIPromise(name) {
+    return new Promise((resolve, reject) => {
+        fetchFromAPI(name, resolve);
+    });
+}
+
+
+
 --- OO ---
 
 {}
@@ -1005,6 +1165,7 @@ Object.entries()
 	do not appear:
 		symbols
 		properties with flag writable: false
+		properties from prototype
 	(can get them with Reflect.ownKeys())
 
 for(let [key, value] of Object.entries(obj)){}
@@ -1035,7 +1196,11 @@ configurable: false
 	often combined with writable false otherwise can set writable back to true with Object.defineProperty
 
 
-Accessor descriptor : object describing a property (configurable, enumerable,...)
+property descriptor : object describing a property (configurable, enumerable,...)
+{value:x, writable: true, enumerable: true, configurable: true}
+	descriptor for a data descriptor
+{get: function(){}, set: function(v){}, enumerable: true, configurable: true}
+	descriptor for a accessor property
 
 Object.getOwnPropertyDescriptor(obj, propertyName)
 	returns a property descriptor : value + flags
@@ -1049,6 +1214,9 @@ Object.defineProperty(obj, propertyName, descriptor)
 	sets attribute
 	eg. Object.defineProperty(o, "a", {value: "hello", enumerable:false})
 	if creates a new property: missing flags are assumed false
+
+
+
 
 Object.defineProperties(obj, {
 	prop1: {...},
@@ -1074,6 +1242,7 @@ Object.isFrozen(obj)
 Object.freeze(obj)
 	cannot add/remove/change any property.
 	Sets configurable: false, writable: false on all properties
+
 
 
 data property : usual property
@@ -1192,7 +1361,9 @@ if call a function without an object, this:
 	- non strict: 	global object
 	- strict: 		undefined
 
-Constructor
+
+
+-- Constructor --
 new aFunction()
 	aFunction is (used as) a Constructor
 	creates a new object, within the function 'this' is that object
@@ -1225,14 +1396,16 @@ new.target
 
 
 
-Prototype
+-- Prototype --
 object have prototype
 prototype can itself have a prototype
 attribute access looks up the prototype chain
 
-myobj = Object.create(a_prototype);
+myobj = Object.create(aPrototype);
 	associate a new object with a prototype
-	??? has a second argument propertiesObject (to define properties?)
+	aPrototype can be null (avoid default keys if we use it as a map)
+myobj = Object.create(aPrototype, propertiesObject);
+	propertiesObject, same as Object.defineProperties
 or
 function Constructor() {}
 Constructor.prototype = {
@@ -1242,9 +1415,86 @@ Constructor.prototype = {
     }
 }
 
-12 !== new Number(12)
-typeof 12 => number
-typeof new Number(12) => object
+Object.setPrototypeOf
+Object.getPrototypeOf(anObject)
+	gets/sets prototype of an object
+anObject.__proto__
+	deprecated
+	dangerous to have : people use user supplied values as keys
+
+
+AConstructor.prototype
+aDefaultPrototype.constructor
+anObject.constructor
+	because of the constructor property on its prototype.
+
+AConstructor.prototype = {};
+	!changing the default prototype
+	the constructor property on the new prototype object won't point to
+	AConstructor
+	{}.constructor = Object and not AConstructor
+	solution:
+	- add properties to the default prototype
+	- 	
+
+
+-- Prototype inheritance --
+'this' in the method of a descriptor in a prototype is the child object
+proto = {
+  foo: function(){return this} // child.foo() : this === child
+}
+child = Object.create(proto);
+child.foo(); //left part of the . dictated the this
+
+writing on an object doesn't affect the prototype
+proto : {a:1}, obj: {} (+its prototype is proto)
+obj.a = 666;
+proto : {a:1}, obj: {a: 666}
+
+deleting on an object doesn't affect the prototype
+proto : {a:1}, obj: {} (+its prototype is proto)
+delete obj.a;
+proto : {a:1}, obj: {} // no effect on the prototype
+
+exception : accessor descriptor (get/set) in the prototype
+reading/writing such property is actually a method call:
+obj.accessor = 1;
+actually does something like:
+protoOfObj.getAccessor(1)
+BUT this in the method is the object called and not the prototype
+
+let proto = {
+    get a() {
+        return this._a; // this is child
+    },
+    set a(value) {
+        this._a = value; // this is child
+    }
+}
+let child = Object.create(proto);
+child.a = 666; // set a()
+console.log(child.a); // get a()
+
+let proto = {
+    stomach: [],
+  
+    eat(food) {
+      this.stomach.push(food); // calls push on stomach of proto
+      this.stomach = [food]; // set stomach on obj to food
+    },
+    
+    set eat(food) {
+      this.stomach = [food]; // 
+    }
+  };
+ 
+let obj = Object.create(proto);
+obj.eat("apple");
+
+
+Builtins (Array, Number,..) have their own prototypes
+those prototypes (Array.__proto__,..) have a prototype : Object.__proto__
+
 
 Number.prototype.decuple = function() {
     return this*10;
@@ -1328,6 +1578,56 @@ confirm("msg")
 
 
 
+--- try catch ---
+try {
+    a;
+} catch(err) {
+} catch { // or
+    err.name;
+    err.message;
+    err.stack;
+    
+    //typical pattern : handle what we want, rethrow the rest
+    if(err instanceof SyntaxError){
+    	// handle
+    }else{
+    	throw err;
+    }
+}finally {
+    console.log("finally");
+}
+	watch out for block scope : what is declared in try isn't visible in catch/finally
+
+throw new Error("msg")
+	can technically throw anything
+	should throw something inheriting from Error
+
+try {
+    return 0;
+}finally {
+	// return in finally takes precedence over return
+	//swallows exceptions
+    return 2; 
+}
+
+function MyError(message=""){
+    this.name = "MyError";
+    this.message = message;
+}
+MyError.prototype = new Error();
+	custom exception
+    
+process.on("uncaughtException", function(err, origin){}
+	global handler (if exception was not caught)
+	node
+
+window.onerror = function(message, url, line, col, error) {
+	global handler (if exception was not caught)
+	browser
+	doesn't seem to work for exceptions created from the browser console
+	used to send those error to an error logging service
+	generally not used to show errors to user
+
 --- Global object ---
 window in browser
 global in node
@@ -1380,6 +1680,9 @@ JSON.parse(str, reviver)
 	reviver is a function(key, value)
 	convert the string value back into js representation
 	returning undefined = do not deserialize that property
+	this is the object that will be created
+		includes not yet handled properties, transformed properties
+		not the properties that have already been rejected for the current object
 	eg: dates
 
 
@@ -1419,7 +1722,7 @@ m	multiline mode, ^ and $ match at beginning/end of line not just string
 
 str.match(regexp)
 	if g flag : array of matches (simple strings)
-	if no g flag: array representing a match (details on the match)
+	if no g flag: array representing a single match (details on the match)
 		[0] = matched, [1] first group,..
 		length	number of indexes (result+groups)
 		index
@@ -1429,7 +1732,7 @@ str.match(regexp)
 
 str.matchAll(regexp)
 	regexp must have the g flag
-	returns an iterable of objects representing a match
+	returns an iterable of arrays representing a match
 	returns empty array if no match
 
 str.replace(regexp, replacement)
