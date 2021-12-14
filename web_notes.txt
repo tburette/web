@@ -715,7 +715,7 @@ tabindex="<number>"
 		maked page usable sooner
 	width=
 	height=
-	allowfullscreen
+	allowfullscreen (embedded videos)
 	sandbox
 		if present sandboxes the iframe.
 		allows adding specific permissions back (sandbox="x y z")
@@ -915,7 +915,9 @@ div
 [attr]
 	attribute selector
 	has attribute
+	attribute name match is case insensitive
 [attr=value]
+	value matching is case sensitive
 [attr="value"]
 	exact value
 	quote optional (needed if space,..)
@@ -1544,6 +1546,7 @@ list-style: <type> <image> <position>;
 
 
 transform: scale(1.5);
+	element must be block/inline-block
 	rotate
 	scale
 	skew skewX skewY
@@ -1733,8 +1736,8 @@ an element whose content is not affected by CSS. The representation of the conte
 can have intrinsic dimension set by its own content (not css properties or children)
 
 object-fit: x;
-	make a replaced element fit its html element
-	(does NOT fit an <img> with <div> container)
+	make a replaced element fit its html element (eg <img>)
+	(does NOT fit an <img> within <div> container)
 	fits the replaced element content (of a certain size) inside its html element (of a certain size)
 		=> html element needs a size
 	can use 100% (parent needs an extrinsec size)
