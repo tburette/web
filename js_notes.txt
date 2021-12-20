@@ -22,10 +22,14 @@ Date() different from new Date() (str vs object)
 
 behaviour of str.match (type of value returned) depends on a flag of the regExp (g global)
 
+return in an executor (new Promise(xxx)) does nothing (does not turn the promise into a fulfilled promise)
+yet return in handler does
+yet throw in handler does settle the promise into a rejected one
+
+(node) use strict or not depending on an external package.json file
+
 todo
 https://github.com/goldbergyoni/javascript-testing-best-practices/blob/master/readme-fr.md
-
-when: an own property vs from a prototype 
 
 weird comparison rules
 	https://javascript.info/comparison
@@ -74,7 +78,8 @@ babel
 Introduced in EC5 (2009), backward incompatible changes
 at beginning of script
 at beginning of function
-??? automatically enabled by modules and classes?
+automatically enabled by modules and classes?
+! node : if package.json has "type": "module" code executed strictly even if no "use strict", class,... !
 
 ;
 always ; recommended
@@ -230,10 +235,10 @@ BigInt
 	BigInt(1) == 1	// yes (also <, <=,...)
 	BigInt(1) === 1 // false
 	
-	can use * + / ...
+	can use * + / < > ...
 	/ rounds toward zero
-	cannot use with Math.xxx
-
+	cannot use with Math.xxx, +aBigInt
+	
 
 
 bitwise operators
@@ -574,7 +579,12 @@ let  [a, , b] = arr
 	array destructuring
 	any iterable on the right side
 
+
+
 -- Iterable ---
+Symbol.iterator property is a function returning an object with next()
+can be used in for..of
+
 objectThatMustBeIterable[Symbol.iterator] = function() {
     return {
         next() {
@@ -583,6 +593,20 @@ objectThatMustBeIterable[Symbol.iterator] = function() {
         }
     };
 };
+
+can simplify with a generator function : 
+objectThatMustBeIterable[Symbol.iterator] = function*() {
+    yield 1;
+    yield 2;
+}
+or just
+let o = {
+    *[Symbol.iterator](){
+        yield 1;
+        yield 2;
+    }
+};
+
 
 Can make a self-iterable
 range[Symbol.iterator] = function() {
@@ -594,13 +618,72 @@ range.next = function() {
 };
 	downside : only one iteration possible
 
-Manually interating :
+Manually interacting :
     iterator = iterable[Symbol.iterator]();
     while(true){
         let result = iterator.next();
         if(result.done) break;
         console.log(result.value)
     }
+
+
+
+-- Asynchronous iterable ---
+get elements one by one asynchronously
+= iterable + promise
+like normal iterable but:
+- [Symbol.asyncIterator] 			instead of [Symbol.iterator]
+- next() must return a promise 		instead of any value
+  (next can be await to simplify)
+- for await..of 					instead of for..of
+
+let range = {
+    from: 1,
+    to: 5,
+
+    [Symbol.asyncIterator]() {
+        return {
+            current: this.from,
+            to: this.to,
+
+            next() {
+                return new Promise(resolve=>{
+                    if(this.current >= this.to){
+                        resolve({done: true});
+                        return;//?
+                    }
+                    setTimeout(()=>{
+                        resolve({done: false, value: this.current++})
+                    }, 500);
+                });
+            }
+        };
+    }
+}
+	can simplify with async generator
+
+can use async generator to make async iterable
+= iterable + promise + generator
+
+let range = {
+  from: 1,
+  to: 5,
+
+  // this line is same as [Symbol.asyncIterator]: async function*() {
+  // async to return Promise
+  // * to handle the iteration
+  async *[Symbol.asyncIterator]() {
+    for(let value = this.from; value <= this.to; value++) {
+
+      // make a pause between values, wait for something
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      yield value;
+    }
+  }
+};
+for await (let value of range)console.log(value);
+
 
 
 Array like object
@@ -965,14 +1048,109 @@ theFunction(...args){}
 a function is an object. It can have properties
 name
 	name of the object
-foo = function(){] //foo.name === "foo"
-obj.prop = function(){] //obj.prop.name === "prop"
+foo = function() {} //foo.name === "foo"
+obj.prop = function() {} //obj.prop.name === "prop"
 	contextual name
 	if no name : uses name of variable it is assigned to!
 array.push(function(){}); //array.pop().name === "" got em!
 
 length
 	number of parameters
+
+
+
+--- generator ---
+function* gen() {
+	yield 1;
+	yield 2;
+}
+function *gen() {} // also works but not used
+
+returns a generator object which has a next() method that returns { value:x, done:y} objects
+lazily executed : function doesn't start until next() of generator object is called
+
+values returned by successive next(): 
+eg.: yield 1; yield2;
+{ value: 1, done: false }
+{ value: 2, done: false }
+{ value: undefined, done: true }
+
+eg.: yield 1; return 2;
+{ value: 1, done: false }
+{ value: 2, done: true } // won't appear in a for..of
+{ value: undefined, done: true }
+	return value does not show up in for..of!
+
+cannot call yield from a function or arrow function
+
+throwing an exception in the generator throws the exception in the caller
+
+function* generateSequences() {
+    yield* generator(0, 10);
+    yield* [10, 11, 12];
+}
+	generator composition
+	works with generator and iterable
+
+function* gen() {
+    let valueFromSecondNext = yield "first yield value";
+    console.log(valueFromSecondNext); // "value passed to first yield"
+}
+let g = gen();
+// do not pass value to first next
+console.log(g.next()); // { value: "first yield value", done: false }
+console.log(g.next("value passed to first yield"));  
+
+g.throw(new Error("msg"));
+	can pass exceptions
+	if exception isn't caught in the generator it is thrown (back) in the caller
+
+g.return(value);
+	stops the generator (done is true from now on)
+	value will be the value of the object returned by next()
+
+can emulate generator with a function returning a function:
+function pseudoGen() {
+  let value = 0;
+  return function() {
+    return value++;
+  }
+}
+let g = pseudoGen();
+g();
+but will not have the nice features: for..of, yield*, g.return,...
+
+
+--- async generator ---
+1)
+//async simplifies use of Promise
+async function async(){
+    return 1;
+}
+async().then(resolve => {
+    console.log(resolve);
+})
+console.log(await async());
+
+
+2)
+//generator function simplifies iteration (Symbol.iterator)
+function* gen() {
+    yield 1
+    yield 2
+}
+for(let v of gen())console.log(v);
+
+
+1+2 = 
+//async generator = async + generator
+async function* asyncGen() {
+    yield 1;
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    yield 2;
+}
+for await(let v of asyncGen())console.log(v);
+result = await genOjbect.next()
 
 
 
@@ -1000,6 +1178,7 @@ let aPromise = new Promise(function(resolve, reject){ // executor function
 	... // usually some asynchronous work
 	// single argument
     resolve(1);
+    return x; // NO! does not settle the promise
     
     // recommend returning an Error object (like throw)
     // alternative : throw
@@ -1009,13 +1188,16 @@ the executor function is run immediately (before returning the promise object)
 
 only the first resolve/reject has an impact on the listeners
 
+if return in the executor : handlers will never run, promise will never settle
+
 promise has a (internal, hidden) state : pending or settled(fulfilled/rejected)
 
-when there is a reject : the closest reject block catches it.
+when there is a reject : the closest reject block catches it (catch or then(null,xxx).
 
 a throw xxx in executor or a handler turns the result into a reject
 
 Can create custom "thenable" object : an object with a then function
+	can be returned by a handler
 	will be treated like a native promise.
 	allows objects that can be used with the promise system without having them inherit from Promise
 let thenable = {
@@ -1034,7 +1216,7 @@ then()/catch()/finally()
 
 .then()
 	if there is a chain: must return a value otherwise next handler will see undefined!!!
-	can return a value or a new Promise object!
+	can return a new Promise object or a value (will turn into a promise)
 .catch()
 .finally()
 
@@ -1058,6 +1240,19 @@ aPromise.then(null, f);
 aPromise.finally(function(){
 	// no arg
 	// for cleanup
+})
+
+
+if a rejection promise is unhandled it is printed in the console.
+Can catch them:
+window.addEventListener('unhandledrejection', function(event) {
+  // the event object has two special properties:
+  alert(event.promise); // [object Promise] - the promise that generated the error
+  alert(event.reason); // Error: Whoops! - the unhandled error object
+});
+
+process.on("unhandledRejection", function(reason, promise){
+    console.log("!!!", reason, promise);
 })
 
 
@@ -1109,6 +1304,44 @@ function fetchFromAPIPromise(name) {
     });
 }
 
+
+
+
+--- async await ---
+async
+async function f() {
+    return 1;
+}
+	the function always return a Promise
+	return value wrapped in a resolved promise
+	or thrown exception wrapped in a rejection promise
+like:
+function f() {
+	return Promise.resolve(1);
+}
+
+async function f() {
+  throw new Error("msg");
+}
+like:
+async function f() {
+  return await Promise.reject(new Error("msg"));
+}
+
+await
+let result = await f();
+let result = await aPromise;
+blocks until the promise is settled then returns the value
+only works inside async functions 
+works globally (not always?)
+works on thenable objects
+
+handle rejection:
+try{
+    let v = await p2;
+}catch(err){
+    console.log(err);
+}
 
 
 --- OO ---
@@ -1514,6 +1747,275 @@ Array.prototype.join.call(arguments)
 
 
 
+--- class ---
+class MyClass {
+    constructor(name) {
+        this.name = name; // in the object
+        console.log("constructor")
+        //like constructor function : implicit this or explicitly return object
+        return {}; 
+    }
+
+    myMethod() { // in the prototype
+        console.log(this.name);
+        this.otherMethod(); // call another method
+        return 0;
+    }
+    
+    get name() { // in the prototype
+	    return this.name;
+	}
+	set name() {}
+
+	[computerName](){} // in the prototype
+	
+	//class field
+	//class field initialized before the constructor() runs
+	xyz = 123; // in the object
+	[computerName] = 123; // in the object (class property)	
+}
+typeof MyClass === 'function'
+MyClass = MyClass.prototype.constructor
+	Creates a MyClass function whose body is the constructor
+	put the methods in the class's prototype
+	like a prototype/function based type
+
+let MyClass = class {...}
+let MyClass = class User {...} //User visible inside the class only
+	class expression
+	can create classes dynamically (eg. class returned by function
+
+differences from prototype/function based:
+- must call with new
+	MyClass() doesn't work
+- string reprensentaiton different
+- methods non enumerable by default
+  like an implicit : Object.defineProperty(MyClass.prototype, "myMethod", {enumerable: false});
+- all code within a class uses strict
+
+
+aMethod() {
+    setTimeout(() => this.hide(), 1000);   // ok (arrow functions share this)
+    setTimeout(function() {this.hide()}, 1000); //SyntaxError
+}
+
+static property and method : same as assigning to the class
+class User {
+    static xxx = "xxx";
+}
+User.xxx = "xxx";
+
+static method:
+class User {
+    static staticMethod() {
+        console.log(this === User);
+    }
+}
+User.staticMethod();
+Just like doing:
+User.staticMethod = function() {
+    console.log(this === User);
+}
+	except here this is the global object
+
+cannot access static fields/methods through an instance
+
+
+instance instanceof classOrConstructorFunction
+	goes up the prototype chain of the instance
+	check if one of those prototype is the prototype of the  class or constructor
+	
+
+SomeClass.prototype = xxx
+	affects instanceof! (but not the objects created before)
+
+
+class A {
+	static [Symbol.hasInstance](obj) {
+	  // return true or false;
+	}
+}
+xxx instanceof A // the static method will be called
+	instead of using the prototype chain, the static method is used
+	result of the method is the final result of instanceof. 
+	if a superclass of A has an Symbol.hasInstance (and A and the classes between A and it doesn't), it will be called
+
+
+[Symbol.toStringTag] =  "Xxx"
+	Used by the builtin toString
+	instead of [object Object] => [object Xxx]
+
+
+-- protecting fields / private --
+_xxx convention : private, do not touch from the outside
+protect field access:
+class AClass {
+  _waterAmount = 0;
+  set waterAmount(value) { // accessor property to protect
+    if (value < 0) {
+      value = 0;
+    }
+    this._waterAmount = value;
+  }
+  get waterAmount() {
+    return this._waterAmount;
+  }
+}
+
+read-only field:
+class AClass {
+	constructor(power) {
+	  this._power = power;
+	}
+	get power() {
+	  return this._power;
+	}
+}
+
+private field and methods
+enforced by the language itself
+!! recent (2021)
+!! NOT visible in subclasses!
+!! cannot access through this['#name']
+class AClass {
+  // a private field must be declared at the class level before it can
+  // be used within a a method (this.#x)
+  #privateField = 0;
+  #privateMethod() {}
+  
+  // access only within the class : this.#privateField, this.#privateMethod()
+}
+aClassInstance.#privateField = 0; // will fail
+aCLassInstance.#privateMethod();  // will fail
+
+
+
+-- inheritance --
+single inheritance only (but mixin possible)
+
+class Rabbit extends Animal {}
+	inheritance
+	sets Rabbit.prototype's prototype to Animal.prototype
+class AClass extends xxx {} => xxx can be anything that returns a class (function,...)
+
+super.method()
+	call method in parent
+
+//constructor in a subclass : 
+constructor(name) {
+    super(name) 
+    this.x = "x";
+}
+	must call super()
+	super() must be called before using this
+	reason : the object created must be the one from above (to be set up correctly prototype wise)
+
+constructor(...args) {
+    super(...args)
+}
+	the default constructor does this
+
+
+A constructor in a class that inherits from another class must retrieve the object it will work on (and return) from the superclass's constructor
+Consequences:
+- must call super() (to get the object)
+- The class fields of a class are only initialized after super() has been called in the constructor. (need the object before we can initialize the fields)
+
+In a constructor the class fields of the super classes and the current class are initialized but not the one of the subclasses
+class Animal {
+    name = 'animal';
+    roar()
+    constructor() {
+        console.log(this.name); //prints animal
+    }
+}
+class Rabbit extends Animal {
+    name = 'rabbit';
+}
+
+BUT the methods of the subclasses are available
+class Animal {
+    name = 'animal';
+    say(){
+        console.log(this.name)
+    }
+    constructor() { // 1) constructor runs
+    				//    class fields of Animal initialized but NOT Lion
+        this.say(); // 2) say of Lion called 
+    }
+}
+class Lion extends Animal {
+    name = 'lion';
+    cry = "roars!"
+    say() {
+        console.log(this.name, this.cry); // 3) prints animal undefined
+    }
+}
+new Lion()
+	undefined because : 
+		parent constructor calls overridden method in subclass
+		class fields not yet initialized in subclass
+	=> careful in constructor when calling methods!
+
+there is some magic in methods (defined in class and plain objects) to make super() work as expected
+hidden [[HomeObject]] property so that super() points to the right object (in the inheritance tree).
+
+anotherObject.aFunction = object.aMethod;
+anotherObject.aFunction()
+	will break if aMethod has super()
+
+
+- two [[prototype]] chains -
+class Animal {}
+class Rabbit extends Animal {}
+
+Prototype chain for instances/prototype objects:
+console.log(Object.getPrototypeOf(Rabbit.prototype) == Animal.prototype);
+a prototype can have a prototype : the parent prototype
+	makes inheritance work
+	obj.xxx if not found in obj then go to obj's prototype then obj's prototype prototype...
+
+Prototype chain for classes:
+Classes have also their prototype chain!
+Makes static work with inheritance
+console.log(Object.getPrototypeOf(Rabbit) == Animal);
+
+class Rabbit {}
+class Rabbit extends Object{}
+	difference: with extends static methods of object work on Rabbit
+	eg. Rabbit.getOwnPropertyDescriptor
+	because : extends sets up the prototype chain _on the classes_ (aka functions)
+
+built-in objects (Array, Map,..) have the first chain but not the second
+Object.xxx not available in Array.xxx
+
+
+- built-in inheritance -
+Can inherit from built-in types
+class PowerArray extends Array {
+	...
+}
+
+aPowerArray.filter/map/... => type of array returned will be PowerArray!
+those methods check the type of the object when creating a new one
+
+static get [Symbol.species]() {
+  return Array;
+}
+	within a class that inherits from a built-in type
+	can specify which class will be used when filter/map/... create a new object
+
+
+-- mixin --
+Inject behaviour into a class
+let someMixin = {
+  // methods here
+}
+
+class SomeClass {}
+Object.assign(SomeClass.prototype, someMixin);
+
+
 --- Primitive conversion ---
 no operator overloading (redefine '+' operator in obj1 + obj2)
 but can control (some) conversions of obj (to string/number/default)
@@ -1616,7 +2118,16 @@ function MyError(message=""){
 }
 MyError.prototype = new Error();
 	custom exception
-    
+  
+class FormatError extends SyntaxError {
+    name = this.constructor.name;
+    constructor(...params) {
+        super(...params)
+    }
+}
+	better custom exception
+	can add parameters to the constructor : additional data
+  
 process.on("uncaughtException", function(err, origin){}
 	global handler (if exception was not caught)
 	node
@@ -1642,6 +2153,166 @@ console.log(foo);
 	useful for polyfill
 
 
+
+--- modules ---
+Will see ES modules
+other systems:
+- AMD
+- CommonJS (node.js default)
+  require()
+  default on node. 
+
+Node:
+to use ES modules in node:
+- use .mjs extension
+- "type": "module" in package.json
+
+Otherwise : SyntaxError: Cannot use import statement outside a module
+
+Browser:
+to use ES modules in browser:
+Must use type="module" in the <script>
+<script src="a.js" type="module"></script> //
+<script type="module">...</script> //
+
+Otherwise : SyntaxError: Cannot use import statement outside a module
+
+
+only runs the code of a module once, even if imported multiple times
+
+Changes to module compared to standard script:
+- a module has its own top-level scope
+  (can still share data : import/export or global object)
+- this is undefined in the top-level
+- can import export
+- a module is always in strict mode
+- import.meta contains info about the module
+	import.meta.url
+
+browser specific:
+- module <script> are always deferred
+	asynchronous load
+	runs in order before DOMContentLoaded
+- defer behaviour works on inline script!
+- can use async attribute on inline <script> if it is type="module"
+- external <script>s for the same src url : run only once
+- requires CORS if src is cross origin
+
+bare module?
+
+usually don't mix named and default exports
+
+
+-- named export/import --
+export
+export function xxx(){}
+export class Xxx {}
+export let xxx = ...;
+export const xxx = ...;
+	export during declaration
+
+...
+export {sayHi, xxx};
+export {xxx as yyy};
+	export apart from declarations
+
+import
+import {xxx} from './module.js'
+import {xxx as yyy} from './module.js'
+
+import * as mod from './aModule.js'
+	import all
+	mod.xxx
+	avoid:
+		prevent bundler optimizations (remove unused dependencies)
+		longer names
+		easier to read/refactor
+
+-- default export/import --
++ many small modules, only one thing per module easier to understand
+- multiple imports can use multiple names
+export default function foo(){}
+export default aVariable; // cannot do export default let aVariable = 1; two lines required
+export default class {}
+export default 123;
+	name not required for default export
+
+export {xxx as default, yyy}
+
+
+import module from './module.js'
+	if export default used
+	rule : 	name of variable is the name of the module
+			avoids importing multiple things under different names
+
+import * as user
+	if default : user.default
+
+
+-- export something we import --
+useful for facade, public interface of a package
+elements NOT available in current file (sayHi, User are not available)
+
+export {sayHi} from './say.js'
+	named export
+export {default as User} from './user.js'
+	exports the default
+
+export * from './module.js'
+	export everything named
+	does not export the default
+	to export default : see above
+
+-- dynamic import --
+static imports : cannot choose file name dynamically, cannot import conditionnaly
+dynamic import : can choose file name, can import conditionnaly
+import()
+	returns a promise containing the import
+import(modulePath)
+  .then(obj => obj is the module object)
+
+let {hi, bye} = await import(moduleName);
+
+let obj = await import('./say.js');
+let say = obj.default;
+or:
+let {default: say} = await import('./say.js');
+
+
+
+--- eval ---
+eval(code as string)
+
+let value = eval(...)
+	value is the value of the last statement
+
+eval'ed code runs in non strict mode by default
+to run in strict mode : eval("\"use strict\"; ...);
+
+can see/set variable of the environment where eval() is called
+(use variable, change them)
+bad programming practice
+fail with minifier
+
+non use strict (parent code):
+	can create new variables => visible in context where called
+
+use strict (parent code):
+	can create new variables => not visible in context where called
+	(can still access/change existing variables)
+
+window.eval
+global.eval
+	the context is the global object
+
+function foo() {
+    global.eval("aaa = 1;");
+    console.log(global.aaa); // 1
+    console.log(aaa); // 1
+}
+foo();
+
+consider new Function(code) instead
 
 --- JSON ---
 RFC4627
@@ -1766,4 +2437,7 @@ str.search(regexp)
     https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
     https://html.spec.whatwg.org/multipage/window-object.html#named-access-on-the-window-object
 
+
+
+--- window ---
 

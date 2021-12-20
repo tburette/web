@@ -159,6 +159,7 @@ no async/defer attribute
 
 async and defer attributes
 	are for external scripts only
+		unless type="module" is used (makes the script defer, can make it async by also adding the async attribute)
 	allows loading parallel to parsing the HTML
 	avoids blocking parsing the html document
 	
