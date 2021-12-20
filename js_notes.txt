@@ -34,6 +34,8 @@ https://github.com/goldbergyoni/javascript-testing-best-practices/blob/master/re
 weird comparison rules
 	https://javascript.info/comparison
 
+srcset (image resolution switching)
+
 
 standard
 last published:
@@ -2421,6 +2423,70 @@ str.search(regexp)
 	position of first match or -1
 
 --- DOM ---
+Document Object Model
+object representation of document
+
+There also is the BOM (browser related objects)
+There also is the builtin js APIs
+
+types of nodes : 
+- element node
+- text node
+	contains only text
+	no chidren (always leaf)
+- comment node
+- document node (the access point)
+... (12 types in all https://dom.spec.whatwg.org/#node )
+
+putting nodes after body : automatically moved to the end of body
+
+html and body nodes are always generated
+
+<x>
+ <y>
+ 	=> text node containing the newline + space between x and y!
+	there are text nodes for new lines and space between elements but they are not shown in browser tools
+	xxx.childNodes lists them
+
+document is the parent of
+	document.doctype
+	document.documentElement (html)
+
+html is the parent of 
+	document.head (shortcut)
+	document.body (shortcut)
+
+from a node, access to other nodes:
+parentNode
+	parentElement is identical except html.parentElement is null.
+	reason : document is not an element node
+
+xxxElementxxx means the nodes of type element only (no text, comment,...)
+
+previousSibling previousElementSibling
+nextSibling nextElementSibling
+
+firstChild firstElementChild
+lastChild lastElementChild
+childNodes (all types of nodes)
+children (elements nodes)
+
+DOM collections:
+coming eg. from childNodes
+- dynamic (changes reflected in the collection)
+- not an array but iterable and indexable
+
+
+
+--- dev tools ---
+$0 in console
+	last element selected
+
+inspect(aDOMNode)
+	selects/inspects the element
+
+
+--- Named access on the Window object ---
 <div id="foo">hello</div>
 <script>
     foo.textContent = "new content";
@@ -2440,4 +2506,13 @@ str.search(regexp)
 
 
 --- window ---
+in browsers the window object is
+- the global object
+- the way to control the browser
+
+BOM Browser Object Model
+represents objects to interact with the browser
+(except the document itself which is the DOM).
+eg.: location, navigator,...
+
 
