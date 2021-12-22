@@ -80,6 +80,12 @@ boolean attribute
 	absent = false
 	e.g. checked disabled defer async 
 
+[data-xxx]
+	custom data attribute
+	name starts with data-
+	allows to put our own data in elements
+	typically used in javascript
+
 <!-- comment -->
 
 Entity
@@ -403,6 +409,10 @@ pseudo-classes:
 	has the focus (tab)
 :active
 	being clicked on
+:not
+	elements that do not match a selector
+	:not(p)
+	div:not(.fancy)
 
 ! careful in the order if use multiple 
 a {}
@@ -1406,6 +1416,7 @@ font-family font_name, alternative_font, generic_fallback_font;
 font-style: italic;
 
 line-height: 1;
+	distance between lines of text
 
 letter-spacing:;
 word-spacing:;
