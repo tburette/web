@@ -763,7 +763,7 @@ new Set()
 new Set(iterable)
 add(value)
 delete(value)
-has(value)
+has(value)	// NOT in
 clear()
 size
 
@@ -1818,7 +1818,7 @@ Just like doing:
 User.staticMethod = function() {
     console.log(this === User);
 }
-	except here this is the global object
+	except here staticMethod is enumerable
 
 cannot access static fields/methods through an instance
 
@@ -1884,6 +1884,11 @@ class AClass {
   // be used within a a method (this.#x)
   #privateField = 0;
   #privateMethod() {}
+  
+  constructor() {
+  	//SyntaxError exception thrown
+    this.#fieldNotDeclaredAtClassLevel = "xxx";
+  }
   
   // access only within the class : this.#privateField, this.#privateMethod()
 }
@@ -2422,6 +2427,8 @@ str.split(regexp)
 str.search(regexp)
 	position of first match or -1
 
+
+
 --- DOM ---
 Document Object Model
 object representation of document
@@ -2448,6 +2455,75 @@ html and body nodes are always generated
 	there are text nodes for new lines and space between elements but they are not shown in browser tools
 	xxx.childNodes lists them
 
+
+-- DOM objects --
+                    ┌───────────────┐
+                    │ EventTarget   │
+                    └──────▲────────┘
+                           │
+                    ┌──────┴────────┐
+       ┌───────────►│     Node      │◄─────────────┐
+       │            └───────────────┘              │
+       │                   ▲                       │
+       │                   │                       │
+┌──────┴────────┐   ┌──────┴────────┐      ┌───────┴───────┐
+│     Text      │   │   Element     │      │    Comment    │
+└───────────────┘   └───────────────┘      └───────────────┘
+                           ▲
+                           │
+                    ┌──────┴────────┐
+        ┌──────────►│ HTMLElement   │◄─────────────┐
+        │           └───────────────┘              │
+        │                  ▲                       │
+        │                  │                       │
+┌───────┴────────┐  ┌──────┴────────┐       ┌──────┴──────────┐
+│HTMLInputElement│  │HTMLBodyElement│       │HTMLAnchorElement│
+└────────────────┘  └───────────────┘       └─────────────────┘
+
+EventTarget
+	addEventListener
+	removeEventListener
+
+Node
+	parentNode, childNodes, firstChild,...
+	nodeType
+	nodeName
+	textContent
+
+
+Element
+	tagName
+	children
+	nextElementSibling,...
+	id
+	className
+	querySelector
+	innerHTML
+	hidden
+
+HTMLElement
+
+HTML<Type>Element
+html attribute => DOM element property is not a one-to-one mapping
+
+
+
+nodeType
+	old school way to determine type of DOM Node
+	number
+	Node.ELEMENT_NODE(1), Node.TEXT_NODE(3), Node.COMMENT_NODE(9), 
+
+nodeName
+	string of the name
+	always uppercase
+	for any node (including text, comment,..)
+tagName
+	for Element
+	tag as-in HTML tag
+	(not on document object which is a node)
+
+
+-- navigation properties --
 document is the parent of
 	document.doctype
 	document.documentElement (html)
@@ -2456,11 +2532,14 @@ html is the parent of
 	document.head (shortcut)
 	document.body (shortcut)
 
+navigation attributes
 from a node, access to other nodes:
 parentNode
 	parentElement is identical except html.parentElement is null.
 	reason : document is not an element node
 
+
+-- navigation methods --
 xxxElementxxx means the nodes of type element only (no text, comment,...)
 
 previousSibling previousElementSibling
@@ -2473,10 +2552,101 @@ children (elements nodes)
 
 DOM collections:
 coming eg. from childNodes
-- dynamic (changes reflected in the collection)
 - not an array but iterable and indexable
+- most often dynamic (changes in DOM reflected in the collection object)
+  sometimes static (eg. querySelectorAll)
 
 
+document.getElementbyId
+(also id as global var, see below)
+
+document/element.querySelector(cssSelector)
+
+document/element.querySelectorAll(cssSelector)
+	static list
+
+document/element.getElementByTagName	element of a certain type (div,..)
+document/element.getElementByClassName
+document.getElementsByName				elements with the given value for the name attribute (not used anymore)
+	these are replaced by querySelector
+
+element.matches(cssSelector)
+	does the element match the given css-selector
+
+element.closest(cssSelector)
+	nearest ancestor (including the element itself) matching the selector
+
+element.contains(elementB)
+	does element contain or is elementB
+
+
+-- element properties --
+innerHTML
+	HTML in the element as a string
+	not the HTML of the element itself
+	can change the HTML content!
+		xx.innerHTML = '...'
+		modifies the object
+		rewrites everything.
+		Lose state, text input, events,..
+		scripts inserted are NOT executed
+
+outerHTML
+	includes the HTML of the element itself
+	can change the element
+		doesn't change the content
+		replaces the element with a new one!
+		old object is still around but not attached
+			aDiv.outerHTML = '...';
+			aDiv// still here with the old content
+
+textContent
+	text inside (no tags)
+
+nodeValue data
+	for types other than Element (comment, window.document)
+
+value
+	value inputted in input, select, textarea,...
+
+hidden
+	hidden = true
+		sets the [hidden] attribute on the element
+	remove element from the DOM (changes layout)
+
+
+-- HTMLElement properties / HTML attributes --
+attributes in the html maps to properties on objects of the DOM
+
+two ways to access the attributes set on html elements from the html object:
+- through specific properties (eg. id="x" => anObj.id)
+- through attribute api below (getAttribute,..)
+
+properties may not have the same value as the attribute:
+- checked: converted to boolean
+- href: full URL
+- value: current value set by user instead of attribute value
+
+
+hasAttribute(name)
+getAttribute(name)
+setAttribute(name, value)
+removeAttribute(name)
+	case insentive name!
+	value is always string
+
+attributes
+	array of attributes
+	live
+
+<... data-xxx = "...">
+	custom data attribute
+	add data to html elements
+	alternative to classes
+	guaranteed never to clash with standard properties
+	typically used by javascript
+	accessible from elem.dataset
+	converts name : [data-abc-def] <=> dataset.abcDef
 
 --- dev tools ---
 $0 in console
@@ -2485,13 +2655,21 @@ $0 in console
 inspect(aDOMNode)
 	selects/inspects the element
 
+console.log(DOMElement)
+	shows DOM tree
+console.dir(DOMElement)
+	shows properties (like an object)
 
---- Named access on the Window object ---
+
+
+--- ID-named global variable ---
+BAD
 <div id="foo">hello</div>
 <script>
     foo.textContent = "new content";
     window.foo.textContent = "new content";
 </script>
+    id-named global variable / variable on the window access
     Named access on the Window object
     all nodes with id are added to the window object
     (and thus globally available)
