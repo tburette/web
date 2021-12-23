@@ -406,7 +406,7 @@ pseudo-classes:
 :hover
 	being pointed-to at
 :focus
-	has the focus (tab)
+	has the focus (tabbed)
 :active
 	being clicked on
 :not
@@ -699,7 +699,7 @@ if multiple checkbox checked :
 
 
 tabindex="<number>"
-	allows the element to be focused on
+	allows the element to be focused on (tabbed)
 	including ones usually not focusable(div,...)
 	(x:focus)
 	also determines in which order tabbing select elements, based on value:
