@@ -2429,6 +2429,53 @@ str.search(regexp)
 
 
 
+--- dev tools ---
+$0 in console
+	last element selected
+
+inspect(aDOMNode)
+	selects/inspects the element
+
+console.log(DOMElement)
+	shows DOM tree
+console.dir(DOMElement)
+	shows properties (like an object)
+
+
+
+--- ID-named global variable ---
+BAD
+<div id="foo">hello</div>
+<script>
+    foo.textContent = "new content";
+    window.foo.textContent = "new content";
+</script>
+    id-named global variable / variable on the window access
+    Named access on the Window object
+    all nodes with id are added to the window object
+    (and thus globally available)
+	Crazy (bad) because
+	- it can clash with window's default properties
+		(window's built-in properties win in that case)
+	- it can clash with global variables set in js
+		(global var wins in that case)
+    https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
+    https://html.spec.whatwg.org/multipage/window-object.html#named-access-on-the-window-object
+
+
+
+--- window ---
+in browsers the window object is
+- the global object
+- the way to control the browser
+
+BOM Browser Object Model
+represents objects to interact with the browser
+(except the document itself which is the DOM).
+eg.: location, navigator,...
+
+
+
 --- DOM ---
 Document Object Model
 object representation of document
@@ -2620,7 +2667,13 @@ attributes in the html maps to properties on objects of the DOM
 
 two ways to access the attributes set on html elements from the html object:
 - through specific properties (eg. id="x" => anObj.id)
+  actual value
 - through attribute api below (getAttribute,..)
+  value set on the HTML
+
+value set on the HTML may not match the actual value : 
+- css
+- changed by js
 
 properties may not have the same value as the attribute:
 - checked: converted to boolean
@@ -2648,49 +2701,147 @@ attributes
 	accessible from elem.dataset
 	converts name : [data-abc-def] <=> dataset.abcDef
 
---- dev tools ---
-$0 in console
-	last element selected
-
-inspect(aDOMNode)
-	selects/inspects the element
-
-console.log(DOMElement)
-	shows DOM tree
-console.dir(DOMElement)
-	shows properties (like an object)
 
 
+--- create / manipulate html ---
+document.createElement(tagName)
+document.createTextNode(text)
+document.createComment(text)
 
---- ID-named global variable ---
-BAD
-<div id="foo">hello</div>
-<script>
-    foo.textContent = "new content";
-    window.foo.textContent = "new content";
-</script>
-    id-named global variable / variable on the window access
-    Named access on the Window object
-    all nodes with id are added to the window object
-    (and thus globally available)
-	Crazy (bad) because
-	- it can clash with window's default properties
-		(window's built-in properties win in that case)
-	- it can clash with global variables set in js
-		(global var wins in that case)
-    https://stackoverflow.com/questions/3434278/do-dom-tree-elements-with-ids-become-global-variables
-    https://html.spec.whatwg.org/multipage/window-object.html#named-access-on-the-window-object
+node.cloneNode()
+	same as cloneNode(false)
+	clones a node
+	only the node itself, not its content
+node.cloneNode(true)
+	deep clone
+
+node.remove()
 
 
+-- add node to the DOM --
+anElement.append(node, node2) 
+prepend()
+before()
+after()
+replaceWith()
+	arg: node or string
+	one or multiple args
+	if string : will create a text node not an html one (escape)
+	can also be used to move an existing node
 
---- window ---
-in browsers the window object is
-- the global object
-- the way to control the browser
+anElement.insertAdjacentHTML(where, htmlString)
+	turns the string into html elements (like innerHTML)
+insertAdjacentText(where, text)
+	creates a text node
+insertAdjacentElement(where, element)
+	must be an element
+where
+	"beforestart"	before the element
+	"afterstart"	beginning of the element
+	"beforeend"		end of the element
+	"afterend"		after the element
 
-BOM Browser Object Model
-represents objects to interact with the browser
-(except the document itself which is the DOM).
-eg.: location, navigator,...
+
+parentElem.appendchild(node)
+parentElem.insertBefore(node, nextSibling)
+parentElem.replaceChild(newNode, oldNode)
+parentElem.removeChild(node)
+	old
+	returns the appended node
+
+document.write
+	old
+	only works when the page is loading (inline scripts)
+	if called after : erases all content
 
 
+
+new DocumentFragment()
+designed to contain nodes (can contain multiple roots)
+can use prepend, append on it
+can pass to prepend, append,... => will add the content
+alternative to an array of elements : x.append(...arrayOfNodes)
+
+
+
+--- class ---
+element.className
+	full class attribute as a string
+	read/write
+	(className not just class because class was reserved in js)
+
+element.classList
+	iterable, indexable list of classes
+x.classList.add(className)
+x.classList.remove(className)
+x.classList.toggle(className)
+x.classList.contains(className)
+	modify classes
+	! div.classList.add(null/undefined) => adds a class "null"/"undefined"!
+	! no empty string to add
+
+
+--- style ---
+elem.style
+	corresponds to the style attribute
+	! only the style attribute
+	doesn't know what is set through css
+	doesn't know what is computed
+	<xxx style="display:none">
+	attribute name modified intro property:
+		background-color => backgroundColor
+		(like custom data attribute)
+eg. elem.style.display = "none";
+
+elem.style.someAttribute = "";
+	remove and style as if we never set a value
+
+elem.style.cssText
+	full style attribute as a string	
+	read/write
+
+
+-- computed style --
+getComputedStyle(element)
+getComputedStyle(element, pseudo-element)
+	return an object similar to element.style
+	read-only
+	contains all the computed properties
+	actually the resolved values (xxx% => xxxpx)
+
+
+
+--- size ---
+values 0/null if 
+-not displayed (display:none, hidden=true)
+-not attached to the DOM
+
+prefer using these properties rather than getComputedStyle
+getComputedStyle:
+- affected by box-sizing
+- may be a value such as "auto" and not a size in px
+
+offsetParent
+	closest positioned parent
+	cf position: absolute
+offsetLeft offsetTop
+	offset to offsetParent
+
+offsetWidth offsetHeight
+	content+padding+border
+	outer width
+
+clientLeft clientTop
+	size of border left/top
+	also includes scrollbar (adds to the size of the border)
+
+clientWidth clientHeight
+	content+padding (not the scrollbar, margin)
+
+scrollWidth scrollHeight
+	useful in case of scrolling
+	not the size of the part visible but
+	the entire size of the element, including the one not visible due to scroll
+
+scrollTop scrollLeft
+	how much has been scrolled
