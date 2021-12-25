@@ -1923,6 +1923,12 @@ overflow: scroll;
 overflow: clip:
 	truncates
 	similar to hidden but something different about scroll bar (appear due to margin/padding ????)
+	
+body {
+    overflow:hidden
+}
+	prevents scrolling the page
+	scrollbar removed
 
 
 --- Flexbox ---

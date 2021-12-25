@@ -499,6 +499,12 @@ can be sparse
 	a = [];
 	a[10] = null;
 	a.length === 11
+	or
+	Array(11)
+	! some operations do not work on sparse array
+		let a = Array(3)
+		Array(3).map((_, i) => i);			// does nothing, no iteration
+		Array(3).fill().map((_, i) => i);	// works
 fill(value)
 	fill array with value
 fill(value, start, end)
@@ -2429,6 +2435,12 @@ str.search(regexp)
 
 
 
+
+
+
+
+
+
 --- dev tools ---
 $0 in console
 	last element selected
@@ -2807,7 +2819,7 @@ getComputedStyle(element, pseudo-element)
 	return an object similar to element.style
 	read-only
 	contains all the computed properties
-	actually the resolved values (xxx% => xxxpx)
+	the actual resolved values (xxx% => xxxpx)
 
 
 
@@ -2816,19 +2828,20 @@ values 0/null if
 -not displayed (display:none, hidden=true)
 -not attached to the DOM
 
-prefer using these properties rather than getComputedStyle
+prefer the properties below rather than getComputedStyle
 getComputedStyle:
 - affected by box-sizing
 - may be a value such as "auto" and not a size in px
 
 offsetParent
-	closest positioned parent
+	closest positioned parent (or body)
 	cf position: absolute
 offsetLeft offsetTop
 	offset to offsetParent
 
 offsetWidth offsetHeight
-	content+padding+border
+	content+padding+border (not the margin)
+	includes scrollbar if any
 	outer width
 
 clientLeft clientTop
@@ -2836,7 +2849,7 @@ clientLeft clientTop
 	also includes scrollbar (adds to the size of the border)
 
 clientWidth clientHeight
-	content+padding (not the scrollbar, margin)
+	content+padding (not the border, scrollbar, margin)
 
 scrollWidth scrollHeight
 	useful in case of scrolling
@@ -2845,3 +2858,35 @@ scrollWidth scrollHeight
 
 scrollTop scrollLeft
 	how much has been scrolled
+
+
+document.documentElement.clientHeight
+document.documentElement.clientWidth
+	size of the window
+	without the scrollbar
+		window.innerWidth window.innerHeight to get value with the scrollbar
+
+
+window.pageXOffset
+window.pageYOffset
+window.scrollX
+window.scrollY
+	current scroll position
+	read-only
+
+window.scrollTo(x,y)
+	scroll to a position
+
+window.scrollBy(x,y)
+	scroll relative to current scroll position
+
+elem.scrollIntoView()
+elem.scrollIntoView(true)
+	scroll element into view (top of the page)
+elem.scrollIntoView(false)
+	scroll element into view (bottom of the page)
+
+document.body.style.overflow = "hidden"
+document.body.style.overflow = ""
+remove scrollbar/scrolling
+restore it
