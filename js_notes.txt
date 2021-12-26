@@ -2890,3 +2890,96 @@ document.body.style.overflow = "hidden"
 document.body.style.overflow = ""
 remove scrollbar/scrolling
 restore it
+
+
+
+-- coordinates --
+two systems:
+-relative to the viewport (window)
+ aka client
+ changes when scrolling
+-relative to the document
+ aka page
+ not affected by scrolling
+
+same when no scrolling.
+when scrolling : 
+	window => changes (as content scroll through the window)
+	document => doesn't change
+
+
+elem.getBoundingClientRect()
+	returns an object with:
+		x y
+		width height
+		top bottom
+		left right
+	relative to the client : window
+	can be negative : scrolled past the element
+	can convert to page related coordinates by using window.pageYOffset !
+
+document.elementFromPoint(x, y);
+	most nested element at (x, y)
+	relative to client
+	(x, y)must be within the viewport
+
+
+
+--- Events ---
+<div onclick="js here">
+<div onclick="aJSFunction()"> //parens
+anElement.onclick = aFunction //no parens
+	only one listener can be attached
+	this is the element
+
+anElement.setAttribute('onclick', function (){}); 
+	doesn't work
+	value of setAttribute is a string
+
+elem.addEventListener(
+    "click", 						//event
+    callbackOrHandlerObject, 				//handler
+    {								//options
+        once: false,
+        capture: false,	// handler runs during the capture phase instead of the bubbling phase
+        passive: true, // cannot/will not prevent default
+    });
+elem.removeEventListener("click", fn)
+   	can add multiple listeners
+
+some events only work with addEventListener
+eg.: DOMContentLoaded
+
+handlers run in the order they where added
+
+callback function:
+	called a handler
+	this = the element (requires a function, doesn't work with arrow function)
+	first argument = Event object
+	always has an automatically created event variable containing the event
+		(as if the callback was wrapped in a function with an event argument)
+
+handler object
+	object with an handleEvent method that works like a callback function
+
+anEvent.type
+	type of event ('click',...)
+anEvent.currentTarget
+	element currently handling the event
+anEvent.target
+	element initially stated to handle the event
+anEvent.clientX
+anEvent.clientY
+	coordinates of the cursor
+	if applicable
+
+
+-- events --
+click		
+mousedown	
+submit		form
+keydown
+contextmeny	right-click
+touchstart
+touchmove
+
