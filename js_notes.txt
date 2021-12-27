@@ -2983,3 +2983,61 @@ contextmeny	right-click
 touchstart
 touchmove
 
+-- bubbling --
+event on an element?
+handlers of element run
+then handlers of parent
+then handlers of ancestors all the way up
+bubble up to document (sometimes window)
+
+most events bubble
+events that do not bubble:
+-focus
+
+eventObject.target
+	tells on which element the event happened
+
+this, eventObject.currentTarget
+	object with the handler currently running
+
+
+
+event.stopPropagation()
+	prevents event from being handled by ancestors
+	(other handlers attached to the current element still run)
+
+event.stopImmediatePropagation()
+	prevents event from being handled by ancestors
+	AND prevents other handlers of the current elment to run
+
+stopping propagation should generally not be used
+
+
+-- capturing --
+1) capture phase
+	event goes from root down to the ancestor elements of the element that triggered the event
+2) target phase
+	event reached the target element
+	(doesn't matter if capture true or false)
+2) bubbling phase
+	event bubbles up the ancestors
+
+capturing should generally not be used
+
+elem.addEventListener('type', handler, {capture: true});
+elem.addEventListener('type', handler, true);
+	runs the handler during the capture phase
+
+a handler capturing on the targeted element is like a normal bubbling handler (runs after other handlers registered earlier)
+
+to remove an handler must use the same phase
+eg.:
+elem.addEventListener('type', handler, {capture: true});
+elem.removeEventListener('type', handler)
+	handler NOT removed
+
+event.eventPhase
+	tells which phase the handler is registered for
+	Event.CAPTURING_PHASE
+	Event.AT_TARGET
+	Event.BUBBLING_PHASE
