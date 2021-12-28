@@ -3041,3 +3041,75 @@ event.eventPhase
 	Event.CAPTURING_PHASE
 	Event.AT_TARGET
 	Event.BUBBLING_PHASE
+
+
+-- event delegation --
+delegate event handling to a parent element
+
+table.onclick = function(event) {
+  // target may not be td but an element inside td, retrieve the td
+  let td = event.target.closest('td'); 
+
+  // if target is not inside any td
+  if (!td) return;
+
+  // make sure we reached the td of the current table (and not a parent table)
+  // case of nested table and td lying outside the table
+  // make sure closest() didn't reach outside of table
+  // example:
+  // td
+  //   table
+  //      elem // <-- receives click. closest matches to td outside of table
+  if (!table.contains(td)) return;
+
+  // found the correct element
+  // can do the work it
+  highlight(td);
+};
+	handle the clicks on td elements in a single place at the table level
+
+
+-- attribute based behaviour --
+<button data-action="load">Load</button> //
+
+class Menu {
+  constructor(elem) {
+    this.elem = elem;
+    // without this line, this within onClick would be the DOM element
+    elem.onclick = this.onClick.bind(this);
+  }
+
+  save() {...}
+  load() {...}
+
+  onClick(event) {
+    let action = event.target.dataset.action;
+    if(action) {
+      this[action];
+    }
+  }
+}
+	make the link between markup (action custom data attribute)
+	and functions
+
+
+-- behaviour pattern --
+setting some markup in an element change its behaviour
+js code implementing that behaviour is in an event handler at the document level
+allows implementing feature without ugly js<=>DOM wiring
+
+// set up the HTML
+<input type="button" value="1" data-counter>
+
+// single handler in the container (here root)
+document.addEventListener('click', function(event) {
+  // check if we want to handle the event (by checking the target)
+  if(event.target.dataset.counter != undefined) {
+    event.target.value++;
+  }
+}
+	set-up handler once at document level
+	can then add the attribute wherever we want to change behaviour
++ decoupled, easy to understand
+- performance (code runs for events we do not care about)
+  event may have been stopped by some intermediary (event.stopPropagation())
