@@ -3113,3 +3113,94 @@ document.addEventListener('click', function(event) {
 + decoupled, easy to understand
 - performance (code runs for events we do not care about)
   event may have been stopped by some intermediary (event.stopPropagation())
+
+
+-- default actions --
+click link : navigate to page
+click form's submit : submit form
+select text : text selected
+...
+
+prevent a default action, in event callback:
+-event.preventDefault()
+-return false;
+	only if handler added with onxxx
+	eg.:
+		<a id="link" href="hi" onclick="return false">hello</a> //
+		link.onclick = ()=>false;
+
+
+addEventListener('...', fn, {passive: true});
+	signals that the handler will not call preventDefault() (or return false)
+	(if call anyway : ignored)
+	important for some events where waiting to see if some handler will prevent the default action will cause an operation not to be smooth
+	eg.: touchmove, touchstart
+	default is true for some browsers/events:
+		chrome and firefox for touchstart, touchmove
+
+event.defaultPrevented
+	has preventDefault() (or return false) bene called
+	by us or by a previous handler
+
+
+-- manually generated events --
+can generate events from JS
+
+new Event(type, options);
+	type: string ('click',...)
+	options:
+		bubbles: true/false (default false)
+		cancelable: true/false (default false) (can prevent default action?)
+
+specific built-in types:
+UIEvent
+FocusEvent
+MouseEvent		(click)
+KeyboardEvent
+...
+
+elem.dispatchEvent(e)
+	"runs" the event
+	returns false if default has been prevented
+	new event is 'run' immediately, current event handling resumes after the event has finished
+	wrap dispatchEvent call in a setTimeout 0 to schedule the new event after the current one.
+
+avoid generating browser events (like click,...) : hacky, bad architecture
+	ok when: 3rd party needs an event; automated testing	
+
+event.isTrusted
+	true if generate by a real user action
+	false if script generated event
+
+example:
+	// must use addEventListener because there is no onxxx for custom events
+	document.addEventListener('foo', ()=>console.log(event));
+	anElem.dispatchEvent(new Event('foo', {bubbles: true});
+
+new MouseEvent('click', {bubbles: true, cancelable: true, clientX: 100, clientY: 100});
+	better to use the correct class
+	
+
+new Event('click', {clientX: 123}):
+	theEvent.clientX === undefined
+	unknown properties in the options parameter for this type of event are ignored
+
+
+-- custom events --
+we can create our own components and have them generate custom events
+
+new CustomEvent('hello', {detail: {anything: "I want"}});
+event.detail
+	data passed as detail into the option object
+	is available in event.detail
+
+our custom even can have a (cancellable) default action:
+code for default action runs after the dispatchEvent if there was no cancel
+if elem.dispatchEvent(myEvent) returns false
+	default action has been prevented in some handler
+	do not run the default action.
+	requires cancelable: true in the option object of the event
+
+eg.: parent-wide context menu and child specific context menu.
+child handler : implement local context menu and prevents default so that parent doesn't overwrite
+parent handler: check if defaultPrevented before setting the menu
