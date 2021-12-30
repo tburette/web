@@ -3204,3 +3204,44 @@ if elem.dispatchEvent(myEvent) returns false
 eg.: parent-wide context menu and child specific context menu.
 child handler : implement local context menu and prevents default so that parent doesn't overwrite
 parent handler: check if defaultPrevented before setting the menu
+
+
+-- mouse events --
+mousedown
+	preventing default on mouse down prevents selecting text
+	(click and drag or double-click)
+mouseup
+mouseover mouseout
+mousemove			every mouse movement detected over an element
+click
+dblclick			rarely used
+contextmenu			right-click (or special keyboard key)
+
+
+order: mousedown -> mouseup -> click (*2) -> dblclick
+
+
+event.button
+	which button was pressed
+	0 primary
+	1 middle
+	2 right
+	3 back
+	4 forward
+
+event.shiftKey
+event.altKey
+event.ctrlKey
+event.metaKey	Cmd on mac (mac generally uses it instead of ctrl)
+	when checking for ctrl:
+	ctrlKey || metaKey
+
+event.clientX
+event.clientY
+	window-relative coordinates
+
+event.pageX
+event.pageY
+	document-relative coordinates
+
+
