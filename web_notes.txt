@@ -293,7 +293,7 @@ Quoting
 	
 <cite> <a href="url"> source of quote</a></cite>
 	source (name) of the citation
-	NOT inside blockquote/q
+	NOT inside the blockquote/q itself
 	visual : text in italic
 
 <abbr title="xxx">x</abbr>
@@ -529,11 +529,15 @@ figure + figcaption
 
 <form action="url" method="post"></form>
 
+<form ... name="xx">
+	can access through
+		documents.forms.xx
+		(document.getElementsByName("xx"))
+			 returns array even though names are supposed to be unique among forms
 
 can structure forms:
--fieldset (+ul)
+-fieldset (+ul +legend)
 	to group checkbox/radio
-	in fieldset
 	li for each choice (input+label)
 -section
 	for multiple related inputs
@@ -667,6 +671,11 @@ if multiple checkbox checked :
 </select>
 	dropdown
 
+<option value="xxx" selected>Two</option>
+	the option selected by default
+
+<select ... multiple>
+	can select multiple elements
 
 --- Autocomplete ---
 <input type="text" id="x" name="x" list="suggestions" autocomplete="off">
@@ -710,6 +719,10 @@ tabindex="<number>"
 		2 : selected after
 		then focus all the elements at zero (the default)
 
+autofocus
+	boolean attribute
+	should be the default element focused on page load
+	(bad for accessibility : confusing for people using screen readers)
 
 
 <audio
@@ -2266,7 +2279,7 @@ column-span: all;
 	Takes all the horizontal space
 	must be block outer display type (?)
 
-break-inside: never;
+break-inside: avoid;
 	put in an item (direct child of a multicol container)
 	avoid breaking in the middle of an item
 
