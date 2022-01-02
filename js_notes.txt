@@ -29,6 +29,8 @@ yet throw in handler does settle the promise into a rejected one
 (node) use strict or not depending on an external package.json file
 
 todo
+<dialog>
+
 https://github.com/goldbergyoni/javascript-testing-best-practices/blob/master/readme-fr.md
 
 weird comparison rules
@@ -832,6 +834,11 @@ outer: for(let i = 0; i < 10; i++) {
     }
 }
 	can break of outer loop by giving a label
+
+xxx: {
+	break xxx;
+}
+	also work without a loop
 
 for(let x = 0; x < 2; x++){};
 for(let x in obj){};
@@ -2626,7 +2633,7 @@ document/element.querySelectorAll(cssSelector)
 
 document/element.getElementByTagName	element of a certain type (div,..)
 document/element.getElementByClassName
-document.getElementsByName				elements with the given value for the name attribute (not used anymore)
+document.getElementsByName				elements with the given value for the name attribute (not really used anymore, forms can have name see document.forms)
 	these are replaced by querySelector
 
 element.matches(cssSelector)
@@ -2862,7 +2869,7 @@ scrollTop scrollLeft
 
 document.documentElement.clientHeight
 document.documentElement.clientWidth
-	size of the window
+	size of the window (viewport)
 	without the scrollbar
 		window.innerWidth window.innerHeight to get value with the scrollbar
 
@@ -3190,6 +3197,7 @@ new Event('click', {clientX: 123}):
 we can create our own components and have them generate custom events
 
 new CustomEvent('hello', {detail: {anything: "I want"}});
+	does not exist in node!
 event.detail
 	data passed as detail into the option object
 	is available in event.detail
@@ -3206,16 +3214,38 @@ child handler : implement local context menu and prevents default so that parent
 parent handler: check if defaultPrevented before setting the menu
 
 
+
+-- handling touch/click input --
+3 ways:
+- mouse events (mousedown, click,...)
+  also triggered when touch
+- touch events (touchstart, touchend, touchmove)
+  touch-specific.
+  Annoying to have to handle both mouse and touch events
+- Pointer events (pointerdown, pointerup, pointermove,...)
+  works for all kinds of pointing devices (mouse, touch, stylus)
+  supports multi-touch, pressure, width/height
+
+
 -- mouse events --
-mousedown
+mousedown mouseup
+	clicked while the pointer was on the element
 	preventing default on mouse down prevents selecting text
 	(click and drag or double-click)
-mouseup
+
 mouseover mouseout
-mousemove			every mouse movement detected over an element
+	move on off the element
+	element itself not children, bubbles
+mouseenter mouseleave
+	move on off the element
+	element or child, does not bubble
+mousemove
+	every mouse movement detected over an element
 click
-dblclick			rarely used
-contextmenu			right-click (or special keyboard key)
+dblclick
+	rarely used
+contextmenu
+	right-click (or special keyboard key)
 
 
 order: mousedown -> mouseup -> click (*2) -> dblclick
@@ -3245,3 +3275,45 @@ event.pageY
 	document-relative coordinates
 
 
+mouseover
+	target : element the cursor came onto
+	relatedTarget : element that the cursor left
+mouseout
+	target : element that the cursor left
+	relatedTarget : element that is now under the cursor
+
+- only on a single element at a time: 
+  if cursor goes from a container parent to a child 
+  it will mouseout when leaving an element for a whild
+- bubbles: : parent will receiver mousover event of children
+- relatedTarget can be null : cursor came from / went  outside the window
+- may skip elements if cursor moves fast
+
+
+mouseenter
+mouseleave
+	target
+	relatedTarget
+- transition to descendant does not count as leaving
+- does not bubble
+
+
+-- pointer events --
+works for all kinds of pointing devices (mouse, touch, stylus)
+Can replace mousexxx events by pointerxxx events
+	pointer events have the same properties as mouse ones (+ some more)
+	mouse will still work
+	touch support will improve (but may need some work)
+
+pointer event properties
+pointerId
+	unique ID of the pointer
+	to handle multiple pointer (eg. touch + stylus)
+	touch : one id per finger
+pointerType
+	"mouse"
+	"pen"
+	"touch"
+isPrimary
+	primary pointer
+	the first finger in multi-touch
