@@ -3317,3 +3317,38 @@ pointerType
 isPrimary
 	primary pointer
 	the first finger in multi-touch
+
+
+-- keyboard events --
+keydown
+keyup
+
+keypress
+	deprecated
+	a mess with too many browser incompatibilities
+
+event.code
+	physical keyboard code
+	represent a key at a certain location
+	no matter the layout (a on azert, q on qwerty)
+		was not the case on my firefox!
+	useful for games
+	not impacted by the case
+	"KeyA", "KeyZ", "Digit0", "Digit9", "Enter", "Tab", ...
+	(not to be confused with charCode)
+
+event.key
+	(corresponding) character
+	"A", "a", ...
+	"Dead" for ^.. ¨..
+	(not to be confused with keyCode)
+
+keydown
+event.preventDefault()
+return false (onxxx)
+	prevents normal action associated with the keyboard
+	character added, character deleted, page scroll, save,...
+
+
+-- scroll event --
+'scroll' event
