@@ -2755,8 +2755,8 @@ insertAdjacentText(where, text)
 insertAdjacentElement(where, element)
 	must be an element
 where
-	"beforestart"	before the element
-	"afterstart"	beginning of the element
+	"beforebegin"	before the element
+	"afterbegin"	beginning of the element
 	"beforeend"		end of the element
 	"afterend"		after the element
 

@@ -2282,6 +2282,7 @@ column-span: all;
 break-inside: avoid;
 	put in an item (direct child of a multicol container)
 	avoid breaking in the middle of an item
+	must be block
 
 sometimes content is fragmented
 	one element spread on multiple columns
