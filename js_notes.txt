@@ -3352,3 +3352,128 @@ return false (onxxx)
 
 -- scroll event --
 'scroll' event
+
+
+
+--- form ---
+document.forms
+	collection of all the forms
+
+document.forms[0] and can iterate
+
+document.forms.xxx
+document.forms["xxx"]
+	if <form... name="xxx"> or 	<form... id="xxx">
+
+
+form.elements
+	collection of all the form inputs (input, select,..) and fieldset
+	no matter how deeply nested
+	no other html elements (div,...)
+
+form.elements[0] and can iterate
+	
+form.elements.xxx
+form.elements["xxx"]
+form.xxx (also)
+	the element if one control
+	a list if multiple controls with that id/name (for radio/checkbox)
+	(if change name of an element
+		only new name in form.elements
+		old and new name in form.old form.new)
+
+aFieldSet.elements
+	fieldset have their own elements property like form
+	fieldset appear in form.elements
+
+
+input.form
+	the form the input/fieldset belongs to
+
+input.value
+	value (as string)
+
+
+checkbox.checked
+	boolean value 
+
+
+aForm.submit()
+	submit the form
+
+-- select --
+select.options
+	collection of the <option>
+
+select.value
+	the value of the [value] of the selected option (<option value="xxx">)
+	the content of the option if no [value] (<option>xxx</option> // )
+
+select.selectedIndex
+	index of the currently selected option
+
+select.value = xxx
+select.selectedIndex = 0
+
+anOption.selected = true
+	set the value of a <select>
+
+new Option(text, value, defaultSelected, selected);
+	creates a new <option>
+	syntactic sugar over document.createElement('option') + setting options
+
+
+-- focus  blur--
+(see also tabindex and autofocus HTML attributes)
+'focus'
+'blur'
+	events
+	do not bubble (but captures)
+	event raised after the focus has been gained/lost
+		preventDefault() will not prevent changing the focus
+
+'focusin'
+'focusout'
+	same as focus/blur but bubbles
+	! onfocusin onfocusout do not work
+
+elem.focus()
+elem.blur()
+	focuses/blurs
+	firefox : cannot focus/blur from a blur/focus event
+
+document.activeElement
+	currently active element
+
+
+-- form data update events --
+change
+	triggered after element change
+	text field : change text then lose focus
+	checkbox, dropdown list : select a value
+
+input
+	every time the value change
+	text field : triggered any time there is a change (type a letter, cut, delete,...)
+
+cut
+copy
+paste
+	can prevent cutting/copying/deleting with preventDefault()
+
+event.clipBoardData.getData('text/plain')
+	get text to be pasted
+	paste only
+	not in cut/copy because text hasn't been copied yet
+		check what is selected to get the text to be copeid
+	! clipboard data is pretty complex (handles file copying)
+
+
+submit
+	event when submitting a form (submit button, enter on field)
+	NOT when aForm.submit()
+	can be used to check the validity of the data
+	can prevent submission : event.preventDefault()
+	a click event on the submit button is also dispatched (even if it wasn't clicked!)
+
+
