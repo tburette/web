@@ -165,7 +165,7 @@ no async/defer attribute
 
 async and defer attributes
 	are for external scripts only
-		unless type="module" is used (makes the script defer, can make it async by also adding the async attribute)
+		unless type="module" (see below)
 	allows loading parallel to parsing the HTML
 	avoids blocking parsing the html document
 	
@@ -173,6 +173,7 @@ async
 	executed as soon as it is available (blocking the HTML parsing)
 	may see partial DOM
 	no execution order between async scripts
+	great for scripts that do not rely on our code and scripts we do not rely one => analytics, ads,...
 
 defer
 	script executed after the document has been parsed. (just before firing the event DOMContentLoaded) 
@@ -182,8 +183,20 @@ defer
 type="text/javascript"
 	obsolete
 
+type="module"
+	makes the script a module
+	is defer (automatically)
+	can make it async by adding async
 
+let script = document.createElement('script');
+script.src = "url.js";
+document.body.append(script);
+	dynamic script
+	like async
 
+script.async = false
+	if add that to a dynamic script
+	like defer
 
 
 <span>x</span>

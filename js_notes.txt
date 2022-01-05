@@ -2955,7 +2955,7 @@ elem.removeEventListener("click", fn)
    	can add multiple listeners
 
 some events only work with addEventListener
-eg.: DOMContentLoaded
+eg.: DOMContentLoaded, focusin, focusout
 
 handlers run in the order they where added
 
@@ -3477,3 +3477,69 @@ submit
 	a click event on the submit button is also dispatched (even if it wasn't clicked!)
 
 
+
+--- page state ---
+DOMContentLoaded
+	HTML loaded, DOM of HTML built
+	can still load images, stylesheets, async scripts
+	if execute js code, possible that : image size 0, stylesheet not applied,...
+	on document (bubbles to window)
+	!MUST use addEventListener (onDOMContentLoaded doesn't work)
+	handler will NOT trigger if it is attached after the event
+
+load
+	everything has ben loaded (image, style, async script)
+	stylesheet applied, size of images known
+	!on window, NOT document
+	also on images
+
+beforeunload
+	can ask for confirmation
+	return false will trigger the confirmation message
+	!event.preventDefault() does not always work (chrome)!!!
+	on window
+
+unload
+	about to leave
+	can still perform limited operations, nothing that takes time
+	on window
+	navigator.sendBeacon(url, data) CAN be used to send data (even if it takes time)
+		broken on safari, must use another event
+
+document.readyState
+	'loading'		before DOMContentLoaded
+	'interactive'	after DOMContentLoade before load
+	'complete'		after load
+
+pattern : want to run code after DOMContentLoaded but don't know if it has happened or not. Eg.: async script
+solution:
+if(document.readyState == 'loading') {
+	//schedule
+	document.addEventListener('DOMContentLoaded', work);
+} else {
+	work();
+}
+
+readystatechange
+	track change of value of readyState
+	old, generally use DOMContentloaded and load nowadays
+	on document
+
+
+-- ressource loading state --
+onload
+	successful load
+	only check the loading, there could be further problem (syntax error in the script,...)
+onerror
+	an error occured
+
+won't trigger if attached after the load
+
+for image, iframe, external style, external script,...
+
+iframe
+	onerror unused
+	onload always triggers (even if unseuccessful)
+
+img
+	loads as soon as an image element gets an src
