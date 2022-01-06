@@ -22,11 +22,25 @@ Date() different from new Date() (str vs object)
 
 behaviour of str.match (type of value returned) depends on a flag of the regExp (g global)
 
-return in an executor (new Promise(xxx)) does nothing (does not turn the promise into a fulfilled promise)
+return in an executoreadystatechanger (new Promise(xxx)) does nothing (does not turn the promise into a fulfilled promise)
 yet return in handler does
 yet throw in handler does settle the promise into a rejected one
 
 (node) use strict or not depending on an external package.json file
+
+addEventListener: (case)
+readystatechange
+but
+DOMContentloaded
+
+readystatechange doesn't bubble
+but
+DOMContentLoaded bubbles
+
+addEventListener('DOMContentLoaded' ...)
+but not
+ondomcontentloaded
+
 
 todo
 <dialog>
@@ -3479,6 +3493,8 @@ submit
 
 
 --- page state ---
+! if event occured before we register : the handler will never be called
+
 DOMContentLoaded
 	HTML loaded, DOM of HTML built
 	can still load images, stylesheets, async scripts
@@ -3523,7 +3539,7 @@ if(document.readyState == 'loading') {
 readystatechange
 	track change of value of readyState
 	old, generally use DOMContentloaded and load nowadays
-	on document
+	!on document, doesn't bubble
 
 
 -- ressource loading state --
@@ -3543,3 +3559,5 @@ iframe
 
 img
 	loads as soon as an image element gets an src
+
+
