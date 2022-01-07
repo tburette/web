@@ -2739,6 +2739,7 @@ attributes
 --- create / manipulate html ---
 document.createElement(tagName)
 document.createTextNode(text)
+	aka CharacterData, aka Text
 document.createComment(text)
 
 node.cloneNode()
@@ -3560,4 +3561,61 @@ iframe
 img
 	loads as soon as an image element gets an src
 
+
+
+--- MutationObserver ---
+new MutationObserver(aCallback(mutationRecordList, mutationObject));
+	create mutation observer
+
+anObserver.observe(element, options);
+	have to specify what to look for.
+	can use the same observer for multiple elements
+	if do observe twice with the same observer and element : remove all other observers ???
+	the callback will now be called when a change is detected
+
+options:
+	childList		addition/removal of child nodes
+	attributes		change to attributes
+	characterData	change to character data (textnode)
+
+	subtree
+		observe change to all children
+		(can register on a parent)
+		for childList and characterData
+	attributeFilter
+		attributes to be monitored, others are ignored
+		for attributes
+		automatically sets attributes to true
+	attributeOldValue
+		have the old value
+		automatically sets attributes to true
+	characterDataOldValue
+		have the previous value of the node's text
+		automatically sets characterData to true
+
+MutationRecord fields:
+type
+	'childList'
+	'attributes'
+	'characterData'
+target
+	(there is no currentTarget)
+addedNodes
+RemovedNodes
+	for childList
+previousSibling
+nextSibling
+	for childList
+attributeName
+	for attributes
+oldValue
+	for attribute/characterData
+
+anObserver.disconnect()
+	stop watching for modifications
+
+anObserver.takeRecords()
+	retrieves any pending modifications
+	the callback won't get called for those records
+	used before disconnect() to make sure we processed all the records
 
