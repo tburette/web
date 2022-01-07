@@ -43,6 +43,11 @@ ondomcontentloaded
 
 
 todo
+
+== rules
+
+web worker
+
 <dialog>
 
 https://github.com/goldbergyoni/javascript-testing-best-practices/blob/master/readme-fr.md
@@ -72,8 +77,6 @@ udemy
 	ES6		https://www.udemy.com/course/modern-javascript-es6-for-react-js/
 nodeschool
 
-todo
-https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode
 
 
 npm
