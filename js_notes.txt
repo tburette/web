@@ -44,7 +44,9 @@ ondomcontentloaded
 
 todo
 
-== rules
+CORS
+
+http cache
 
 web worker
 
@@ -52,6 +54,8 @@ web worker
 
 https://github.com/goldbergyoni/javascript-testing-best-practices/blob/master/readme-fr.md
 
+
+== rules
 weird comparison rules
 	https://javascript.info/comparison
 
@@ -1204,6 +1208,44 @@ to avoid callback hell:
 
 
 
+--- event loop ---
+1) run oldest macrotask (or wait for one)
+2) run all available microtasks of the macrotask
+   after: control returned to the browser's event loop
+3) render
+4) repeat
+
+-- macrotask --
+aka task
+endless loop running (macro)tasks, 
+macrotasks : <script> loading, event handler, timeout callback,...
+
+macrotask queue (V8 term) : FIFO task queue
+if no task to run currently : wait for task
+node : if no task ready to run or pending -> exit.
+
+no rendering when a task run (no matter how long it runs) ! 
+	eg.: in script change the DOM then do long computation => won't see change until end of computation
+long running task : raises alert to the user
+
+
+-- microtask --
+microtask : handlers in then, catch, finally and await.
+when a macrotask ends : all queued microtasks are run.
+
+within an execution of a macrotask : all the microtask are run in an environment that is not affected by other macrotasks.
+There has been no change caused by external events (user action, mous coordinates change, some event handler changing the DOM,...)
+
+queueMicrotask(func)
+	adds func to the microtask queue
+	will run before control is returned to the event loop
+	schedule code to run later but before other (macro)tasks that can change the world underneath our feets
+	
+setTimeout => 		schedule macrotask, other code may run
+queueMicrotask =>	schedule microtask, we are at the end of our own code
+
+
+
 -- Promise --
 new Promise(executorFunction);
 let aPromise = new Promise(function(resolve, reject){ // executor function
@@ -1249,6 +1291,7 @@ then()/catch()/finally()
 .then()
 	if there is a chain: must return a value otherwise next handler will see undefined!!!
 	can return a new Promise object or a value (will turn into a promise)
+	can split a complex then handler in two simpler then => return intermediate value from the first then handler (even if no async operation)
 .catch()
 .finally()
 
@@ -2417,6 +2460,9 @@ careful:
 	method will be called without the object. Wrong this.
 	fix with bind
 
+in browsers, if repeat the same action 5+ times : there is a 4ms delay before it runs again even if the delay is 0
+	historical for browser compatibility
+
 
 
 --- Regex ---
@@ -2969,8 +3015,12 @@ elem.addEventListener(
         capture: false,	// handler runs during the capture phase instead of the bubbling phase
         passive: true, // cannot/will not prevent default
     });
+elem.addEventListener("click", x, true);
+	true like {capture: true}
+
 elem.removeEventListener("click", fn)
-   	can add multiple listeners
+	! if added a listener with passive true : must remove it with passive true
+		removeEventListener("click", fn, true)
 
 some events only work with addEventListener
 eg.: DOMContentLoaded, focusin, focusout
@@ -3037,6 +3087,9 @@ event.stopImmediatePropagation()
 
 stopping propagation should generally not be used
 
+Sometimes it is a good idea to wait for all potential handlers to have run before performing an action.
+Eg.: detect a request to open a menu. Wait for all handlers to have run before opening the menu.
+Solution : open the menu in a 0 delay setTimeout.
 
 -- capturing --
 1) capture phase
@@ -3541,7 +3594,7 @@ if(document.readyState == 'loading') {
 }
 
 readystatechange
-	track change of value of readyState
+	track change of value of document.readyState
 	old, generally use DOMContentloaded and load nowadays
 	!on document, doesn't bubble
 
@@ -3621,4 +3674,93 @@ anObserver.takeRecords()
 	retrieves any pending modifications
 	the callback won't get called for those records
 	used before disconnect() to make sure we processed all the records
+
+
+
+--- fetch ---
+aResponse = await fetch(url, options);
+	promise based
+	reject : couldn't make the request, abnormal (header) response
+		404 and the like do NOT cause a rejection
+	response is the header only, not the data
+
+options {...}
+method: 'POST'
+body: theBody
+	if the body is a string, a Content-Type is added automatically
+headers: { Xxx: "value"}
+	some headers are restricted
+signal: anAbortController.signal
+	abort the fetch, see AbortController
+referrer
+	"" no referrer
+	"someURL" can set anyreferrer we want
+redirect
+	behaviour when redirect
+	"follow" (default)	automatically follow 
+	"error"				error in case of redirect
+	"manual"			our code checks and handles redirect itself
+mode
+	change CORS setting
+cache
+	fetch() uses HTTP-caching
+	can change that behaviour
+
+response.status
+	eg. 200
+response.ok
+	true if http status code 200-299
+response.headers
+	Map-like object
+	get(xxx)
+	iterate
+
+response.body
+	a ReadableStream : allows download chunk-by-chunk
+	reader = response.body.getReader();
+	while(true){
+		{done, value} = await reader.read();
+		if(done) break;
+		//do something with value which is a Uint8Array (can be converted)
+	}
+
+response.text()
+response.json()
+response.blob()
+..
+	await on it
+	can only call it once
+
+
+-- Form data --
+new FormData(aForm);
+	can be the body of fetch
+		fetch(url, {method: 'POST', body: aformData});
+
+append(name, value)
+	a form can have multiple fields with the same name
+	append adds multiple same-named field
+append(name, blob, fileName)
+	as if <input type="file">
+	cf Blob
+set(name, value)
+	does not allow multiple fields of the same name
+	removes all existing fields with the same name before setting
+delete(name)
+get(name)
+has(name)
+
+for(let [name, value] of aFormData){}
+
+
+-- AbortController --
+used to abort async operations (eg. fetch)
+
+let ac = new AbortController();
+ac.abort();
+ac.signal.addEventListener('abort', function(){console.log(arguments)});
+signal.aborted == true/false
+
+fetch(anURL, {signal: ac.signal});
+	fetch has support for the AbortController
 
