@@ -2212,7 +2212,7 @@ process.on("uncaughtException", function(err, origin){}
 	global handler (if exception was not caught)
 	node
 
-window.onerror = function(message, url, line, col, error) {
+window.onerror = function(message, url, line, col, error) {}
 	global handler (if exception was not caught)
 	browser
 	doesn't seem to work for exceptions created from the browser console
@@ -3695,6 +3695,11 @@ signal: anAbortController.signal
 referrer
 	"" no referrer
 	"someURL" can set anyreferrer we want
+referrerPolicy
+	browser sends the referrer for us
+	the referrer sent depends on the policy (a string)
+	each policy may send a different value depending on :
+		same origin, another origin, https->http
 redirect
 	behaviour when redirect
 	"follow" (default)	automatically follow 
@@ -3702,9 +3707,20 @@ redirect
 	"manual"			our code checks and handles redirect itself
 mode
 	change CORS setting
+credentials
+	"same-origin": default, only send credentials for same-origin
+	"include" : send cookies even on cross-origin (must be allowed by the server)
+	"omit" : never send cookie (same or cross origin)
 cache
 	fetch() uses HTTP-caching
 	can change that behaviour
+keepalive
+	if true when closing the page
+	instead of stopping the request
+	the (small) request will be sent to the server
+	won't handle response
+	eg.: sending statistics.
+
 
 response.status
 	eg. 200
@@ -3763,4 +3779,166 @@ signal.aborted == true/false
 
 fetch(anURL, {signal: ac.signal});
 	fetch has support for the AbortController
+
+
+--- CORS ---
+Cross-Origin Resource Sharing
+	= sharing resources between origins
+	the goal was to allow cross-site AJAX
+
+Same Origin Policy
+	restrict scripts/documents from loading resources from another origin
+	
+is about allowing js from reading from a server
+Same Origin Policy does not prevent making get/post requests to cross-origin servers (already possible)
+It does not prevent CSRF.
+CORS and image: can retrieve image from a cross-origin but cannot access its data from js
+CORS and form: can send get/post form to cross-origin
+
+
+origin is : domain/port/protocol (scheme/host/port)
+subdomain considered a different domain
+cross-origin if a difference in origin
+
+two types of cross-origin requests:
+- safe request
+  only the methods :
+  	GET/POST/HEAD
+  only the headers :
+  	Accept
+  	Accept-Language
+  	Content-Language
+  	Content-Type
+  		one of : application/x-www-form-urlencoded, multipart/form-data, text/plain
+- unsafe requests
+	all other requests
+
+Why those specific requests considered safe?
+Those are the requests that could be made by old browser/js
+eg. using <form action="url"> or <script src="url">
+Old webservers know that such requests can come from browser/javascript and take that into account 
+Old webservers can mistakenly assume the request doesn't come from a browser if it an unsafe request and do something unsafe
+
+
+1) same origin request:
+no restriction
+
+
+2) safe cross-origin requests
+- Origin added to the header of the request : domain/protocol/port without path
+	server checks this field and decide if it accept this cross-origin request
+	if accepts : sets Access-Control-Allow-Origin in the header of the response
+
+- server response:
+Access-Control-Allow-Origin
+	a domain/protocol/port (no path)
+	or
+	*
+Access-Control-Expose-Headers
+	allow js to read more than the safe headers (see below)
+	eg.: Access-Control-Expose-Headers: Content-Length,API-Key
+
+Access-Control-Allow-Credentials: true 
+	for requests with credentials
+
+js only allowed to read some "safe" response headers:
+	Cache-Control
+	Content-Language
+	Content-Type
+	Expires
+	Last-Modified
+	Pragma
+
+
+3) unsafe cross-origin requests:
+- before sending the request send a preflight request.
+	used to avoid problem with old server that could assume that such a request cannot come from a browser and do something unsecure 
+
+preflight request
+	used to check if the server will accept our unsafe cross-origin request
+	will it accept our origin/method/headers
+the request:
+	OPTIONS method 
+	no body
+	headers: 
+		Access-Control-Request-Method
+		Access-Control-Request-Headers
+		Origin
+
+- preflight server response:
+empty body
+status 200
+headers:
+	Access-Control-Allow-Origin
+		* or an origin
+	Access-Control-Allow-Methods
+	Access-Control-Allow-Headers
+	(Access-Control-Allow-Credentials: true)
+	(Access-Control-Max-Age cache permissions to prevent too many preflights)
+server typically do not just allow the requested method/headers but send all the allowed ones (to prevent another preflight)
+
+- actual request
+	Origin in the header
+
+- actual response
+	Access-Control-Allow-Origin in the header
+
+
+-- credentials --
+cross-origin js request do not include cookies by default.
+fetch(url, {credentials: "include"});
+if server accepts cookie it will add in the response header:
+Access-Control-Allow-Credentials: true
+
+Access-Control-Allow-Origin: * forbidden if use credentials
+
+
+
+--- URL ---
+Can use where url string expected (eg. fetch())
+does the encoding for us (eg. " " => "%20)
+new URL("https://javascript.info/profile")
+	URL
+new URL("profile", "https://javascript.info")
+	URL with a base and a path
+new URL("..", anURL);
+	URL relative to another URL
+
+new URL("https://the.host:81/path?search=value#hash");
+                      href                         |
+      origin           |        |             |    |
+        |       host   |        |             |    |
+protocol| hostname|port|pathname|search       |hash|
+https: // the.host:81   /path    ?search=value #hash
+
+url.href		the full thing
+url.protocol	https:
+url.hostname	the.host	(host but no port)
+url.port		81
+url.host		the.host:81 (hostname+port)
+url.origin		https://the.host:81 (protocol+host)
+
+url.pathname	/path
+url.search		?search=value	(string)
+url.searchParam	map-like object (get, set, has, delete)
+
+encodeURI(anEntireURLString)
+same as new URL(string).href
+: ? = & # allowed in URL => not encoded
+encodes characters totally forbidden in a URL
+decodeURI
+
+encodeURIComponent
+encode individual pathname/search/hash (encodes ? = & +,...)
+: ? = & # not allowed in URL => encoded
+decodeURIComponent
+
+
+
+--- WebSocket ---
+bidirectional persistent connection
+
+let socket = new WebSocket("ws://xxx")
+let socket = new WebSocket("wss://xxx")
+	wss is encrypted (like http vs https)
 
