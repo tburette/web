@@ -3949,3 +3949,156 @@ let socket = new WebSocket("ws://xxx")
 let socket = new WebSocket("wss://xxx")
 	wss is encrypted (like http vs https)
 
+
+--- cookie ---
+Set by server using HTTP header Set-Cookie
+Browser adds them automatically to subsequent requests to the server
+
+name=value; name2=value2
+	representation of cookieS
+	each pair is its own cookie
+	format used by Set-Cookie, document.cookie
+	space after ;
+	4k max per cookie
+
+document.cookie
+	accessor property
+
+str=document.cookie
+	cookies as a single string
+
+document.cookie="key=value"
+	sets a single cookie! does not overwrite all cookies
+	name and value must be encoded : encodeURIComponent
+	document.cookie="k=v; k2=v2"
+		k2 ignored (k2 interpreted as an option)
+
+document.cookie="key=value; option=optionvalue; option2"
+	can add options that will impact the cookie
+
+document.cookie="k=v; path=/apath"
+	cookie accessible under that path and subpaths
+	an absolute path (/xxx not xxx) //
+	default current path 
+	path=/ sets the path to the root so the cookie is accessible from all pages
+	a page in one path can access a cookie in another path : create iframe and access its cookie. (not the case with different domains)
+
+document.cookie="k=v; domain=example.com"
+	default: 	domain is the current domain (host)
+				accessible on the domain NOT subdomain
+	possible value:
+		current domain
+		parent domain			(allows cookie access to all subdomains)
+		NO other domain			(on foo.com set cookie for bar.com)
+		NO sibling domain		(on x.example.com set cookie for y.example.com)
+		NO child subdomain		(on example.com set cookie for x.example.com)
+	if set explicit domain : accessible to that domain and subdomains
+	in the browser (dev tools):
+		example.com => only the domain, no subdomain (set implicitely)
+		.example.com => domain and subdomains (set explicitely)
+
+document.cookie="k=v; max-age=amountinseconds"
+document.cookie="k=v; expires=gmtstring"
+	when will the browser delete the cookie
+	if not set : cookie is a session cookie => expires at the end of the session
+	expires: format of date.toUTCString
+	
+
+document.cookie="k=v; secure"
+	cookie is only passed in request header if over https
+	will only appear in document.cookie if we are on https
+	(browser dev tools will show the cookie even if it isn't active)
+
+document.cookie="k=v; samesite=xxx"
+	should the cookie be sent when doing a cross site request
+	can prefent CSRF attacks
+	recent : not supported until 2018
+	alternative : csrf token
+document.cookie="k=v; samesite=strict"
+	cookie is never sent across domain
+	problem: if user click a link (eg. going to the homepage)
+		=> cookie not sent: not logged in,...
+	
+document.cookie="k=v; samesite=lax"
+	default value
+	like strict (no cross-site) except if both conditions are met:
+	- it's a safe meethod (GET, HEAD,..)
+	- operation is "top-level navigation" : change page in the browser
+		excludes : iframe, js request, img
+	allows go to url operation to work
+	
+document.cookie="k=v; samesite=none"
+	always send the cookie, including during cross-site requests
+
+HttpOnly
+	in Set-Cookie, not js
+	cookie not visible in js
+	preserves cookie against xss attacks
+
+to delete a cookie
+set max-age=-1
+same path/domain !
+
+document.cookie = `key=value; path=/; expires=${new Date("2025-01-01").toUTCString()}; secure; samesite=lax`
+	can use cookie to store data
+	but
+		limited in size
+		sent to server each time
+		can be manipulated by the server
+
+
+<img src="thirdparty.com/tracker">
+	if Set-Cookie in response
+	cookie set on thirdparty.com (not the current site)
+	allows ad tracking (same cookie if visit other site containing the tracker=
+
+<script src="thirdparty.com/tracker">
+	document.cookie = xxx
+	sets cookie on the current domain NOT thirdparty
+
+
+--- localStorage sessionStorage---
+save key-value pairs
+a few Mb
+localStorage
+	shared within the same origin
+	survive browser restart
+	shared between tabs
+sessionStorage
+	survive page refresh
+	not shared between tabs
+
+same API
+setItem(key, value)
+getItem(key)
+removeItem(key)
+clear()
+key(index)
+length
+
+key and value are strings only!
+can use JSON
+
+technically can set/get values directly through properties:
+localStorage.key = "value";
+	not recommended
+		can be a clash with built-in properties
+		(storage event (notifying ata modification) is not triggered)
+			not true in firefox and chrome
+
+not iterable but can use
+for(let [key, value] of Object.entries(localStorage){}
+
+window.onstorage
+	triggers when localStorage is changed IN ANOTHER WINDOW
+	event contains
+		key
+		newValue
+		oldValueurl
+	can be used to communicate across windows!
+	although there is a dedicated API : broadcast channel (low support?)
+
+
+reports of:
+- firefox deleting localStorage
+- safari not updating a localstorage changed in another tab
