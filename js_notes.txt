@@ -1477,8 +1477,8 @@ Object.entries()
 	do not appear:
 		symbols
 		properties with flag writable: false
-		properties from prototype
-	(can get them with Reflect.ownKeys())
+		properties from prototype (as if filtered with hasOwnProperty()
+		(can get them with Reflect.ownKeys())
 
 for(let [key, value] of Object.entries(obj)){}
 
