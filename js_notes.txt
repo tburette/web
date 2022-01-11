@@ -3681,6 +3681,7 @@ aResponse = await fetch(url, options);
 	reject : couldn't make the request, abnormal (header) response
 		404 and the like do NOT cause a rejection
 	response is the header only, not the data
+	can also pass a Request object (contains the URL and options)
 
 options {...}
 method: 'POST'
@@ -3782,24 +3783,51 @@ fetch(anURL, {signal: ac.signal});
 	fetch has support for the AbortController
 
 
---- CORS ---
+
+--- Same Origin Policy, Content Security Policy and CORS ---
+Same Origin Policy
+	restrict js from reading resources from another origin
+
+CORS and image: can retrieve image from a cross-origin but cannot access its data from js
+CORS and form: can send get/post form to cross-origin
+
+origin is : domain/port/protocol (scheme/host/port)
+subdomain considered a different domain
+cross-origin if a difference in origin
+
+
+Two mechanisms to protect:
+- Content-Security-Policy
+  prevent the page from loading/running some content that comes from a different origin(script, image,...)
+  we prevent our own page from doing bad things (protects from XSS,..)
+- CORS
+  client attempts to read from another origin
+  server can prevent read from unwanted origins
+
+For both, the verification is made on the client (browser).
+Prevents bad guys from tricking the browser of user from doing bad thing
+Does not prevent bad guys from doing bad things with their own machines (make request and ignore same origin)
+
+
+
+-- Content-Security-Policy --
+http header
+eg. Content-Security-Policy: default-src https://cdn.example.net; script-src 'self' https://api.mywebsite.com; img-src 'none'
+by default allows everything
+default-src sets the default value for several options (but not all)
+
+
+
+-- CORS --
 Cross-Origin Resource Sharing
 	is about allowing js to read from a server which is normally not possible
 	= sharing resources between origins
 	the goal was to allow cross-site AJAX
 
-Same Origin Policy
-	restrict js from reading resources from another origin
-
-Same Origin Policy does not prevent making get/post requests to cross-origin servers (already possible)
+CORS does not allow/prevent making get/post requests to cross-origin servers
+It has always been possible : <img src="external">, submit a form,...
 It does not prevent CSRF.
-CORS and image: can retrieve image from a cross-origin but cannot access its data from js
-CORS and form: can send get/post form to cross-origin
-
-
-origin is : domain/port/protocol (scheme/host/port)
-subdomain considered a different domain
-cross-origin if a difference in origin
+It does prevent reading data from another origin.
 
 two types of cross-origin requests:
 - safe request
@@ -3821,6 +3849,7 @@ Old webservers know that such requests can come from browser/javascript and take
 Old webservers can mistakenly assume the request doesn't come from a browser if it an unsafe request and do something unsafe
 
 
+
 1) same origin request:
 no restriction
 
@@ -3828,7 +3857,6 @@ no restriction
 2) safe cross-origin requests
 - Origin added to the header of the request : domain/protocol/port without path
 	server checks this field and decide if it accept this cross-origin request
-	if accepts : sets Access-Control-Allow-Origin in the header of the response
 
 - server response:
 Access-Control-Allow-Origin
@@ -3838,9 +3866,12 @@ Access-Control-Allow-Origin
 Access-Control-Expose-Headers
 	allow js to read more than the safe headers (see below)
 	eg.: Access-Control-Expose-Headers: Content-Length,API-Key
-
 Access-Control-Allow-Credentials: true 
-	for requests with credentials
+	for requests made with credentials (eg. for fetch credentials:"include")
+	by default cross-origin requests do not include cookies
+	both client and server must indicate they are ok sending cookies 
+	if client sent with cookie but server didn't include this header => response won't be passed to js
+	credential = cookie, Authorization http header, client certificate
 
 js only allowed to read some "safe" response headers:
 	Cache-Control
@@ -4096,3 +4127,4 @@ window.onstorage
 reports of:
 - firefox deleting localStorage
 - safari not updating a localstorage changed in another tab
+
