@@ -80,6 +80,11 @@ udemy
 nodeschool
 
 
+js questions
+https://github.com/ganqqwerty/123-Essential-JavaScript-Interview-Questions
+https://github.com/sudheerj/javascript-interview-questions
+
+
 
 npm
 npm install
@@ -98,7 +103,7 @@ babel
 	to be combined with a polyfill
 
 "use strict";
-Introduced in EC5 (2009), backward incompatible changes
+Introduced in ES5 (2009), backward incompatible changes
 at beginning of script
 at beginning of function
 automatically enabled by modules and classes?
@@ -983,9 +988,12 @@ a function with no return value or no return
 
 function foo(){}
 	function declaration
+	function statement
+	parse time
 
 const foo = function(){}
 	function expression
+	runtime
 
 const foo = function bar(){}
 	named function expression
@@ -2440,6 +2448,8 @@ JSON.parse(str, reviver)
 timerId = setTimeout(func, delay, arg1, arg2,...)
 timerId = setInterval(func, delay, arg1, arg2,...)
 clearTimeout(timerId);
+clearInterval(timerId);
+	both clear methods do the same thing (share the same range of timeId)
 
 this is the window object (Timer object in node)
 
