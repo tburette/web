@@ -1,15 +1,14 @@
 tolearn
-Content Security Policy (CSP)
-https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Flow_Layout/Block_and_Inline_Layout_in_Normal_Flow
 https://www.youtube.com/c/MozillaDeveloper/videos?view=0&sort=p&flow=grid
 https://github.com/Kristories/awesome-guidelines#frontend-development
 https://developer.mozilla.org/en-US/docs/MDN/Guidelines/Code_guidelines/CSS
-CORS, same-origin policy
-Fetch API
 
-web component (exists, actually used?)
-(SMACSS alternative to BEM, understand what it is, how to recognize but do not learn)
+transition
 
+howto, snippets
+https://css-tricks.com/snippets/
+https://www.30secondsofcode.org/
+https://www.w3schools.com/howto/
 
 EMMET
 main>(div#id+div.class)>h1{Title}^ul>li.class$*5+footer[attr="value"]
@@ -155,7 +154,10 @@ basic structure of an HTML document (with comments):
 		crossorigin	CORS
 		media		media query (responsive preloading)
 
-
+<script>some code..</script>
+	called inline script
+	onclick="..."
+		called inline event handler
 <script src="x.js" defer></script>
 
 no async/defer attribute

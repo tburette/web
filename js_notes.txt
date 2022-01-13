@@ -44,6 +44,8 @@ ondomcontentloaded
 
 todo
 
+Strict-Transport-Security
+
 http cache
 
 web worker
@@ -3025,6 +3027,9 @@ elem.addEventListener(
     });
 elem.addEventListener("click", x, true);
 	true like {capture: true}
+	
+	within the handler: this is currentTarget
+	(reminder : arrow functions do not have their own this)
 
 elem.removeEventListener("click", fn)
 	! if added a listener with passive true : must remove it with passive true
@@ -3953,16 +3958,16 @@ new URL("https://the.host:81/path?search=value#hash");
 protocol| hostname|port|pathname|search       |hash|
 https: // the.host:81   /path    ?search=value #hash
 
-url.href		the full thing
-url.protocol	https:
-url.hostname	the.host	(host but no port)
-url.port		81
-url.host		the.host:81 (hostname+port)
-url.origin		https://the.host:81 (protocol+host)
+url.href			the full thing
+url.protocol		https:
+url.hostname		the.host	(host but no port)
+url.port			81
+url.host			the.host:81 (hostname+port)
+url.origin			https://the.host:81 (protocol+host)
 
-url.pathname	/path
-url.search		?search=value	(string)
-url.searchParam	map-like object (get, set, has, delete)
+url.pathname		/path
+url.search			?search=value	(string)
+url.searchParams	map-like object (get, set, has, delete)
 
 encodeURI(anEntireURLString)
 same as new URL(string).href
