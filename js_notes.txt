@@ -3816,20 +3816,128 @@ Two mechanisms to protect:
   prevent the page from loading/running some content that comes from a different origin(script, image,...)
   we prevent our own page from doing bad things (protects from XSS,..)
 - CORS
-  client attempts to read from another origin
+  allows js to read from another origin (which is normally forbidden)
+  client js attempts reading from another origin
   server can prevent read from unwanted origins
 
 For both, the verification is made on the client (browser).
-Prevents bad guys from tricking the browser of user from doing bad thing
-Does not prevent bad guys from doing bad things with their own machines (make request and ignore same origin)
+Prevents bad guys from tricking the browser of users from doing bad thing
+Does not prevent bad guys from disabling those protections on their own machines
 
 
 
 -- Content-Security-Policy --
-http header
-eg. Content-Security-Policy: default-src https://cdn.example.net; script-src 'self' https://api.mywebsite.com; img-src 'none'
+specifies which domain the content can be loaded from
+can also restrict protocol (eg. https only)
+prevents XSS
+
+http header or <meta>
+response header:
+Content-Security-Policy: default-src https://cdn.example.net; script-src 'self' https://api.mywebsite.com; img-src 'none'
+
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src *; script-src https://*;">
+
 by default allows everything
-default-src sets the default value for several options (but not all)
+
+directive1 value; directive2 value1 value2
+series of directives.
+; separated
+directive format: <directive-name> <value> [<value> ...]
+
+
+directives
+categories of directives : fetch, document, navigation, reporting, other
+
+Fetch directives:
+controls loading of ressources (xxx-src)
+default-src
+	fallback value for other fetch directives
+	if another directive is explicitely set : value of default NOT used for that directive (erases does not add)
+
+script-src
+	inline script (<script>x</script>) //
+		blocked by default even if 'self' or *
+		needs 'unsafe-inline' to allow
+	blocks eval by default
+		the mere presence of script-src directive blocks eval(str)
+		see unsafe-eval to enable
+
+connect-src
+	Allow fetch, XMLHttpReuest, WebSocket, Navigator.sendBeacon, <a> ping
+
+font-src
+
+frame-src
+
+img-src
+
+media-src
+	<audio>, <video>, <track>
+
+Document directives: 
+base-uri
+	urls that can be used for <base> head tag
+
+Navigation directives:
+form-action
+	allow target of form submission
+
+frame-ancestors
+	determine who can embed this resource
+
+Reporting directives:
+send JSON somewhere whenever a policy blocks something
+
+
+
+Values:
+'none'
+	don't allow any loading
+
+'self'
+	only from the current origin
+
+'unsafe-inline'
+	Allow scripts, onclick=,...
+
+'unsafe-eval'
+	Allow eval, and associated: function(str), setTimeout(str),..
+
+'strict-dynamic'
+	if use nonce/sha to allow a script (the standard way, outside of this value)
+	then all scripts loaded by this sha/nonce-verifified script will be allowed
+	not in safari
+
+<hash-algo>-<base64-value>
+eg. sha256-jzgBGA4UWFFmpOBq0JpdsySukE1FrEN5bUpoK8Z29fY=
+
+nonce-xxx
+	?
+
+host source
+localhost
+	localhost port 80
+localhost:5501
+	localhost port 5501
+https://localhost:5501
+	..and https
+https://localhost:5501/exercises/HTML/a.js
+	full match
+https://localhost:*
+	any port
+
+*.localhost
+	any subdomain of localhost
+	BUT not localhost itself!
+
+*
+	any source
+	doesn't allow inline, still need to use 'unsafe-inline'
+
+
+Content-Security-Policy-Report-Only
+	Like Content-Security-Policy but only reports and does not enforce
+	allow testing new policies without breaking a site
 
 
 
