@@ -1301,7 +1301,12 @@ then()/catch()/finally()
 	can return a new Promise object or a value (will turn into a promise)
 	can split a complex then handler in two simpler then => return intermediate value from the first then handler (even if no async operation)
 .catch()
+
 .finally()
+	returns a promise with the same settles/rejected value (unless exception)
+	within the handler:
+		return has no effect
+		throw exception : finally returns a rejection promise with that exception
 
 	
 aPromise.then(function(result){
@@ -1471,6 +1476,13 @@ obj["key"] = x;
 delete object.property
 delete object["property"]
 	removes key from object
+
+delete someVariable
+	does nothing (non strict mode)
+	error (strict mode)
+
+delete someObj.propertyAtThePrototypeLevel
+	does nothing (no error)
 
 object converted to boolean : always true
 
@@ -1829,6 +1841,27 @@ Array.prototype.join.call(arguments)
 	method borrowing
 
 
+-- prototype inheritance with constructors --
+const A = function(x) {
+    this.x = x;
+};
+A.prototype.getX = function() {
+    return this.x;
+}
+
+const B = function(x, y) {
+    A.call(this, x); // call parent constructor
+    this.y = y;
+}
+//alternative : B.prototype = Object.create(A.prototype) + set constructor property
+Object.setPrototypeOf(B.prototype, A.prototype);
+B.prototype.getY = function() {
+    return this.y;
+}
+
+let b = new B("x", "y");
+b.getX();
+
 
 --- class ---
 class MyClass {
@@ -1908,6 +1941,9 @@ instance instanceof classOrConstructorFunction
 	goes up the prototype chain of the instance
 	check if one of those prototype is the prototype of the  class or constructor
 	
+1 instanceof Number == false
+	does NOT work for primitives
+
 
 SomeClass.prototype = xxx
 	affects instanceof! (but not the objects created before)
@@ -2766,6 +2802,8 @@ two ways to access the attributes set on html elements from the html object:
 value set on the HTML may not match the actual value : 
 - css
 - changed by js
+  elem.attributes.attr = "x" doesn't change value of elem.getAttribute("attr")
+  elem.getAttribute("attr") changes value of elem.attributes.attr = "x"
 
 properties may not have the same value as the attribute:
 - checked: converted to boolean
