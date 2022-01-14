@@ -2450,10 +2450,23 @@ cubic-bezier(x1, y1, x2, y2)
 can have movement if element is positioned (position: xxx) + top/right/bottom/left
 
 
-there is another way to animate : 
-transition
-state which property to watch for, when it changes (eg. due to a :pseudo-class) smoothly go from one value to the other
 
+--- transition ---
+transition: <property> <duration> <timing-function> <delay>;
+transition-property: color;
+transition-duration: 4s;
+transition-timing-function: linear; ease-in ease-out ...
+transition-delay: 1s;
+When a property change : change the value progressively over time instead of changing immediately.
+Set on the element WITHOUT pseudo-class
+
+eg.
+transition: all 2s;
+transition: font-size 2s .5s;
+transition: font-size 2s, transform .5s;
+	multiple properties separated by a ,
+
+avoid using auto value
 
 
 
