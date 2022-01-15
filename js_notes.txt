@@ -1015,6 +1015,14 @@ const func = new Function('arg1', 'return arg1 + 1;')
 	- want to assign the result of a calculation to a const
 	  const foo = (function(){...return x;})();
 
+void function(){console.log("hello")}()
+true & function...
+! function...
+...
+	unusual ways to write an IIFE
+	technically don't need to use ()
+	can use anything that turns the function declaration into an expression
+
 
 Arrow function
 () => { return 2 }
@@ -1672,7 +1680,7 @@ a_function.apply(this_object, [0, 1]);
 	a = [0, 1, 2]
 	Math.min.apply(Math, a); // array converted to individual arguments
 
-bind(thisObject, arg1, arg2)
+a_function.bind(thisObject, arg1, arg2)
 	return a new function whose this is _permanently_ attached to thisObject
 	and the first arguments always are the ones specified (arg1, arg2)
 	returnedFunction() ~= originalFunction.call(thisObject, 0, 1);
@@ -1682,7 +1690,7 @@ bind(thisObject, arg1, arg2)
 	useful for setTimeout(object.method) => can avoid losing object being this with bind
 	the new function does NOT have the properties of the original
 
-bind(null)
+a_function.bind(null)
 	bind to the global object
 
 if call a function without an object, this:
@@ -2276,6 +2284,13 @@ console.log(foo);
 	bad to put variables in the global object
 	useful for polyfill
 
+value of this at the top level:
+browser:
+	strict/non strict : window
+	module (type="module") : undefined
+
+node:
+	module.exports
 
 
 --- modules ---
