@@ -1500,9 +1500,9 @@ Object.entries()
 	return arrays (contrary to map.xxx, set.xxx, Array.xxx which return an iterable)
 	do not appear:
 		symbols
-		properties with flag writable: false
+		properties with flag enumerable: false
+		(can get them both with Reflect.ownKeys())
 		properties from prototype (as if filtered with hasOwnProperty()
-		(can get them with Reflect.ownKeys())
 
 for(let [key, value] of Object.entries(obj)){}
 
@@ -1545,6 +1545,7 @@ Object.getOwnPropertyDescriptors(obj)
 	get proprety descriptors for all properties
 	returns an object: {propertyName: {propertyDescriptor}, ...}
 		same object structure as in defineProperties
+	all including symbols and non-enumerable
 
 Object.defineProperty(obj, propertyName, descriptor)
 	sets attribute
@@ -1563,7 +1564,7 @@ Object.defineProperties(obj, {
 Object.getOwnPropertySymbols(o)
 	get all Symbol properties
 Reflect.ownKeys(o)
-	all the keys (string and symbols)
+	all the keys (including symbols and non-enumerable)
 
 Object.isExtensible(obj)
 Object.preventExtensions(obj);
