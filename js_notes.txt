@@ -37,9 +37,25 @@ readystatechange doesn't bubble
 but
 DOMContentLoaded bubbles
 
+DOMContentLoaded on document but load on window
+
 addEventListener('DOMContentLoaded' ...)
 but not
 ondomcontentloaded
+
+onfocus
+but not
+onfocusin (must use addEventListener)
+
+date
+	autocorrection instead of error
+	fullyear
+	month starts at 0
+
+generator function
+doing a return
+	value not available in for..of loop
+	value available in generator object : {done:true, value=<return value>}
 
 
 todo
@@ -1432,6 +1448,9 @@ only works inside async functions
 works globally (not always?)
 works on thenable objects
 
+await 1
+	creates a resolved promise
+
 handle rejection:
 try{
     let v = await p2;
@@ -1446,6 +1465,11 @@ try{
 	object initializer
 	aka object literal
 	keys converted to string
+
+new Object()
+	arg object => returns that object (==)
+	arg null/undefined => returns a new empty object
+	other value (string, int,..) => wrap that value in an object
 
 a.key
 a["key"]
@@ -2148,6 +2172,12 @@ let someMixin = {
 class SomeClass {}
 Object.assign(SomeClass.prototype, someMixin);
 
+limitations:
+- instanceof theMixin doesn't work
+- cannot use accessor. Writing to an accessor property defined in the mixin erases it with a data accessor in the object
+- cannot use super
+
+better to make a class and inherit from it
 
 --- Primitive conversion ---
 no operator overloading (redefine '+' operator in obj1 + obj2)
@@ -2522,7 +2552,16 @@ careful:
 	method will be called without the object. Wrong this.
 	fix with bind
 
-in browsers, if repeat the same action 5+ times : there is a 4ms delay before it runs again even if the delay is 0
+- if multiple scheduled functions have their delay elapsed and are ready to run
+  order is in order of in which setTimeout was called
+let a = setTimeout(function ( ) {console.log('a');}, 1);
+let b = setTimeout(function ( ) {console.log('b');}, 0);
+//...
+	the first function to run is not deterministic:
+	-a if more than 1ms is elapsed before the engine decides which function to run
+	-b if ready to run a function quickly
+
+- in browsers, if repeat the same action 5+ times : there is a 4ms delay before it runs again even if the delay is 0
 	historical for browser compatibility
 
 
@@ -3775,9 +3814,11 @@ redirect
 	"manual"			our code checks and handles redirect itself
 mode
 	change CORS setting
-	"cors" default, follow cors
-	"same-origin" no cross-origin at all
-	"no-cors" safe cross-origin (no unsafe!)
+	"cors" default, (attempts) cors request
+	"same-origin" error if try a cross-origin request
+	"no-cors" allow safe cross-origin request, cannot read result
+				allows what has always been possible
+				like img.src="cross origin url"
 credentials
 	"same-origin": default, only send credentials for same-origin
 	"include" : send cookies even on cross-origin (must be allowed by the server)
