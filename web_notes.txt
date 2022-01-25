@@ -14,6 +14,9 @@ EMMET
 main>(div#id+div.class)>h1{Title}^ul>li.class$*5+footer[attr="value"]
 !
 
+HTML/css warts
+box-sizing : different part of the same document measure size in a different way. Remind me of old PHP with options that changed the behaviour of the code
+
 TIPS
 make all the elements have a given value for a property
 html {
