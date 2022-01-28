@@ -4,6 +4,8 @@ negative index : like 0 or count from the end of the array/string?
 
 objects used as dictionary (no length, perfs, limited keys)
 
+map accepts key but different instances of the same object compare false
+
 o == 1 => not the number primitive conversion but the string one
 
 let proto = {
@@ -26,7 +28,13 @@ return in an executoreadystatechanger (new Promise(xxx)) does nothing (does not 
 yet return in handler does
 yet throw in handler does settle the promise into a rejected one
 
-(node) use strict or not depending on an external package.json file
+
+behaviour of code changes depending on whether the code is in a module or not
+see "Changes to module compared to standard script:"
+
+
+(node) use strict or not depending on an external package.json file. Can't tell behaviour just by looking at the source code itself.
+
 
 addEventListener: (case)
 readystatechange
