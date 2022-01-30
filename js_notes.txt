@@ -65,8 +65,18 @@ doing a return
 	value not available in for..of loop
 	value available in generator object : {done:true, value=<return value>}
 
+let fo = new Object(false);
+console.log(fo == false);
+console.log(!!fo == true);
+
+Array constructor does different things depending on the number of args
+new Array(2);		[, ]
+new Array(2, 3);	[2, 3]
 
 todo
+
+using non standard element?
+<myElement></myElement>
 
 Strict-Transport-Security
 
@@ -787,6 +797,7 @@ comparisoin based on identity
 m = new Map();
 m = new Map([ ['k', 'v'], ['k2', 'v2']])
 m = new Map(Object.entries(obj))
+	or any iterable with [x, y]
 set(key, value)
 	can chain
 get(key)
@@ -963,6 +974,7 @@ uses local time zone
 
 getTime
 	returns the timestamp
+	number of ms since unix epoch
 Date.now()
 	returns current timestamp
 	shortcut for new Date().getTime()
@@ -1028,6 +1040,7 @@ const func = new Function('arg1', 'return arg1 + 1;')
 	new Function syntax to create a function from string
 	not to be confused with object creation through constructor call
 	no access to variables available in the environment where new Function is called
+	can replace eval()
 
 (function() {
     //...
