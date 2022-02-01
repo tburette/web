@@ -1299,6 +1299,14 @@ queueMicrotask =>	schedule microtask, we are at the end of our own code
 
 
 
+--- web worker ---
+run code in its own execution context without interfering with the js of the user interface
+can send network requests
+can send events to js code of main page
+
+
+
+
 -- Promise --
 new Promise(executorFunction);
 let aPromise = new Promise(function(resolve, reject){ // executor function
@@ -1448,7 +1456,7 @@ async function f() {
 	the function always return a Promise
 	return value wrapped in a resolved promise
 	or thrown exception wrapped in a rejection promise
-like:
+is like:
 function f() {
 	return Promise.resolve(1);
 }
@@ -1456,18 +1464,28 @@ function f() {
 async function f() {
   throw new Error("msg");
 }
-like:
+is like:
 async function f() {
-  return await Promise.reject(new Error("msg"));
+  return Promise.reject(new Error("msg"));
 }
 
 await
 let result = await f();
 let result = await aPromise;
-blocks until the promise is settled then returns the value
-only works inside async functions 
-works globally (not always?)
+blocks until the promise is settled
+give execution back to the caller.
+	if not any (global scope) => next microtask
+	if no microtask => next macrotask
+when setteld : resumes execution, value of await expression = value of promise =>resolve or exception thrown (NOT a Promise object)
+only works inside async functions or in javascript module
 works on thenable objects
+
+async function foo(){
+  await asyncFunction("http://localhost:5501");
+};
+foo()
+	when the await blocks the execution, the execution continues in the called, which receives a pendinf Promise object
+
 
 await 1
 	creates a resolved promise
@@ -2377,6 +2395,7 @@ Changes to module compared to standard script:
 - this is undefined in the top-level
 - can import export
 - a module is always in strict mode
+- can use await in top level
 - import.meta contains info about the module
 	import.meta.url
 
