@@ -2429,6 +2429,7 @@ export {xxx as yyy};
 import
 import {xxx} from './module.js'
 import {xxx as yyy} from './module.js'
+	object destructuring syntax!
 
 import * as mod from './aModule.js'
 	import all
@@ -3961,7 +3962,7 @@ Does not prevent bad guys from disabling those protections on their own machines
 
 
 
--- Content-Security-Policy --
+--- Content-Security-Policy ---
 specifies which domain the content can be loaded from
 can also restrict protocol (eg. https only)
 prevents XSS
@@ -3974,7 +3975,7 @@ Content-Security-Policy: default-src https://cdn.example.net; script-src 'self' 
 
 by default allows everything
 
-directive1 value; directive2 value1 value2
+directive1 value; directive2 value1 value2; ...
 series of directives.
 ; separated
 directive format: <directive-name> <value> [<value> ...]
@@ -3983,7 +3984,7 @@ directive format: <directive-name> <value> [<value> ...]
 directives
 categories of directives : fetch, document, navigation, reporting, other
 
-Fetch directives:
+-- Fetch directives --
 controls loading of ressources (xxx-src)
 default-src
 	fallback value for other fetch directives
@@ -3998,7 +3999,7 @@ script-src
 		see unsafe-eval to enable
 
 connect-src
-	Allow fetch, XMLHttpReuest, WebSocket, Navigator.sendBeacon, <a> ping
+	Allow fetch, XMLHttpRequest, WebSocket, Navigator.sendBeacon, <a> ping
 
 font-src
 
@@ -4009,23 +4010,23 @@ img-src
 media-src
 	<audio>, <video>, <track>
 
-Document directives: 
+-- Document directives --
 base-uri
 	urls that can be used for <base> head tag
 
-Navigation directives:
+-- Navigation directives --
 form-action
 	allow target of form submission
 
 frame-ancestors
 	determine who can embed this resource
 
-Reporting directives:
+-- Reporting directives --
 send JSON somewhere whenever a policy blocks something
 
 
 
-Values:
+-- Values --
 'none'
 	don't allow any loading
 
@@ -4076,7 +4077,7 @@ Content-Security-Policy-Report-Only
 
 
 
--- CORS --
+--- CORS ---
 Cross-Origin Resource Sharing
 	is about allowing js to read from a server which is normally not possible
 	= sharing resources between origins
@@ -4174,7 +4175,7 @@ server typically do not just allow the requested method/headers but send all the
 	Access-Control-Allow-Origin in the header
 
 
--- credentials --
+--- credentials ---
 cross-origin js request does not include cookies by default.
 fetch(url, {credentials: "include"});
 if server accepts cookie it will add in the response header:
