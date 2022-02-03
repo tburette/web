@@ -858,7 +858,6 @@ media type
 	all
 	print
 	screen
-	speech
 	(other types are deprecated)
 
 media features:
@@ -1455,10 +1454,12 @@ font-style: italic;
 
 line-height: 1;
 	distance between lines of text
+	default is normal ~= 1.2
 
 letter-spacing:;
 word-spacing:;
 	h space between letters/words
+	the value adds/subtracts from the normal spacing (-0.1em = normal spacing -0.1)
 
 text-indent: <pos or neg size>;
 	indent first line of text
@@ -2095,6 +2096,7 @@ flex-shrink: x;
 	same relative system as flex-grow
 
 flex-basis: x;
+	main-size of the element
 	takes priority over width/height
 	initial size of flex element before shrink/grow adjustments
 	"= min-size but can be affected by grow/shrink"
