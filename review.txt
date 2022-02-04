@@ -1,0 +1,43 @@
+event : type currentPhase
+node module => .mjs
+module : top level await
+@media media-type and (media-feature) {}
+custom data attribute : <div data-x> elem.dataset.x
+map.keys() map.values() Object.fromEntries(mapObject)
+[a, ] = [0, 1, 2]
+<a href="x" download="filename">
+o.handleEvent
+thenable
+<dl>
+ <dt>
+ <dd>
+/dl
+blockquote cite
+process.on window.addEventListener 'unhandledRejection'
+window.onerror process.on('uncaughtException',..)
+box-shadow:
+preflight OPTIONS http request
+new.target
+getComputedStyle(element, pseudo-element)
+
+
+---
+observer: who triggers, push/pull, event type
+parametrized pluggable adapter
+
+git diff HEAD
+
+optional chaining
+---
+data property and accessor property
+fetch(..., {method: 'POST', body: new FormData(aForm)});
+---
+erhlich
+glauben
+der schluss la conclusion, der schlüssel
+---
+M μ mu
+---
+
+git fetch CAN change local branch : git fetch origin remote:local
+
