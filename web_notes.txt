@@ -1765,6 +1765,7 @@ display: inline;
 display: inline-block;
 	does not break into a new line like inline
 	but width/height, padding, margin and border are used
+	transform works
 	works like replaced elements
 display: flex;
 	outer display type : box

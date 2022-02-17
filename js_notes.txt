@@ -73,6 +73,15 @@ Array constructor does different things depending on the number of args
 new Array(2);		[, ]
 new Array(2, 3);	[2, 3]
 
+
+array.join()
+, between elements (instead of nothing)
+
+document.cookie 				lists cookie in a ; separated string
+document.cookie = "a=b; c=d"	sets a cookie with options
+
+
+
 todo
 
 using non standard element?
@@ -87,6 +96,10 @@ web worker
 <dialog>
 
 https://github.com/goldbergyoni/javascript-testing-best-practices/blob/master/readme-fr.md
+
+js repos
+https://twitter.com/Ashish_feels/status/1493574496229285890?t=GyLbBFetghjkIks_FcJGRA&s=09
+
 
 
 == rules
@@ -3703,7 +3716,8 @@ DOMContentLoaded
 	HTML loaded, DOM of HTML built
 	can still load images, stylesheets, async scripts
 	if execute js code, possible that : image size 0, stylesheet not applied,...
-	on document (bubbles to window)
+	on document
+	bubbles (to window)
 	!MUST use addEventListener (onDOMContentLoaded doesn't work)
 	handler will NOT trigger if it is attached after the event
 
@@ -3751,7 +3765,8 @@ onload
 	successful load
 	only check the loading, there could be further problem (syntax error in the script,...)
 onerror
-	an error occured
+	couldn't load the resource
+	doesn't bubble (can still catch globally : window level with capture:true
 
 won't trigger if attached after the load
 
@@ -3963,6 +3978,7 @@ Does not prevent bad guys from disabling those protections on their own machines
 
 
 --- Content-Security-Policy ---
+restricts the page from doing some operations
 specifies which domain the content can be loaded from
 can also restrict protocol (eg. https only)
 prevents XSS
