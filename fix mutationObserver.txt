@@ -1,0 +1,18 @@
+https://javascript.info/mutation-observer
+
+* background
+read linearly no problem... until MutationObserver
+harder than it should to understand
+
+* what makes it hard to understand
+=>explanation of config harder than it should
+-characterdata = ?
+ never explained clearly what "characterData" is
+ not clear it is a text node as explained in https://javascript.info/dom-nodes => (add link and acnhor?)
+-some options only apply if one or multiple other options exist
+-not clear that the value must be true/false
+
+=>should separate the register (observe) from the callback part
+(put observe example nearer to the observe explanation)
+(put callback explanation afterwards?)
+

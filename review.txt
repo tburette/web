@@ -40,4 +40,136 @@ M μ mu
 ---
 
 git fetch CAN change local branch : git fetch origin remote:local
+git log -p to see the diff
+
+
+---
++ ~ sibling
+instanceof Number/BigInt/String => doesn't work (on primitive)
+this top-scope browser: window/undefined node:module.exports
+---
+git branch -l -a
+git show aTag
+---
+Nu ν
+
+---
+computed property
+strict mode changes scope of functions (not just variables)
+
+---
+git describe --exact-match
+grid-template-columns: auto;
+---
+σ sigma
+
+---
+intrinsec/extrinsec size
+git describe --exact-match
+
+---
+new Hello
+Υ upsilon
+
+---
+module : own top scope, import.meta, top level await
+Request object (fetch)
+
+---
+Object.assign(destination, more, than, one, source)
+addEventListener(eventType, objectWithhandleEventFunction)
+
+---
+overflow: "hidden"
+Φ φ vs  Ψ ψ
+wirklich vs wichtig
+function expression
+
+---
+spread operator
+clearfix is for float
+method borrowing
+closest()+contains() in  high-level handler
+logical properties
+
+---
+no instanceof on primitives
+polymorphic iteration
+eta
+observer choices: type? who triggers?
+zufall mitglied beraten
+
+--
+catch handler: if(e instanceof Xxx){...}else{ throw err}
+
+--
+property value shorthand
+
+--
+::selection can only set a few properties
+<form method="post <- lower case!
+<input ... placeholder="xxx" 
+css declaration => property:value
+git revert -m 1/2/3
+
+--
+shorthand method cannot be used as constructor
+
+--
+MutationObserver
+date autocorrection
+cherry-pick doesnt check for conflict (contrary to rebase, merge)
+
+--
+elem.dispatchEvent
+immediately called constructor function
+writing-mode
+Upsilon Υ/υ
+ν
+
+--
+git branch -D
+
+--
+tabindex
+betrachten
+
+--
+art direction problem
+
+--
+template literal: placeholder
+css declaration
+behavioral pattern : interpreter
+hystérésis
+σ ɛ ω
+
+--
+fetch(..., {credentials: true}):
+can git reset -p -- file
+
+--
+addEventListener(event, callbackORHANDLER, true) // true = {capture: true}
+{handlerEvent(){...}}
+aForm.elements.x aForm.elements[0]
+let first = second = "hi";
+git fetch can change local branch (git fetch remote r:l)
+
+--
+instance NOT on primitives (1, 1n, "str")
+
+--
+Array.from(iterable/pseudo-array)
+
+--
+ICMP is inside an IP packet (protocol = 1)
+
+--
+names for:
+-an html attribute with my own name that I can use with my js and know won't clash with built-in attributes (name + how does it work)
+-an element that (by definition) doesn't have content
+-name and list of elements in html that are made of multiple character and that are used to represent a textual symbol that cannot be used directly because it has special meaning in HTML
+
+
+--
 

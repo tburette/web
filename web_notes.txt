@@ -1,7 +1,33 @@
 tolearn
+responsive images
+srcset
+
+application/x-www-form-urlencoded
+multipart/form-data
+https://developer.mozilla.org/en-US/docs/Web/HTML/Element/Form#attr-enctype
+
+http
+
+règles == === précisémment
+
+<dialog>
+
 https://www.youtube.com/c/MozillaDeveloper/videos?view=0&sort=p&flow=grid
 https://github.com/Kristories/awesome-guidelines#frontend-development
 https://developer.mozilla.org/en-US/docs/MDN/Guidelines/Code_guidelines/CSS
+
+Modern JavaScript Explained For Dinosaurs
+https://medium.com/the-node-js-collection/modern-javascript-explained-for-dinosaurs-f695e9747b70
+
+HTML learning roadmap + 48 FREE resources to learn.
+https://twitter.com/_georgemoller/status/1459538965741158401/photo/1
+
+How to Become a Full Stack Web Developer.
+https://twitter.com/parik36/status/1501165953005932545?t=2hJmpqIm3IoeMXMSSEkcpA&s=09
+
+Best GitHub repos every beginner web developer must know
+Contains best practices, handbooks, projects, and top resources
+https://twitter.com/langford_dev/status/1501160705256726530?t=WlPBnzySTah7KsK5sZKubA&s=09
 
 transition
 
@@ -72,6 +98,7 @@ tag
 
 self-closing elements:
 	br
+	hr
 	img
 	input
 	link
@@ -84,6 +111,12 @@ boolean attribute
 	present = true
 	absent = false
 	e.g. checked disabled defer async 
+(some) boolean attributes:
+	async
+	defer
+	checked
+	disabled
+	required
 
 [data-xxx]
 	custom data attribute
@@ -99,6 +132,8 @@ Entity
 	required in some places (attribute, url) for & " '
 	avoid using unless needed
 	used to be popular before utf-8 documents and editor without unicode support
+	aka HTML entity
+	aka (HTML) character entity
 	aka character reference (in standard)
 	aka entity reference
 	aka encoded character
@@ -113,11 +148,13 @@ basic structure of an HTML document (with comments):
 <!DOCTYPE html>
 	doctype
 	tells which version of HTML we are using
-<html> <!--root element of the document-->
+<html lang="en"> <!--root element of the document-->
   <head>
-    <title>Title</title>
     <meta charset="utf8"/>
     	defines encoding
+    <title>Title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    	if webpage designed with mobile in mind
   </head>
   <body>
     <!--content-->
@@ -219,7 +256,7 @@ script.async = false
 
 <p>x</p>
 	paragraph
-	adds newline after
+	adds newline before and after
 
 <h1>x</h1>
 <h6>x</h6>
@@ -275,6 +312,7 @@ browser applies text-decoration: line-through;
 	use instead of <s> to mark text as deleted
 <ins>
 	used to mark inserted text
+	underlines
 
 <hr>
 	horizontal rule
@@ -413,7 +451,7 @@ Quoting
 	note : onclick="<some JS>" also exists
 
 <a ping="url url url">hi</a>
-	send POST equests with the body PING to the urls
+	send POST requests with the body PING to the urls
 	for tracking
 
 links (href):
@@ -422,42 +460,6 @@ links (href):
 	root relative:
 				/path
 	fragment : 	[path]#fragment
-
-pseudo-classes:
-:link
-	non-cliked link
-:visited
-	clicked link
-:hover
-	being pointed-to at
-:focus
-	has the focus (tabbed)
-:active
-	being clicked on
-:not
-	elements that do not match a selector
-	:not(p)
-	div:not(.fancy)
-
-! careful in the order if use multiple 
-a {}
-a:active{}
-a:focus{}
-a:link{}
-	same specificity, multiple can be true simultaneously
-	link declarations override the focus ones!!
-	focus declarations override the active ones!!
-
-styling properties linked to links:
-color
-cursor
-	cursor when hovering (do NOT use :hover)
-outline
-	outline when has focus
-	like border but takes no space, always on four sides
-	doesn't affect layout
-text-decoration
-	the underline
 
 
 
@@ -478,6 +480,7 @@ text-decoration
 		better to use css
 	object-fit
 		resize to fit container, see replaced element
+		see replaced element
 	title
 		tooltip
 		better to put it in text next to the image (figure/figcaption is one way)
@@ -510,11 +513,14 @@ semantic alternatives to div:
 	helps screen reader jumps straight to the main content
 <article>
 	self-contained content
-	would make sense alone without context (RSS)
+	would make sense alone without context
+	Could be syndicated (RSS)
 	eg.: forum post, news article, blog article, user comment
 <section>
 	group thematically related content
-	typically has its own header/title
+	part of a document
+	fairly weak compared to other semantic elements (nav, aside,...)
+	still more semantic than div : know it regroup linked content
 	eg.: sections of an article, different parts of an homepage
 <header>
 	contains navigation or introductory text (typically the part repeated at the top of all the pages)
@@ -526,11 +532,11 @@ semantic alternatives to div:
 <footer>
 	like header
 <nav>
-	a major block of navigation
+	content is a major block of (internal) navigation
 	contains navigation : inside this document or to other pages
 	typically one for the entire document
 	there can be multiple <nav>. Eg. one for site navigation and one for the current document
-	do NOT use <nav> just because there are a bunch of links (eg. no nav for footer)
+	do NOT use <nav> just because there are a bunch of links (eg. no nav for footer, for a bunch of external links)
 <aside>
 	content that is tangentially related to the content around the aside element
 	eg.: info about author, info about an element mentioned in the text, repeating a quote for visual spacing
@@ -548,11 +554,17 @@ figure + figcaption
 	</figure>
 
 
+<details>
+    <summary>The summary</summary>
+    The detail.
+</details>
+	shows the summary with an arrow to expand and reveal the detail
+	no js needed!
+	theDetailsElement.open <= true/false to reveal detail or hide it
+	theDetailsElement.addEventListener("toggle", ...)
 
 
-
-
-<form action="url" method="post"></form>
+<form action="url" method="post" enctype="xxx"></form>
 
 <form ... name="xx">
 	can access through
@@ -628,6 +640,7 @@ alternative:
 <input type="button|submit|reset" value="click me">
 	can only have text in this button
 
+if no submit button and multiple input : pressing enter on a field does NOT submit the form
 
 --- input text ---
 can have pattern
@@ -737,7 +750,7 @@ tabindex="<number>"
 	including ones usually not focusable(div,...)
 	(x:focus)
 	also determines in which order tabbing select elements, based on value:
-	negative : cannot focus by tabbing but can focus with JS
+	negative : can only focus through JS
 	0 = default : can focus (after positives)
 	positive : 
 		1 : selected first
@@ -1009,6 +1022,10 @@ div
 	visited link
 :active
 	being clicked on
+:enabled
+:disabled
+:checked
+:blank
 :first-child
 	first element among siblings
 :last-child
@@ -1017,6 +1034,26 @@ div
 :nth-child(even)
 :invalid
 	<input> or other <form> element which fail to validate
+
+! careful in the order if use multiple 
+a {}
+a:active{}
+a:focus{}
+a:link{}
+	same specificity, multiple can be true simultaneously
+	link declarations override the focus ones!!
+	focus declarations override the active ones!!
+
+styling properties linked to links:
+color
+cursor
+	cursor when hovering (do NOT use :hover)
+outline
+	outline when has focus
+	like border but takes no space, always on four sides
+	doesn't affect layout
+text-decoration
+	the underline
 
 
 ::x
@@ -1035,6 +1072,7 @@ x::after
 	can have the content be an empty string and set to display:block to add complex stuff
 ::selection
 	part of the document selected
+	can only set a few properties
 
 
 
@@ -1118,10 +1156,10 @@ Specificity
 			they don't have selector so other components always 0 (1000)
 		2. id selectors
 			#id
-		3. class selectors, attribute selectors, pseudo-class
+		3. class selectors, pseudo-class, attribute selectors
 			.class
-			[attr=x]
 			:pseudo-class
+			[attr=x]
 		4. element / pseudo-element selector
 			div
 			::after
@@ -1276,7 +1314,7 @@ define:
 }
 	the selector defines the scope the custom property can be used in!
 	custom properties are inherited like any ordinary property
-	:root is a pseudo-class that matches the root (<html>) => available globally
+	:root is a pseudo-class that matches the root (<html>) => variable is available globally
 	can overwrite a custom property in a (sub) element
 use:
 var(--variable-name)
@@ -1776,6 +1814,11 @@ display: inline-flex:
 	
 display: grid;
 	use css grid
+	
+display: none;
+	like having the hidden attribute set
+	not part of the layout
+	see also visibility: hidden (part of the layout but not rendered)
 
 
 

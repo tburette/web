@@ -1,4 +1,18 @@
+js questions
+https://stackoverflow.com/questions/tagged/javascript?tab=votes&page=2&pagesize=15
+https://github.com/ganqqwerty/123-Essential-JavaScript-Interview-Questions
+https://github.com/sudheerj/javascript-interview-questions
+https://twitter.com/saviomartin7/status/1485562300639559681?t=8OG3-681uaoFKrsryt3CKQ&s=09
+
+js snippets
+https://www.30secondsofcode.org/js/p/2?from=paginator
+
+react guide
+https://www.freecodecamp.org/news/react-beginners-guide/
+
+
 js warts
+javascriptisweird.com
 negative index : like 0 or count from the end of the array/string?
 	inconsistant (indexOf and substring vs slice and substr)
 
@@ -7,6 +21,9 @@ objects used as dictionary (no length, perfs, limited keys)
 map accepts key but different instances of the same object compare false
 
 o == 1 => not the number primitive conversion but the string one
+
+1 instanceof Number == false
+	does NOT work for primitives
 
 let proto = {
     stomach: [],
@@ -81,6 +98,54 @@ document.cookie 				lists cookie in a ; separated string
 document.cookie = "a=b; c=d"	sets a cookie with options
 
 
+try{
+    let value = 1;
+    throw new Error();
+}catch(err){ 
+    console.log(value); //ReferenceError
+}
+
+
+let a = 0;
+alert( Boolean(a) ); // false
+let b = "0";
+alert( Boolean(b) ); // true
+alert(a == b); // true
+
+
+elem.attributes is a map representing the array
+it looks like you can add elements to it ($0.attributes.aaa="aaa") but it doesn't do anything. Forced to use $0.setAttribute
+yet it works for style ($0.style.backgroundColor = "red")
+cookie, localStorage every collection work in a different manner
+
+Cannot use bigint with Math.xxx
+
+parseInt("") // NaN
+Number("") // 0 Number returns NaN if cannot parse except for ""
+
+parseInt("10", 37) // NaN
+(10).toString(37) // RangeError
+
+(-7).toString(2) // -111 (- sign with binary is weird..)
+
+
+let o = {
+    valueOf(){
+        return 0;
+    }
+}
+o == false
+but
+!!o == true
+
+not wart just funny:
+127.toString(16)	// SyntaxError
+127..toString(16)	// ok
+127?.toString(16)	//ok
+
+
+
+
 
 todo
 
@@ -151,6 +216,10 @@ babel
 	transpiler : convert modern js into js that can be run on older js engines
 	to be combined with a polyfill
 
+docstring format for javascript : jsdoc widely used
+https://devhints.io/jsdoc
+https://jsdoc.app/
+
 "use strict";
 Introduced in ES5 (2009), backward incompatible changes
 at beginning of script
@@ -173,9 +242,9 @@ Object.is(a, b)
 	like === but
 	NaN is NaN
 	+0 is not -0
-	
 
-primitive types (singlue value, stored as value in variables)
+
+primitive types (single value, stored as value in variables)
 string
 number
 bigint
@@ -184,7 +253,8 @@ symbol
 null
 undefined
 
-Object type
+Object types (non primitive type)
+(NOT typeof 'object' cf [] and null)
 	{}
 	function
 	array
@@ -210,7 +280,9 @@ new Boolean(false)
 typeof
 	return string of the type
 
+"str"		'string'
 true/false	'boolean'
+undefined	'undefined'
 null		'object'	!
 []			'object'	!
 {}			'object'
@@ -235,6 +307,7 @@ undefined
 null == undefined
 	this is a special rule
 	(eg. [] != {})
+	a null or undefined value is called a nullish value (see ?? ?.)
 
 
 
@@ -243,7 +316,9 @@ numbers are double
 0.1 + 0.2 == 0.30000000000000004
 Number.MIN_SAFE_INTEGER
 Number.MAX_SAFE_INTEGER
+	limit where integers can be represented and comparison performed correctly.
 	around 10**15, 2^53-1
+	limit of double
 	Number.MAX_SAFE_INTEGER +1 === Number.MAX_SAFE_INTEGER + 2
 
 1_000_000_000
@@ -270,14 +345,13 @@ non use strict : === 8, but Number("010") === 10
 Number(<something>)
 +a_string
 	convert to number (eg. a string)
+	Number(1n)
 
 new Number(12) !== 12 
 typeof 12 => number
 typeof new Number(12) => object
 !!0 => false
 !!new Number(O) => true
-
-but Number(0) is the same as 0
 
 parseInt(str)
 parseInt(str, radix) // default 10
@@ -286,13 +360,15 @@ parseFloat(str)
 	ignore non-number text at the end of the string
 	Number("123x") === NaN
 	parseInt("123x") === 123
+	parseInt(1n)
 
 Infinity
 	obtained with the keyword or dividing by zero (except 0/0, Infinity/Infinity,..)
 	
-Nan
-	cannot parse a number ParseInt(), Number()
-	string + operation "foo" / 2
+NaN
+	parseInt()
+	cannot parse a number parseInt("x"), Number("x")
+	non number + operation : "foo"/2, {}/2
 
 
 aNumber.toString()
@@ -301,6 +377,7 @@ aNumber.toString(2) // base
 2.toString() // error
 (2).toString() 2..toString() // ok
 
+(-7).toString(2) // -111 (weird..)
 
 BigInt
 	represents integer of any size
@@ -323,10 +400,24 @@ AND ( & )
 OR ( | )
 XOR ( ^ )
 NOT ( ~ )
+	convert the number to 32 bits integer and invert that
+	000...x => 111...!x
+	111...x => 000...!x
 LEFT SHIFT ( << )
 RIGHT SHIFT ( >> )
 ZERO-FILL RIGHT SHIFT ( >>> )
 numbers are converted to signed 32 bits integers. Truncated if needed
+
+
+falsy
+false
+0
+-0
+0n
+""
+null
+undefined
+NaN
 
 
 logical operators
@@ -336,16 +427,16 @@ logical operators
 		if operand is returned (see below): returns the original value (not converted)
 || || || ...
 	return first true value
-	or last value
+	or last value (if all false)
 && && && ...
 	return first false value
-	or first value
+	or last value (if all true)
 
 a ?? b
 	nullish coalescing operator
 	nullish = null or undefined ( https://developer.mozilla.org/en-US/docs/Glossary/Nullish )
-	if a not null or undefined: returns a
-	if a null or undefined: 	returns b
+	if a is not null or undefined:	returns a
+	if a is null or undefined:		returns b
 	fairly new (2020)
 	useful to give a default value if something may not be defined
 		alert(user ?? "Anonymous");
@@ -359,7 +450,7 @@ a?.b
 	a && a.b && a.b.c is similar but
 		more verbose
 		if falsish value : return falsish value instead of undefined
-	the variable a must exist (but may be null/undefined) otherwhise exception
+	the variable a must exist (but may be null/undefined) otherwise exception
 object.function?.()
 	calls the function if it exists
 	returns undefined if it does not exist
@@ -376,7 +467,9 @@ a_null_variable?.name = "John";
 --- String ---
 
 "13"[0] === "1"
+	undefined if not found
 "13".charAt(0) === "1"		// was the only way originally
+	"" if not found
 "hell".length === 4
 
 "ba" < "bar"
@@ -531,7 +624,7 @@ let a = 11;
 
 for(let i = 0; i < 3 ; i++) {
     arr.push(function foo(){
-        console.log(i); //i different with let. Would be the same xith var
+        console.log(i); //i different with let. Would be the same with var
     });
 }
 
@@ -655,7 +748,9 @@ a_function(...array)
 
 for(let value of array){}
 	iterate
+	
 forEach(function(item, index, array){})
+	drawback of forEeach : can't return (the enclosing function from it)
 
 let arr = 'hello over there'.split(' ')
 let  [a, , b] = arr
@@ -671,8 +766,8 @@ can be used in for..of
 objectThatMustBeIterable[Symbol.iterator] = function() {
     return {
         next() {
-            return {done: false, value: this.current++};
-            return {done: true};
+            return {done: false, value: this.current++}; // first time called
+            return {done: true};						 // second time called
         }
     };
 };
@@ -1027,6 +1122,7 @@ double edged : can give wrong value and there won't be an error
 conversion to primitive (number timestamp)
 +aDate
 	converts date to timestamp (see primitive conversion)
+	like getTime()
 aDate - anotherDate
 	difference in timestamp => difference in ms
 
@@ -1545,7 +1641,7 @@ obj = {
     ...
   }
 }
-	method definition shorthand
+	shorthand method definition 
 	! contrary to the long form cannot be used as a constructor ??? why
 	https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#method_definitions
 
@@ -1782,6 +1878,7 @@ new aFunction()
 	creates a new object, within the function 'this' is that object
 	that object is returned
 	BUT if return a object (type object only, no primitive) : will be the object returned
+		! if return an object (instead of this): instanceof will return false
 	aFunction() {...; return {};}
 		{} will be the object created
 	aFunction() {...; return "4";}
@@ -1970,8 +2067,9 @@ class MyClass {
 
 	[computerName](){} // in the prototype
 	
-	//class field
-	//class field initialized before the constructor() runs
+	//instance field
+	//instance field initialized before the constructor() runs
+	// an instance variable attached to the object, distinct for each object
 	xyz = 123; // in the object
 	[computerName] = 123; // in the object (class property)	
 }
@@ -2045,7 +2143,8 @@ xxx instanceof A // the static method will be called
 	if a superclass of A has an Symbol.hasInstance (and A and the classes between A and it doesn't), it will be called
 
 
-[Symbol.toStringTag] =  "Xxx"
+[Symbol.toStringTag] = "Xxx"
+get [Symbol.toStringTag](){return "Xxx"}
 	Used by the builtin toString
 	instead of [object Object] => [object Xxx]
 
@@ -2465,6 +2564,7 @@ export {xxx as default, yyy}
 
 
 import module from './module.js'
+	imports the default (error if no default)
 	if export default used
 	rule : 	name of variable is the name of the module
 			avoids importing multiple things under different names
@@ -2905,6 +3005,7 @@ attributes in the html maps to properties on objects of the DOM
 two ways to access the attributes set on html elements from the html object:
 - through specific properties (eg. id="x" => anObj.id)
   actual value
+  for builtin value (otherwise elem.attributes.xxx)
 - through attribute api below (getAttribute,..)
   value set on the HTML
 
@@ -3425,6 +3526,7 @@ new Event('click', {clientX: 123}):
 
 
 -- custom events --
+we can listen to and send custom events on dom elements
 we can create our own components and have them generate custom events
 
 new CustomEvent('hello', {detail: {anything: "I want"}});
@@ -3444,6 +3546,19 @@ eg.: parent-wide context menu and child specific context menu.
 child handler : implement local context menu and prevents default so that parent doesn't overwrite
 parent handler: check if defaultPrevented before setting the menu
 
+
+-- custom event targets --
+Can have our own objects that behave like DOM elements: addEventListener, removeEventListener, dispatchEvent
+
+class MyTarget extends EventTarget {}
+const target = new MyTarget();
+or just
+const target = new EventTarget();
+
+can then do:
+target.addEventListener('touch', (e)=>console.log(e));
+let e = new Event('touch'); // or CustomEvent if want to add detail
+target.dispatchEvent(e);
 
 
 -- handling touch/click input --
@@ -3726,6 +3841,8 @@ load
 	stylesheet applied, size of images known
 	!on window, NOT document
 	also on images
+	NOT reliable (eg. on mobile browsers).
+		Use event visibilitychange and document.visibilityState instead
 
 beforeunload
 	can ask for confirmation
@@ -3759,6 +3876,15 @@ readystatechange
 	old, generally use DOMContentloaded and load nowadays
 	!on document, doesn't bubble
 
+visibilitychange
+	document.visibilityState
+		'visible'
+			foreground tab of a non minimized window
+		'hidden'
+			when:
+			background tab
+			minimized
+			os screen lock (not on my ubuntu)
 
 -- ressource loading state --
 onload
@@ -3805,10 +3931,10 @@ options:
 		for attributes
 		automatically sets attributes to true
 	attributeOldValue
-		have the old value
+		event has the old value
 		automatically sets attributes to true
 	characterDataOldValue
-		have the previous value of the node's text
+		event has the old node's text value
 		automatically sets characterData to true
 
 MutationRecord fields:
@@ -3965,11 +4091,12 @@ cross-origin if a difference in origin
 Two mechanisms to protect:
 - Content-Security-Policy
   prevent the page from loading/running some content that comes from a different origin(script, image,...)
+  our webserver sets the restrictions
   we prevent our own page from doing bad things (protects from XSS,..)
 - CORS
   allows js to read from another origin (which is normally forbidden)
   client js attempts reading from another origin
-  server can prevent read from unwanted origins
+  the third party we contact prevents allows/prevents our read
 
 For both, the verification is made on the client (browser).
 Prevents bad guys from tricking the browser of users from doing bad thing
@@ -4015,7 +4142,7 @@ script-src
 		see unsafe-eval to enable
 
 connect-src
-	Allow fetch, XMLHttpRequest, WebSocket, Navigator.sendBeacon, <a> ping
+	Allow fetch, XMLHttpRequest, WebSocket, navigator.sendBeacon, <a> ping
 
 font-src
 
@@ -4101,8 +4228,8 @@ Cross-Origin Resource Sharing
 
 CORS does not allow/prevent making get/post requests to cross-origin servers
 It has always been possible : <img src="external">, submit a form,...
-It does not prevent CSRF.
 It does prevent reading data from another origin.
+It does not prevent CSRF.
 
 two types of cross-origin requests:
 - safe request
@@ -4251,8 +4378,9 @@ let socket = new WebSocket("wss://xxx")
 
 
 --- cookie ---
-Set by server using HTTP header Set-Cookie
-Browser adds them automatically to subsequent requests to the server
+Set by server using HTTP header Set-Cookie, 
+browser adds them automatically to subsequent requests to the server.
+or set in js
 
 name=value; name2=value2
 	representation of cookieS
@@ -4274,7 +4402,7 @@ document.cookie="key=value"
 		k2 ignored (k2 interpreted as an option)
 
 document.cookie="key=value; option=optionvalue; option2"
-	can add options that will impact the cookie
+	can add options (attributes) that will impact the cookie
 
 document.cookie="k=v; path=/apath"
 	cookie accessible under that path and subpaths
@@ -4402,4 +4530,69 @@ window.onstorage
 reports of:
 - firefox deleting localStorage
 - safari not updating a localstorage changed in another tab
+
+
+
+---
+node
+npm ls
+	list local packages
+npm ls -h
+	list global packages
+npm install xxx
+	install package xxx
+npm install xxx –save-dev
+	in package.json, saved in devDependencies instead of in dependencies
+
+
+read input
+import _readline from 'readline'
+const readline = _readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
+readline.question("Question? ", value => {
+    console.log("value: ", value);
+});
+
+read input sync
+import readline from 'readline-sync'
+let answer = readlinesync.question("Question? ");
+
+
+
+testing, Jest
+jest n°1 <--
+	+ most popular/liked (see https://2021.stateofjs.com/en-US/libraries/testing/)
+	- many deps, no ES module support by default
+alternatives : mocha (n°2), cypress,...
+
+
+to use ES modules with jest
+https://jestjs.io/docs/ecmascript-modules
+in package.json:
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  }
+
+in a xxx.test.js
+test('the blah does foo', () => {
+	// toBe uses Object.is
+    expect(sum(1, 2)).toBe(3); 
+    //toEqual compares object recursively
+    expect({a:1}).toEqual({a:1}); 
+    //negative
+    expect(xxx).not.toBe(yyy);
+    toBeNull();
+    toBeUndefined();
+    toBeDefined();
+    toBeTruthy();
+    toBeFalsy();
+    toBeGreaterThan
+    toBeCloseTo
+    toMatch(/xxx/);
+    toContain('scalar'); // expect(list).toContain(..);
+    expect(()=> someCode()).toThrow();
+    expect(()=> someCode()).toThrow(Error);
+});
 
