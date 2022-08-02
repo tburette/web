@@ -22,8 +22,12 @@ map accepts key but different instances of the same object compare false
 
 o == 1 => not the number primitive conversion but the string one
 
-1 instanceof Number == false
+(1 instanceof Number) == false
 	does NOT work for primitives
+
+typeof null == 'object'
+but
+(null instanceof Object) == false
 
 let proto = {
     stomach: [],
