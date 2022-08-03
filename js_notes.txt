@@ -94,6 +94,9 @@ Array constructor does different things depending on the number of args
 new Array(2);		[, ]
 new Array(2, 3);	[2, 3]
 
+a = Array(3);	[,,]
+a = Array("3");	["3"]
+
 
 array.join()
 , between elements (instead of nothing)
