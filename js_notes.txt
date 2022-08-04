@@ -150,7 +150,8 @@ not wart just funny:
 127..toString(16)	// ok
 127?.toString(16)	//ok
 
-
+delete obj.property
+	returns true even if property doesn't exist (or exist only in prototype)
 
 
 
