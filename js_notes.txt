@@ -262,7 +262,7 @@ null
 undefined
 
 Object types (non primitive type)
-(NOT typeof 'object' cf [] and null)
+(NOT typeof 'object' cf null)
 	{}
 	function
 	array
@@ -351,7 +351,7 @@ use strict : 	 error
 non use strict : === 8, but Number("010") === 10
 
 Number(<something>)
-+a_string
++aString
 	convert to number (eg. a string)
 	Number(1n)
 
