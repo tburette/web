@@ -467,7 +467,7 @@ array?.[i]
 	read if object/array exists, otherwise returns undefined
 delete obj?.value
 	delete obj.value if obj exists
-a_null_variable?.name = "John";
+aNullVariable?.name = "John";
 	SyntaxError (cannot do what amounts to undefined = "x");
 
 
@@ -492,8 +492,8 @@ a_null_variable?.name = "John";
 	line`
 	multiline (return and newline part of the string)
 
-a_function`tagged template literal`
-	call a_function passing the strings and ${} to it
+aFunction`tagged template literal`
+	call aFunction passing the strings and ${} to it
 foo`tagged ${"hi"}template literal ${1+1} hi`
 same as : foo([ 'tagged ', 'template literal ', ' hi' ], 'hi', 2)
 
@@ -750,8 +750,8 @@ sort(compareFn)
 reverse()
 	in place
 	
-a_function(...array)
-	= a_function(array[0], array[1], array[2]);
+aFunction(...array)
+	= aFunction(array[0], array[1], array[2]);
 	spread operator
 
 for(let value of array){}
@@ -1047,7 +1047,7 @@ for(let x of iterable){};
 		Map
 		Set
 		NodeList (document.querySelectorAll)
-		Object.entries/keys/values(an_object) to iterate over objects
+		Object.entries/keys/values(anObject) to iterate over objects
 forEach
 a.forEach(elem => console.log(elem));
 a.forEach((elem, index) => console.log(elem, index));
@@ -1205,7 +1205,7 @@ b = function() {console.log("b");};
 
 c();
 c = () => console.log("c!");
-c = one_param => console.log("c!");	// no ()
+c = oneParam => console.log("c!");	// no ()
 c = (p1, p2) => console.log("c!");
 c = (p1, p2) => {console.log("c!"); ... };
 	ko : c doesn't exist at the moment of the call
@@ -1226,16 +1226,12 @@ foo(undefined);
 
 
 
-a_function(...array)
-	rest parameters
-	= a_function(array[0], array[1], array[2]);
+
 [1, 2, ...array]
-	spread operator
+aFunction(...array);
+	spread operator (caller side)
+	= aFunction(array[0], array[1], array[2]);
 
-
-function foo(...array)
-	rest parameters
-	array is a regular array
 
 Math.max(...array)
 	largest value in an array
@@ -1632,7 +1628,7 @@ a["key"]
 	get value of key
 
 {
-  [a_var]:1; //any expression really
+  [aVar]:1; //any expression really
 }
 	computed property
 	Take the value, use its string representation as the key
@@ -1657,9 +1653,9 @@ obj = {
 obj.key = x;
 obj["key"] = x;
 
-"property_name" in obj
+"propertyName" in obj
 	test if the property exists
-	almost like obj.property_name !== undefined but returns true if we stored undefined in property_name
+	almost like obj.propertyName !== undefined but returns true if we stored undefined in propertyName
 
 delete object.property
 delete object["property"]
@@ -1851,27 +1847,27 @@ f = a.func
 b = f() // this = global object
 
 Can take any function and attach it as an attribute to the object : 'this' will be the object if called through the object (exception bind)
-a.fn = some_random_function
+a.fn = someRandomFunction
 
-a_function.call(this_object, 0, 1);
+aFunction.call(thisObject, 0, 1);
 	calls the function with a certain this object and arguments
-a_function.apply(this_object, [0, 1]);
+aFunction.apply(thisObject, [0, 1]);
 	same but args is an array
 	can be used to splat an array:
 	a = [0, 1, 2]
 	Math.min.apply(Math, a); // array converted to individual arguments
 
-a_function.bind(thisObject, arg1, arg2)
+aFunction.bind(thisObject, arg1, arg2)
 	return a new function whose this is _permanently_ attached to thisObject
 	and the first arguments always are the ones specified (arg1, arg2)
 	returnedFunction() ~= originalFunction.call(thisObject, 0, 1);
 	call to bind does not affect the original function
-	stronger than call, apply, an_obj.bound_function()! => this won't change
-	cannot rebind
+	stronger than call, apply, anObj.boundFunction()! => this won't change
+	can rebind
 	useful for setTimeout(object.method) => can avoid losing object being this with bind
 	the new function does NOT have the properties of the original
 
-a_function.bind(null)
+aFunction.bind(null)
 	bind to the global object
 
 if call a function without an object, this:
@@ -2394,7 +2390,7 @@ If want to keep things simple :
 
 alert("msg")
 
-prompt("msg", displayed_default)
+prompt("msg", displayedDefault)
 	return null if cancel
 
 confirm("msg")
