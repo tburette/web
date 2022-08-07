@@ -371,12 +371,15 @@ parseFloat(str)
 	parseInt(1n)
 
 Infinity
-	obtained with the keyword or dividing by zero (except 0/0, Infinity/Infinity,..)
+	obtained with the keyword or 
+	dividing by zero (except 0/0)
 	
 NaN
-	parseInt()
 	cannot parse a number parseInt("x"), Number("x")
+	NaN in an operation : 2+NaN
 	non number + operation : "foo"/2, {}/2
+	0/0
+	Infinity/Infinity
 
 
 aNumber.toString()
@@ -439,6 +442,8 @@ logical operators
 && && && ...
 	return first false value
 	or last value (if all true)
+a && b || c && d = (a && b) || (c && d)
+	&& precedence over ||
 
 a ?? b
 	nullish coalescing operator
@@ -459,7 +464,7 @@ a?.b
 		more verbose
 		if falsish value : return falsish value instead of undefined
 	the variable a must exist (but may be null/undefined) otherwise exception
-object.function?.()
+object?.function()
 	calls the function if it exists
 	returns undefined if it does not exist
 object?.[key]
