@@ -491,6 +491,9 @@ aNullVariable?.name = "John";
 	diacritical marks after non diacritical marks (z < ö) (cf unicode)
 	str.localeCompare to be language aware
 
+str.localeCompare(otherString)
+	compare with locale awareness. Eg. Ö < P
+
 `template literal ${expression}`
 	${} = literal
 `multi
@@ -504,9 +507,6 @@ same as : foo([ 'tagged ', 'template literal ', ' hi' ], 'hi', 2)
 
 String(something)
 	convert to string
-
-str.localeCompare(otherString)
-	compare with locale awareness. Eg. Ö < P
 
 str.toUpperCase()
 
@@ -538,6 +538,7 @@ str.slice(startI, endI)
 	if start > end => empty
 
 str.substr(startI, length)
+	DEPRECATED
 	negative index counts from end of string (-1 = last index)
 
 str.split(', ')
@@ -548,7 +549,7 @@ str.split(', ')
 --- Symbol ---
 Unique identifier
 NOT like string
-NOT like smalltalk's #symbol
+NOT like smalltalk's #symbol (but Symbol.for yes)
 
 
 Symbol("a") != Symbol("a")
