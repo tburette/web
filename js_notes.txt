@@ -591,9 +591,9 @@ Symbol.for('x')
 	Symbol("x") != Symbol.for("x")
 	similar to smalltalk's #symbol
 
-Symbol.keyFor(some_symbol)
+Symbol.keyFor(someSymbol)
 	returns the description of a global symbol
-	pointless : can use some_symbol.description
+	pointless : can use someSymbol.description
 	can be used to determine if a symbol is global or not
 
 Usage 2:
@@ -602,7 +602,7 @@ Symbol.hasInstance, Symbol.iterator, Symbol.toPrimitive,...
 Can alter the built-in behaviour:
 - make an object iterable (we choose the returned elements)
 - ...
-
+like python's dunder methods
 
 
 --- variables ---
@@ -647,7 +647,7 @@ a = 11; // error
 	block scope
 	cannot reassign
 	must assign a value;
-
+let
 function foo(){}
 	hoisted
 	in strict mode : function definition is block scoped : exists only within the block
