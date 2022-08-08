@@ -678,6 +678,9 @@ new Array('hi', 1, true);
 	if single argument of type number : create an array of that size!
 array is an object with extra stuff (length, managing the ordered collection)
 can be sparse
+	array = like a table/object whose keys are index.
+	sparse array = missing some indexes as keys
+	eg.:
 	a = [];
 	a[10] = null;
 	a.length === 11
@@ -685,6 +688,7 @@ can be sparse
 	Array(11)
 	! some operations do not work on sparse array
 		let a = Array(3)
+		// map skips the missing indexes (no key for that index)
 		Array(3).map((_, i) => i);			// does nothing, no iteration
 		Array(3).fill().map((_, i) => i);	// works
 fill(value)
@@ -729,6 +733,8 @@ arr.concat(arg1, arg2)
 	does not change arr
 	returns new array with arr concatenated to arg1, arg2,..
 	args can be array or single elements
+	! behaviour change depending on arg type!
+	actually more of a flat operation
 	if arg is an object with a [Symbol.isConcatSpreadable] property then all the property values of that object will be added to the result (instead of the object itself)
 indexOf(item, from)
 lastIndexOf(item, from)
