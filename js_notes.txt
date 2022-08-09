@@ -780,7 +780,7 @@ let  [a, , b] = arr
 
 
 -- Iterable ---
-Symbol.iterator property is a function returning an object with next()
+Symbol.iterator property is a function returning a generator (an object with next())
 can be used in for..of
 
 objectThatMustBeIterable[Symbol.iterator] = function() {
@@ -950,7 +950,7 @@ WeakMap
 		key must be an object
 		removed automatically if object has no other reference
 		typical use : 
-		-add info to an object belonging to other code. Do not want to modify the object itself but still want associated data
+		-add info to an object belonging to other code. Do not want to modify the object itself (even non-enumerable, symbol) but still want associated data
 		- cache the result of a computation (for a given object)
 	no size
 	no iteration
@@ -976,7 +976,8 @@ WeakSet
 	only contains objects
 	no size
 	no iteration
-	does contain has, delete
+	no clear but does possess delete
+	does possess has
 	can determine if an element is or is not in the set
 	eg.: message has been read if is in the set.
 
