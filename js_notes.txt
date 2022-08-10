@@ -1162,6 +1162,7 @@ function foo(){}
 const foo = function(){}
 	function expression
 	runtime
+	foo.name == 'name'
 
 const foo = function bar(){}
 	named function expression
@@ -1200,7 +1201,7 @@ x => x
 (x,y) => x+y
 	lambda
 
-arrow function don't have their own this
+arrow function don't have their own this or arguments
 this comes from the context!
 Useful and intuitive when create an arrow function within a function
 
@@ -1229,8 +1230,9 @@ function foo(param=[]){
     param.push("hi");
     console.log(param);
 }
-foo(); // no arg
-foo(undefined); 
+	used if:
+	foo(); // no arg
+	foo(undefined);
 	default parameter used if no arg passed OR undefined passed!
 	(but default NOT used if null)
 	default parameter evaluated each call
@@ -1254,7 +1256,8 @@ Math.max(...array)
 arguments
 	within a function : the arguments passed
 	arrow functions don't have their own arguments (it is the one of the parent function)
-	array-like, iterable but does not an array : does not support array function
+	array-like, iterable but is not an array : does not support array functions
+	Array.from(arguments) to turn into a real array
 theFunction(...args){}
 	alternative to arguments
 	real array
@@ -1281,7 +1284,7 @@ function* gen() {
 }
 function *gen() {} // also works but not used
 
-returns a generator object which has a next() method that returns { value:x, done:y} objects
+the generator object has a next() method that returns { value:x, done:y} objects
 lazily executed : function doesn't start until next() of generator object is called
 
 values returned by successive next(): 
@@ -1296,7 +1299,7 @@ eg.: yield 1; return 2;
 { value: undefined, done: true }
 	return value does not show up in for..of!
 
-cannot call yield from a function or arrow function
+cannot call yield from a regular function or arrow function
 
 throwing an exception in the generator throws the exception in the caller
 
