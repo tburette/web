@@ -1240,6 +1240,26 @@ function foo(param=[]){
 		risk of modifying a default arg and affecting subsequent calls does not exist
 
 
+Destructuring assignment
+unpacks values from array/objects into distinct variables
+used wherever a series of values is expected : a, b, c, d
+	-variable assignment
+	 let [x, y] = ...
+	-function arguments
+	 function fn([x, y]){}
+	-for loops
+	-catch
+
+on array
+let [a, ...rest] = anArray
+on objects
+let {prop1, prop2 } = anObject
+
+function foo(...array){}
+	rest parameters (function declaration side)
+	is a type of spread operator
+	rest property (part of destructuring assignment)
+	array is a regular array
 
 
 [1, 2, ...array]
