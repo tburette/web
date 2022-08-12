@@ -1303,6 +1303,10 @@ function* gen() {
 	yield 2;
 }
 function *gen() {} // also works but not used
+	returns a Generator object that conforms to
+	iterable protocol ([Symbol.iterator])
+	and
+	iterator protocol (next())
 
 the generator object has a next() method that returns { value:x, done:y} objects
 lazily executed : function doesn't start until next() of generator object is called
@@ -1433,7 +1437,7 @@ long running task : raises alert to the user
 
 -- microtask --
 microtask : handlers in then, catch, finally and await.
-when a macrotask ends : all queued microtasks are run.
+before a macrotask ends : all queued (ready) microtasks are run.
 
 within an execution of a macrotask : all the microtask are run in an environment that is not affected by other macrotasks.
 There has been no change caused by external events (user action, mous coordinates change, some event handler changing the DOM,...)
@@ -1443,10 +1447,27 @@ queueMicrotask(func)
 	will run before control is returned to the event loop
 	schedule code to run later but before other (macro)tasks that can change the world underneath our feets
 	
-setTimeout => 		schedule macrotask, other code may run
+setTimeout => 		schedule macrotask, other code may run, rendering
 queueMicrotask =>	schedule microtask, we are at the end of our own code
 
 
+document.body.style.backgroundColor = "red";
+setTimeout(()=>{
+	let i = 0;
+	while(i<1_000_000_000)i++}
+)
+	changes color immediately
+	the macrotask with the change of color and the call to setTimeout() ends and the color changes. Loop runs later in its own macrotrask
+
+document.body.style.backgroundColor = "red";
+queueMicrotask(()=>{
+	let i = 0;
+	while(i<1_000_000_000)i++}
+)
+	changes color after the loop ends
+	the loop runs in a separate microtask but in the same macrotask
+	as the macrotask where the color change happens
+	render only at the end of the macrotask
 
 --- web worker ---
 run code in its own execution context without interfering with the js of the user interface
