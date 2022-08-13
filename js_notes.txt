@@ -1650,11 +1650,14 @@ async function f() {
 await
 let result = await f();
 let result = await aPromise;
-blocks until the promise is settled
-give execution back to the caller.
-	if not any (global scope) => next microtask
-	if no microtask => next macrotask
-when setteld : resumes execution, value of await expression = value of promise =>resolve or exception thrown (NOT a Promise object)
+when an await is hit:
+-within the function :
+	blocks until the awaited promise is settled
+-caller of the (await) function containing the await : 
+	give exeuction back to the caller (returns a promise)
+	caller may itself block if it itself called the function with an await
+-if not in any async function (global scope) : execute next micro/macrotask
+when setteld : resumes execution, value of await expression = value of settled promise =>resolve or exception thrown (NOT a Promise object)
 only works inside async functions or in javascript module
 works on thenable objects
 
@@ -1662,7 +1665,7 @@ async function foo(){
   await asyncFunction("http://localhost:5501");
 };
 foo()
-	when the await blocks the execution, the execution continues in the called, which receives a pendinf Promise object
+	when the await blocks the execution, the execution continues in the caller of foo, which receives a pending Promise object
 
 
 await 1
