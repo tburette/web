@@ -1493,13 +1493,16 @@ the executor function is run immediately (before returning the promise object)
 
 only the first resolve/reject has an impact on the listeners
 
-if return in the executor : handlers will never run, promise will never settle
+if return from the executor before resolve/reject is called/set up for later: handlers will never run, promise will never settle
+
+can resolve a Promise
 
 promise has a (internal, hidden) state : pending or settled(fulfilled/rejected)
 
 when there is a reject : the closest reject block catches it (catch or then(null,xxx).
 
 a throw xxx in executor or a handler turns the result into a reject
+(! an exception in a callback will be silently swallowed)
 
 Can create custom "thenable" object : an object with a then function
 	can be returned by a handler
@@ -1521,7 +1524,8 @@ then()/catch()/finally()
 
 .then()
 	if there is a chain: must return a value otherwise next handler will see undefined!!!
-	can return a new Promise object or a value (will turn into a promise)
+	can return a new Promise object or a value :will turn into a promise
+		contrary to return in the executor function
 	can split a complex then handler in two simpler then => return intermediate value from the first then handler (even if no async operation)
 .catch()
 
@@ -1565,6 +1569,10 @@ window.addEventListener('unhandledrejection', function(event) {
 process.on("unhandledRejection", function(reason, promise){
     console.log("!!!", reason, promise);
 })
+
+unhandled rejection and program execution
+node : if unhandled and no unhandledRejeciton handler : stops program (even if other code pending)
+js : continues executing (always)
 
 
 Promise.all
