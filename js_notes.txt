@@ -1727,14 +1727,23 @@ obj["key"] = x;
 
 delete object.property
 delete object["property"]
-	removes key from object
+	removes property from object
+
+delete o.doesNotExist
+	does nothing
+
+Object.defineProperty(o, 'xxx', {configurable: false});
+delete o.xxx;
+	strict mode : TypeError
+	non strict mode : returns false
 
 delete someVariable
 	does nothing (non strict mode)
-	error (strict mode)
+	error (strict mode) (except delete this for some reason)
 
 delete someObj.propertyAtThePrototypeLevel
 	does nothing (no error)
+	can delete a property in an object and the property still exist :  property is (also) defined in a parent prototype
 
 object converted to boolean : always true
 
@@ -1804,6 +1813,8 @@ Object.defineProperties(obj, {
 	prop2: {...},
 })
 	same object structure as in getOwnPropertyDescriptors
+	keep existing properties (if different name)
+	Object.create(proto, xxx) same object structure
 
 Object.getOwnPropertySymbols(o)
 	get all Symbol properties
@@ -1848,7 +1859,7 @@ Object.defineProperty(object, 'fullName', {
   set(value) {
     [this.name, this.surname] = value.split(" ");
   },
-  //enumerable, configureble..
+  //enumerable, configurable..
 });
 
 to have a "private" backing field for a property:
