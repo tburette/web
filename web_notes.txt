@@ -201,13 +201,13 @@ basic structure of an HTML document (with comments):
 	called inline script
 	onclick="..."
 		called inline event handler
-<script src="x.js" defer></script>
 
 no async/defer attribute
 	parsing of the HTML is stopped.
 	download then execute the script
 	resume parsing the HTML
 
+<script src="x.js" defer></script>
 async and defer attributes
 	are for external scripts only
 		unless type="module" (see below)
@@ -378,11 +378,11 @@ Quoting
 <pre></pre>
 	preformatted text
 	block
-	preserves spacing
+	preserves spacing and returns of the HTML
+	monospace font by default
 	does not wrap : will cause horizontal scroll if long!
 	can force newline with css:
 		white-space: pre-wrap;
-	monospace font by default
 
 <var></var>
 	variable name
@@ -473,17 +473,17 @@ links (href):
 	alt=""
 		image is decoration only or there already is a caption for the image
 		when used and the image is missing : no image displayed (instead of broken image)
+	title
+		tooltip
+		better to put it in text next to the image (figure/figcaption is one way)
 
 	width height
 		extracted from the image file itself anyway
 		not very useful unless : resize, image hasn't loaded, avoid reflow
 		better to use css
-	object-fit
+	object-fit (css)
 		resize to fit container, see replaced element
 		see replaced element
-	title
-		tooltip
-		better to put it in text next to the image (figure/figcaption is one way)
 
 responsive image
 make multiple resolutions available, browser picks the best
@@ -564,6 +564,7 @@ figure + figcaption
 	theDetailsElement.addEventListener("toggle", ...)
 
 
+
 <form action="url" method="post" enctype="xxx"></form>
 
 <form ... name="xx">
@@ -572,17 +573,20 @@ figure + figcaption
 		(document.getElementsByName("xx"))
 			 returns array even though names are supposed to be unique among forms
 
+<form ... target="_blank">
+	to open result in a new page
+
 can structure forms:
--fieldset (+ul +legend)
-	to group checkbox/radio
-	li for each choice (input+label)
 -section
 	for multiple related inputs
 	+title
+-h2/h3/..
+	for the form/each section
+-fieldset (+ul +legend)
+	to group checkbox/radio
+	li for each choice (input+label)
 -p
 	for each input
--h1/h2
-	for the form/each section
 
 
 <input type="text" placeholder="text displayed before typing" required name="x">
